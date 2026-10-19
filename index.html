@@ -233,7 +233,7 @@ html,body{overflow-x:hidden}
 <body>
 <noscript>This study app needs JavaScript enabled.</noscript>
 <script>
-/* build 4512276091 */
+/* build 44efec8324 */
 /* CloudSim — a small AWS CLI + Azure CLI simulator over a working cloud model.
    AWS: VPC, subnets, IGW, route tables, NAT, EIP, security groups, EC2, S3, IAM, SNS, CloudWatch.
    Azure: resource groups, locks, VNets, subnets, NSGs (priority rules), VMs, public IPs,
@@ -992,6 +992,8 @@ window.COURSE = {
     { id: 'a-pro', track: 'aws', name: 'Pro Track', desc: 'What senior AWS engineers do: hybrid networks, security engineering, IaC, FinOps.' },
     { id: 'a-ai', track: 'awsai', name: 'AI Practitioner (AIF-C01)', desc: 'AI/ML & generative AI foundations, AWS AI services, RAG, responsible & secure AI.' },
     { id: 'a-aix', track: 'awsai', name: 'AIF-C01 Exam Ready', desc: 'Weighted exam simulation at the official domain percentages.' },
+    { id: 'a-mle', track: 'awsai', name: 'ML Engineer Associate (MLA-C02)', desc: 'Data prep, model development, deployment/orchestration, monitoring & security on SageMaker.' },
+    { id: 'a-mlex', track: 'awsai', name: 'MLA-C02 Exam Ready', desc: 'Weighted exam simulation at the official domain percentages.' },
     { id: 'z-f', track: 'az', name: 'Azure Fundamentals (AZ-900)', desc: 'Cloud concepts, Azure architecture & services, management & governance.' },
     { id: 'z-x1', track: 'az', name: 'AZ-900 Exam Ready', desc: '50 questions, 45 minutes, official domain weights.' },
     { id: 'z-c', track: 'az', name: 'Azure Administrator (AZ-104)', desc: 'Identity, storage, compute, networking, monitoring — hands-on.' },
@@ -1654,6 +1656,138 @@ window.COURSE = {
       Q('Human-in-the-loop review is MOST important when:', 'Outputs affect high-stakes decisions (medical, legal, financial)', ['The model is cheap', 'The prompt is short', 'Latency is low'], 'Risk-based oversight.', 'f4'),
       Q('Which service would you choose to build and deploy a fully custom fraud-detection model?', 'Amazon SageMaker', ['Amazon Bedrock', 'Amazon Textract', 'Amazon Translate'], 'Custom model → SageMaker.', 'f3'),
       Q('What does an embedding enable in a search system?', 'Semantic (meaning-based) similarity search', ['Exact string matching only', 'Encryption of data', 'Faster disk I/O'], 'Vectors capture meaning.', 'f2')
+    ],
+    labs: []
+  });
+})();
+
+;
+/* AWS AI track — Machine Learning Engineer Associate (MLA-C02). Replaced the retired ML Specialty. */
+(function () {
+  var S = COURSE.stages, Q = window.Q, T = window.TYPE;
+  var MLA = { m1: '1. Data Preparation for ML', m2: '2. ML Model Development', m3: '3. Deployment & Orchestration', m4: '4. Monitoring, Maintenance & Security' };
+
+  S.push({
+    id: 'a18', track: 'awsai', tier: 'a-mle', title: 'Data preparation & model development', code: 'AWSML01-FEATURE-STORE',
+    goal: 'Get data ML-ready (clean, split, engineer features, fix imbalance) and train/tune a model with SageMaker — Domains 1 and 2 of MLA-C02.',
+    lesson: [
+      { h: 'Data formats & where it lives', html: '<ul><li>Training data usually sits in <b>Amazon S3</b>. For large-scale training, columnar <b>Parquet</b> or <b>RecordIO-protobuf</b> are efficient; CSV/JSON are fine for small jobs.</li><li><b>SageMaker Processing</b> runs scalable data-processing/validation jobs; <b>AWS Glue</b> does serverless ETL; <b>Athena</b> queries S3 with SQL.</li><li>Ingest streams with <b>Kinesis</b>; store features for reuse in <b>SageMaker Feature Store</b> (online for low-latency inference, offline for training).</li></ul>' },
+      { h: 'Cleaning & feature engineering', html: '<ul><li><b>Missing values</b>: drop, or <b>impute</b> (mean/median/mode, or a model). <b>Outliers</b>: cap or remove when they are errors.</li><li><b>Scaling</b>: <b>normalization</b> (min-max to 0–1) and <b>standardization</b> (zero mean, unit variance) so features are comparable — needed by distance/gradient methods.</li><li><b>Categorical encoding</b>: <b>one-hot</b> for unordered categories, <b>label/ordinal</b> for ordered. <b>Binning</b> groups continuous values.</li><li><b>SageMaker Data Wrangler</b> gives a visual pipeline for all of this; <b>Ground Truth</b> labels data (with humans/automation).</li></ul>' },
+      { h: 'Splitting & imbalance', html: '<ul><li>Split into <b>train / validation / test</b>; use <b>k-fold cross-validation</b> for small datasets. Never let test data leak into training (<b>data leakage</b> inflates scores).</li><li><b>Class imbalance</b> (99% "not fraud"): use <b>resampling</b> (oversample minority / undersample majority, e.g. <b>SMOTE</b>), class weights, and judge with <b>precision/recall/F1</b>, not plain accuracy.</li></ul>' },
+      { h: 'Training & algorithm choice', html: '<ul><li><b>SageMaker built-in algorithms</b> (XGBoost, Linear Learner, k-means, etc.), <b>script mode</b> (your own TensorFlow/PyTorch/sklearn), or <b>bring your own container</b>.</li><li>Use <b>Managed Spot Training</b> to cut training cost up to ~90%; <b>distributed training</b> for big models/data.</li><li><b>Automatic Model Tuning (AMT)</b> searches hyperparameters (Bayesian/random) to optimize a chosen metric.</li></ul>' },
+      { h: 'Evaluating a model', html: '<table><tr><th>Problem</th><th>Watch these metrics</th></tr><tr><td>Classification</td><td>Accuracy, <b>precision, recall, F1</b>, <b>AUC/ROC</b>, confusion matrix</td></tr><tr><td>Regression</td><td><b>RMSE</b>, MAE, R²</td></tr></table><p><b>Bias/variance</b>: high bias = underfit (add features/complexity); high variance = overfit (more data, regularization, simpler model). <b>SageMaker Clarify</b> measures data/model bias and feature importance.</p>' }
+    ],
+    cards: [
+      ['S3 for training data', 'Primary store; Parquet/RecordIO are efficient at scale.'],
+      ['SageMaker Processing', 'Scalable data processing/validation jobs.'],
+      ['Feature Store', 'Reusable features; online (low-latency) + offline (training).'],
+      ['Imputation', 'Fill missing values (mean/median/mode or a model).'],
+      ['Normalization vs standardization', 'Min-max 0–1 vs zero-mean/unit-variance scaling.'],
+      ['One-hot encoding', 'Turn unordered categories into binary columns.'],
+      ['Data Wrangler', 'Visual data-prep/feature-engineering pipeline in SageMaker.'],
+      ['Ground Truth', 'Data labeling service (human + automated).'],
+      ['Data leakage', 'Test/future info bleeding into training — inflates scores, fails in prod.'],
+      ['Class imbalance fix', 'Resampling/SMOTE, class weights; judge with precision/recall/F1.'],
+      ['Built-in algorithms', 'XGBoost, Linear Learner, k-means, etc.; or script mode / own container.'],
+      ['Managed Spot Training', 'Use spare capacity to cut training cost up to ~90%.'],
+      ['Automatic Model Tuning', 'Hyperparameter search (Bayesian/random) to optimize a metric.'],
+      ['Precision vs recall', 'Of predicted-positive how many right / of actual-positive how many caught.'],
+      ['RMSE', 'Regression error metric (penalizes large errors).'],
+      ['Overfit vs underfit', 'High variance (memorized) vs high bias (too simple).'],
+      ['SageMaker Clarify', 'Bias detection + explainability (feature importance).']
+    ],
+    qs: [
+      Q('A fraud dataset is 99.3% legitimate. Which metric is MOST misleading here?', 'Plain accuracy', ['Recall', 'F1 score', 'Precision'], 'A model saying "never fraud" scores 99.3% accuracy but catches nothing.', 'm1'),
+      Q('Best technique for the imbalance above?', 'Resample (e.g. SMOTE oversampling) and/or class weights', ['Delete the minority class', 'Ignore it', 'Only add more features'], 'Rebalance and use recall/F1.', 'm1'),
+      Q('Converting an unordered "state" column for ML is best done with:', 'One-hot encoding', ['Standardization', 'Dropping the column', 'RMSE'], 'Unordered categories → one-hot.', 'm1'),
+      Q('Which scaling gives features zero mean and unit variance?', 'Standardization', ['Normalization (min-max)', 'One-hot encoding', 'Binning'], 'Standardization.', 'm1'),
+      Q('A model scores 0.99 in validation but fails in production. A likely cause is:', 'Data leakage during preparation', ['Too little compute', 'Using Parquet', 'Using Feature Store'], 'Leakage inflates offline scores.', 'm1'),
+      Q('Which service provides a visual, low-code data-prep and feature-engineering flow?', 'SageMaker Data Wrangler', ['Amazon Athena', 'AWS Shield', 'Amazon Polly'], 'Data Wrangler.', 'm1'),
+      Q('You need the same engineered features available for both training and low-latency inference. Use:', 'SageMaker Feature Store (offline + online)', ['An S3 bucket only', 'DynamoDB streams', 'CloudTrail'], 'Feature Store serves both.', 'm1'),
+      Q('To label a large image dataset for supervised training, use:', 'SageMaker Ground Truth', ['SageMaker Clarify', 'SageMaker Model Monitor', 'Amazon Macie'], 'Ground Truth = labeling.', 'm1'),
+      Q('Missing numeric values in a feature are best handled by:', 'Imputation (e.g. median) or a model, chosen to avoid bias', ['Always deleting the rows', 'Setting them to 0 blindly', 'Ignoring them'], 'Impute thoughtfully.', 'm1'),
+      Q('Which SageMaker capability searches hyperparameters to maximize a metric?', 'Automatic Model Tuning (AMT)', ['Model Monitor', 'Feature Store', 'Ground Truth'], 'AMT.', 'm2'),
+      Q('To cut training cost on interruptible workloads, use:', 'Managed Spot Training', ['Larger on-demand instances', 'Multi-AZ endpoints', 'Provisioned Concurrency'], 'Spot for training.', 'm2'),
+      Q('A regression model predicting house prices should be evaluated with:', 'RMSE / MAE / R²', ['Precision and recall', 'AUC', 'Confusion matrix'], 'Regression metrics.', 'm2'),
+      Q('High variance (overfitting) is best reduced by:', 'More data, regularization, or a simpler model', ['Adding more parameters', 'Removing the validation set', 'Raising the learning rate only'], 'Fight overfit.', 'm2'),
+      Q('To use your own PyTorch training code on SageMaker without building a container, use:', 'Script mode', ['Only built-in algorithms', 'A Lambda function', 'Athena'], 'Script mode.', 'm2'),
+      Q('Which built-in algorithm is a strong default for tabular classification/regression?', 'XGBoost', ['k-means (clustering)', 'PCA', 'Random Cut Forest'], 'XGBoost for tabular supervised.', 'm2'),
+      Q('To measure whether a model is biased against a demographic group, use:', 'SageMaker Clarify', ['SageMaker Feature Store', 'Amazon Inspector', 'AWS Config'], 'Clarify = bias + explainability.', 'm2'),
+      Q('Which validation method is best for a very small dataset?', 'k-fold cross-validation', ['A single 50/50 split', 'No validation', 'Training on all data then reusing it as test'], 'k-fold maximizes use of small data.', 'm2')
+    ],
+    labs: []
+  });
+
+  S.push({
+    id: 'a19', track: 'awsai', tier: 'a-mle', title: 'Deploy, orchestrate, monitor & secure', code: 'AWSML02-SHADOW-VARIANT',
+    goal: 'Serve models the right way, automate the pipeline, watch for drift, and lock it all down — Domains 3 and 4 of MLA-C02.',
+    lesson: [
+      { h: 'Choosing an inference option', html: '<table><tr><th>Option</th><th>Use when</th></tr><tr><td><b>Real-time endpoint</b></td><td>Low-latency, always-on, steady traffic</td></tr><tr><td><b>Serverless inference</b></td><td>Intermittent/spiky traffic; scale to zero</td></tr><tr><td><b>Asynchronous inference</b></td><td>Large payloads / long processing; queue requests</td></tr><tr><td><b>Batch transform</b></td><td>Score a whole dataset offline, no endpoint</td></tr></table><p><b>Multi-model endpoints</b> host many models behind one endpoint to save cost. <b>Auto scaling</b> adjusts instance count to load.</p>' },
+      { h: 'Safe rollouts', html: '<ul><li><b>Production variants</b> behind one endpoint enable <b>A/B testing</b> by splitting traffic.</li><li><b>Shadow testing</b> sends a copy of live traffic to a new model without affecting responses — compare before promoting.</li><li><b>Blue/green</b> with canary/linear traffic shifting rolls out new versions with quick rollback.</li></ul>' },
+      { h: 'Orchestration & MLOps', html: '<ul><li><b>SageMaker Pipelines</b> is the native CI/CD for ML (steps: process → train → evaluate → register → deploy). <b>Model Registry</b> versions and approves models.</li><li>Alternatives/companions: <b>Step Functions</b>, <b>MWAA (Managed Airflow)</b>, <b>EventBridge</b> triggers, <b>CodePipeline/CodeBuild</b>.</li><li>Automate retraining when new data arrives or drift is detected.</li></ul>' },
+      { h: 'Monitoring & drift', html: '<ul><li><b>SageMaker Model Monitor</b> watches <b>data quality</b>, <b>model quality</b>, <b>bias drift</b>, and <b>feature attribution drift</b> against a baseline and alarms via <b>CloudWatch</b>.</li><li><b>Data drift</b> = input distribution changes; <b>concept drift</b> = the relationship between inputs and the target changes. Either can quietly degrade a model — monitor and retrain.</li></ul>' },
+      { h: 'Security & cost', html: '<ul><li><b>IAM least privilege</b> for roles; run training/endpoints in a <b>VPC</b> with no internet, reach AWS via <b>VPC endpoints/PrivateLink</b>; encrypt data with <b>KMS</b> (at rest) and TLS (in transit).</li><li>Protect data with <b>Amazon Macie</b> (finds PII in S3); audit with <b>CloudTrail</b>; isolate tenants per account.</li><li>Cost: right-size instances, use <b>Spot</b> for training, <b>serverless/async</b> for bursty inference, and shut idle endpoints down.</li></ul>' }
+    ],
+    cards: [
+      ['Real-time endpoint', 'Always-on, low-latency inference for steady traffic.'],
+      ['Serverless inference', 'Scales to zero; good for intermittent/spiky traffic.'],
+      ['Asynchronous inference', 'Queues large-payload / long-running requests.'],
+      ['Batch transform', 'Score a whole dataset offline with no persistent endpoint.'],
+      ['Multi-model endpoint', 'Many models behind one endpoint to cut cost.'],
+      ['Production variants', 'Split traffic across models on one endpoint for A/B.'],
+      ['Shadow testing', 'Mirror live traffic to a new model without affecting users.'],
+      ['SageMaker Pipelines', 'Native ML CI/CD: process→train→evaluate→register→deploy.'],
+      ['Model Registry', 'Version, approve and track models.'],
+      ['Model Monitor', 'Detects data/model quality and bias/attribution drift.'],
+      ['Data drift vs concept drift', 'Inputs shift vs input→target relationship shifts.'],
+      ['Auto scaling', 'Adjust endpoint instance count to load.'],
+      ['VPC + PrivateLink', 'Keep ML traffic off the public internet.'],
+      ['KMS encryption', 'Encrypt data/artifacts at rest with managed keys.'],
+      ['Amazon Macie', 'Discovers PII/sensitive data in S3.'],
+      ['Managed Spot (recap)', 'Cheap training on interruptible capacity.']
+    ],
+    qs: [
+      Q('You must score a 50 GB dataset once per night with no always-on endpoint. Use:', 'Batch transform', ['Real-time endpoint', 'Serverless inference', 'Multi-model endpoint'], 'Offline whole-dataset scoring.', 'm3'),
+      Q('Traffic is rare and spiky and you want to pay nothing when idle. Choose:', 'Serverless inference', ['Real-time endpoint on large instances', 'Batch transform', 'A fleet of EC2'], 'Serverless scales to zero.', 'm3'),
+      Q('Requests carry very large payloads and take minutes to process. Best option:', 'Asynchronous inference', ['Real-time endpoint', 'Batch transform', 'Lambda only'], 'Async queues long/large jobs.', 'm3'),
+      Q('You want to test a new model on real traffic WITHOUT affecting users. Use:', 'Shadow testing', ['A/B production variants at 50/50', 'Replace the endpoint immediately', 'Batch transform'], 'Shadow mirrors traffic.', 'm3'),
+      Q('Splitting live traffic 90/10 between two models on one endpoint is:', 'A/B testing with production variants', ['Shadow testing', 'Blue/green only', 'Multi-model endpoint'], 'Production variants.', 'm3'),
+      Q('The native way to build an ML CI/CD workflow (process, train, evaluate, register, deploy) is:', 'SageMaker Pipelines', ['Amazon Athena', 'AWS Config', 'Amazon Macie'], 'SageMaker Pipelines.', 'm3'),
+      Q('To host 50 small per-customer models cheaply behind one endpoint, use:', 'A multi-model endpoint', ['50 separate endpoints', 'Batch transform', 'Serverless for each'], 'Multi-model endpoint.', 'm3'),
+      Q('What versions and gates models for approval before deployment?', 'SageMaker Model Registry', ['Feature Store', 'Ground Truth', 'Data Wrangler'], 'Model Registry.', 'm3'),
+      Q('Model accuracy slowly degrades as customer behavior changes over months. This is:', 'Concept drift', ['Data leakage', 'Overfitting on the test set', 'A cold start'], 'Input→target relationship changed.', 'm4'),
+      Q('Which service detects data-quality and drift issues on a deployed model?', 'SageMaker Model Monitor', ['SageMaker Clarify only', 'AWS Shield', 'Amazon Comprehend'], 'Model Monitor.', 'm4'),
+      Q('To keep a training job off the public internet while reaching S3, use:', 'A VPC with VPC endpoints / PrivateLink', ['A public subnet with an IGW', 'A NAT to the internet only', 'Disabling IAM'], 'Private networking.', 'm4'),
+      Q('To find PII sitting in the training S3 bucket, use:', 'Amazon Macie', ['Amazon Inspector', 'AWS Budgets', 'Amazon Forecast'], 'Macie discovers sensitive data.', 'm4'),
+      Q('Least-privilege for a SageMaker execution role means:', 'Grant only the specific S3/ECR/KMS actions the job needs', ['AdministratorAccess for convenience', 'No role at all', 'Root credentials'], 'Minimal permissions.', 'm4'),
+      Q('Which encrypts model artifacts and data at rest with keys you manage?', 'AWS KMS', ['An open S3 bucket policy', 'TLS alone', 'CloudFront'], 'KMS at rest.', 'm4'),
+      Q('A real-time endpoint is idle most of the day but you keep paying. Cheapest fix without losing responsiveness:', 'Switch to serverless (or async) inference / enable auto scaling', ['Use a bigger instance', 'Add more variants', 'Run batch transform hourly'], 'Match the serving option to the traffic.', 'm4'),
+      Q('Drift monitoring compares live traffic against:', 'A baseline captured from training/validation data', ['The billing report', 'A random number', 'The endpoint logs only'], 'Baseline comparison.', 'm4')
+    ],
+    labs: []
+  });
+
+  S.push({
+    id: 'a20', track: 'awsai', tier: 'a-mlex', title: 'Capstone: MLA-C02 exam simulation', code: 'AWSML-ENGINEER',
+    goal: 'A weighted exam simulation matched to the Machine Learning Engineer Associate domains. Pass this and book MLA-C02.',
+    capstone: { n: 40, minutes: 60, pool: ['a18', 'a19', 'a20'], weights: { m1: 28, m2: 26, m3: 22, m4: 24 }, domains: MLA },
+    lesson: [{ h: 'The real exam', html: '<ul><li><b>MLA-C02</b> (Machine Learning Engineer – Associate): ~65 questions, 130 minutes, scaled pass 720/1000. More hands-on/SageMaker-focused than the old ML Specialty.</li><li>Domains: Data Preparation <b>28%</b>, Model Development <b>26%</b>, Deployment & Orchestration <b>22%</b>, Monitoring/Maintenance/Security <b>24%</b>.</li></ul><p>This simulation draws <b>40 questions</b> weighted to those domains. You need over 90%.</p>' }],
+    cards: [['MLA-C02 format', '~65 questions, 130 minutes, pass 720/1000.'], ['MLA-C02 domains', 'Data prep 28%, Model dev 26%, Deploy/orchestrate 22%, Monitor/secure 24%.']],
+    qs: [
+      Q('A model needs retraining automatically whenever fresh data lands in S3. Best trigger?', 'An EventBridge rule starting a SageMaker Pipeline', ['A manual notebook run', 'A cron on a laptop', 'Nothing — retrain yearly'], 'Event-driven MLOps.', 'm3'),
+      Q('Which pairing correctly matches problem to metric?', 'Imbalanced classification → F1/recall; regression → RMSE', ['Classification → RMSE; regression → precision', 'Both → accuracy', 'Both → AUC only'], 'Match metric to task.', 'm2'),
+      Q('To reduce bias discovered in a model before deployment, you might:', 'Rebalance/relabel data and re-evaluate with Clarify', ['Hide the metric', 'Deploy anyway', 'Increase instance size'], 'Address the data/model, measure again.', 'm2'),
+      Q('Most cost-effective training for a large, interruption-tolerant job:', 'Managed Spot Training', ['On-demand GPUs 24/7', 'A multi-model endpoint', 'Serverless inference'], 'Spot for training.', 'm2'),
+      Q('A feature must be computed identically at training and inference time. Use:', 'SageMaker Feature Store', ['Two separate scripts', 'A spreadsheet', 'Recompute differently each side'], 'Consistency via Feature Store.', 'm1'),
+      Q('Which indicates data leakage?', 'A feature that is only known after the event you are predicting', ['A normalized feature', 'A one-hot column', 'A k-fold split'], 'Future info leaking in.', 'm1'),
+      Q('Spiky, unpredictable inference traffic with idle periods is best served by:', 'Serverless inference', ['A large always-on endpoint', 'Batch transform', 'Ground Truth'], 'Scale to zero.', 'm3'),
+      Q('To validate a new model on live traffic with zero user impact:', 'Shadow testing, then promote if metrics hold', ['Replace in place and watch', 'Delete the old model first', 'Only offline tests'], 'Shadow first.', 'm3'),
+      Q('Keeping all ML traffic private within AWS requires:', 'VPC with VPC endpoints/PrivateLink and no internet gateway', ['A public endpoint with a password', 'Disabling encryption for speed', 'Open security groups'], 'Private networking.', 'm4'),
+      Q('Model quality silently drops; inputs look the same but outcomes changed. This is:', 'Concept drift — monitor and retrain', ['Underfitting', 'A KMS error', 'An IAM issue'], 'Concept drift.', 'm4'),
+      Q('The native ML CI/CD orchestrator on AWS is:', 'SageMaker Pipelines (with Model Registry)', ['AWS Config', 'Amazon Macie', 'Amazon Lex'], 'Pipelines + Registry.', 'm3'),
+      Q('For tabular data with mixed numeric and categorical columns, a strong baseline algorithm is:', 'XGBoost (with proper encoding/scaling)', ['k-means', 'A CNN', 'PCA alone'], 'XGBoost for tabular.', 'm2'),
+      Q('Which best discovers PII in your training bucket for compliance?', 'Amazon Macie', ['Amazon Inspector', 'AWS Trusted Advisor', 'Amazon Polly'], 'Macie.', 'm4'),
+      Q('You must score an entire historical dataset once with no endpoint. Use:', 'Batch transform', ['Real-time endpoint', 'Async inference', 'Serverless'], 'Whole-dataset offline.', 'm3')
     ],
     labs: []
   });
