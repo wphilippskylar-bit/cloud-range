@@ -233,7 +233,7 @@ html,body{overflow-x:hidden}
 <body>
 <noscript>This study app needs JavaScript enabled.</noscript>
 <script>
-/* build 09f9731d67 */
+/* build a717f1a67f */
 /* CloudSim — a small AWS CLI + Azure CLI simulator over a working cloud model.
    AWS: VPC, subnets, IGW, route tables, NAT, EIP, security groups, EC2, S3, IAM, SNS, CloudWatch.
    Azure: resource groups, locks, VNets, subnets, NSGs (priority rules), VMs, public IPs,
@@ -983,7 +983,8 @@ window.COURSE = {
     { id: 'aws', name: 'AWS', short: 'AWS', subtitle: 'Zero → Cloud Practitioner (CLF-C02) → Solutions Architect Associate (SAA-C03) → senior' },
     { id: 'awsai', name: 'AWS AI', short: 'AWS·AI', subtitle: 'AI Practitioner (AIF-C01) → Machine Learning Engineer → generative AI (independent path)' },
     { id: 'az', name: 'Azure', short: 'AZ', subtitle: 'Zero → Azure Fundamentals (AZ-900) → Azure Administrator (AZ-104) → senior' },
-    { id: 'azai', name: 'Azure AI', short: 'AZ·AI', subtitle: 'AI Fundamentals (AI-900/901) → AI Engineer (AI-102/103): vision, language, generative AI & agents' }
+    { id: 'azai', name: 'Azure AI', short: 'AZ·AI', subtitle: 'AI Fundamentals (AI-900/901) → AI Engineer (AI-102/103): vision, language, generative AI & agents' },
+    { id: 'gcp', name: 'Google Cloud', short: 'GCP', subtitle: 'Cloud Digital Leader → Generative AI Leader → Associate Cloud Engineer → ML Engineer' }
   ],
   tiers: [
     { id: 'a-f', track: 'aws', name: 'Cloud Practitioner (CLF-C02)', desc: 'Cloud basics, core services, security, billing.' },
@@ -1003,7 +1004,15 @@ window.COURSE = {
     { id: 'z-aif', track: 'azai', name: 'AI Fundamentals (AI-900/901)', desc: 'AI workloads, ML principles, vision, NLP, generative AI, responsible AI.' },
     { id: 'z-aifx', track: 'azai', name: 'AI-900 Exam Ready', desc: 'Weighted exam simulation at the official area percentages.' },
     { id: 'z-aie', track: 'azai', name: 'AI Engineer (AI-102/103)', desc: 'Provision/secure Azure AI, build generative & agent solutions, and the vision/language/doc services.' },
-    { id: 'z-aiex', track: 'azai', name: 'AI-102 Exam Ready', desc: 'Weighted exam simulation at the official domain percentages.' }
+    { id: 'z-aiex', track: 'azai', name: 'AI-102 Exam Ready', desc: 'Weighted exam simulation at the official domain percentages.' },
+    { id: 'gcp-cdl', track: 'gcp', name: 'Cloud Digital Leader', desc: 'Digital transformation, infrastructure/app modernization, data & AI, security, operations & cost.' },
+    { id: 'gcp-cdlx', track: 'gcp', name: 'CDL Exam Ready', desc: 'Weighted exam simulation across the CDL areas.' },
+    { id: 'gcp-gail', track: 'gcp', name: 'Generative AI Leader', desc: 'Gen AI fundamentals, Gemini/Vertex AI, prompting/RAG/agents, responsible adoption.' },
+    { id: 'gcp-gailx', track: 'gcp', name: 'Gen AI Leader Exam Ready', desc: 'Weighted exam simulation across the Gen AI Leader areas.' },
+    { id: 'gcp-ace', track: 'gcp', name: 'Associate Cloud Engineer', desc: 'Hands-on: projects, IAM, compute, storage, networking, deployment & operations.' },
+    { id: 'gcp-acex', track: 'gcp', name: 'ACE Exam Ready', desc: 'Weighted exam simulation across the ACE domains.' },
+    { id: 'gcp-mle', track: 'gcp', name: 'Professional ML Engineer', desc: 'Framing, data/features, training, serving, MLOps & monitoring on Vertex AI.' },
+    { id: 'gcp-mlex', track: 'gcp', name: 'PMLE Exam Ready', desc: 'Weighted exam simulation across the PMLE domains.' }
   ],
   stages: [],
   labs: {},
@@ -2425,6 +2434,484 @@ window.COURSE = {
       Q('Transcribing calls that use heavy industry jargon accurately:', 'Custom speech model (Azure AI Speech)', ['Prebuilt TTS', 'Translator', 'Document Intelligence'], 'Custom speech.', 'e4'),
       Q('The AI-103 refresh of AI-102 is centered on:', 'Generative AI apps and agents', ['Only computer vision', 'Only networking', 'On-prem Active Directory'], 'GenAI/agents focus.', 'e2'),
       Q('A system message in a chat completion is used to:', 'Set the assistant\'s role, rules and tone', ['Store the API key', 'Index documents', 'Translate text'], 'System message.', 'e2')
+    ],
+    labs: []
+  });
+})();
+
+;
+/* Google Cloud track — Cloud Digital Leader + Generative AI Leader (foundational). */
+(function () {
+  var S = COURSE.stages, Q = window.Q, T = window.TYPE;
+  var CDL = { d1: '1. Digital transformation', d2: '2. Infrastructure & app modernization', d3: '3. Data & AI innovation', d4: '4. Trust & security', d5: '5. Operations, scaling & cost' };
+  var GAIL = { l1: '1. Generative AI fundamentals', l2: '2. Google Cloud gen AI tech', l3: '3. Techniques: prompting, RAG & agents', l4: '4. Responsible AI & adoption' };
+
+  // ---------------- Cloud Digital Leader ----------------
+  S.push({
+    id: 'gc1', track: 'gcp', tier: 'gcp-cdl', title: 'Digital transformation & modernizing infrastructure', code: 'GCPCDL01-OPEN-CLOUD',
+    goal: 'Why organizations move to Google Cloud and the compute/storage/containers you run there — the infrastructure half of Cloud Digital Leader.',
+    lesson: [
+      { h: 'Cloud value & Google\'s "open cloud"', html: '<ul><li>Cloud = on-demand, pay-as-you-go resources. Benefits: <b>scalability</b>, <b>agility</b>, <b>CapEx→OpEx</b>, global reach, managed services.</li><li>Google emphasizes <b>open cloud</b> (open source, multi/hybrid cloud) with <b>GKE</b> and <b>Google Distributed Cloud</b> so you avoid lock-in and run across environments.</li><li>Resource hierarchy: <b>Organization → Folders → Projects → resources</b>. Billing and IAM policies inherit down it.</li></ul>' },
+      { h: 'Compute options (know when to use each)', html: '<table><tr><th>Service</th><th>What</th><th>Use when</th></tr><tr><td><b>Compute Engine</b></td><td>VMs (IaaS)</td><td>Full control / lift-and-shift</td></tr><tr><td><b>Google Kubernetes Engine (GKE)</b></td><td>Managed Kubernetes</td><td>Containers at scale, portability</td></tr><tr><td><b>Cloud Run</b></td><td>Serverless containers</td><td>Stateless apps/APIs, scale to zero</td></tr><tr><td><b>App Engine</b></td><td>Serverless platform (PaaS)</td><td>Web apps without managing infra</td></tr><tr><td><b>Cloud Functions / Run functions</b></td><td>Event-driven functions (FaaS)</td><td>Small event handlers</td></tr></table>' },
+      { h: 'Storage & databases', html: '<ul><li><b>Cloud Storage</b> — object storage (buckets); classes: Standard, Nearline, Coldline, Archive by access frequency. <b>Persistent Disk</b>/<b>Filestore</b> for block/file.</li><li>Databases: <b>Cloud SQL</b> (managed MySQL/Postgres/SQL Server), <b>Spanner</b> (global, horizontally-scalable relational), <b>Bigtable</b> (wide-column NoSQL, huge scale), <b>Firestore</b> (document NoSQL), <b>Memorystore</b> (Redis cache).</li></ul>' },
+      { h: 'Modernizing apps & migrating', html: '<ul><li>Patterns: rehost (lift-and-shift), replatform, refactor to microservices/containers, rebuild serverless.</li><li><b>Migrate to Virtual Machines</b> moves VMs in; <b>GKE/Cloud Run</b> modernize to containers; <b>Apigee</b> manages APIs; <b>Anthos/GKE Enterprise</b> run across on-prem and clouds.</li></ul>' }
+    ],
+    cards: [
+      ['Open cloud', 'Google\'s open-source, multi/hybrid approach to avoid lock-in.'],
+      ['Resource hierarchy', 'Organization → Folders → Projects → resources; IAM/billing inherit down.'],
+      ['Compute Engine', 'VMs (IaaS); full control / lift-and-shift.'],
+      ['GKE', 'Managed Kubernetes for containers at scale.'],
+      ['Cloud Run', 'Serverless containers; scale to zero.'],
+      ['App Engine', 'Serverless PaaS for web apps.'],
+      ['Cloud Functions', 'Event-driven serverless functions (FaaS).'],
+      ['Cloud Storage', 'Object storage; Standard/Nearline/Coldline/Archive classes.'],
+      ['Cloud SQL', 'Managed MySQL/Postgres/SQL Server.'],
+      ['Spanner', 'Global, horizontally scalable relational DB.'],
+      ['Bigtable', 'Wide-column NoSQL for massive scale/low latency.'],
+      ['Firestore', 'Serverless document NoSQL database.'],
+      ['Migrate to VMs', 'Lift-and-shift VM migration tool.'],
+      ['Anthos / GKE Enterprise', 'Run and manage containers across on-prem and clouds.']
+    ],
+    qs: [
+      Q('A stateless web API should scale to zero when idle with no servers to manage. Best service?', 'Cloud Run', ['Compute Engine', 'Bigtable', 'Filestore'], 'Serverless containers, scale to zero.', 'd2'),
+      Q('A team needs managed Kubernetes to run many containers with portability. Choose:', 'Google Kubernetes Engine (GKE)', ['App Engine', 'Cloud SQL', 'Cloud Storage'], 'GKE = managed Kubernetes.', 'd2'),
+      Q('Lift-and-shift of existing VMs into Google Cloud uses:', 'Compute Engine (with Migrate to Virtual Machines)', ['Cloud Run', 'Firestore', 'Pub/Sub'], 'VMs = Compute Engine.', 'd2'),
+      Q('Which storage is object storage for files, images and backups?', 'Cloud Storage (buckets)', ['Persistent Disk', 'Bigtable', 'Spanner'], 'Object storage.', 'd2'),
+      Q('Rarely accessed data kept for a year of compliance is cheapest in which class?', 'Archive (or Coldline)', ['Standard', 'Nearline only', 'Persistent Disk'], 'Colder classes for infrequent access.', 'd2'),
+      Q('A globally distributed app needs a horizontally scalable relational database with strong consistency. Choose:', 'Cloud Spanner', ['Cloud SQL', 'Bigtable', 'Firestore'], 'Spanner = global relational.', 'd2'),
+      Q('Huge-scale, low-latency NoSQL for time-series/IoT is:', 'Bigtable', ['Cloud SQL', 'Spanner', 'Memorystore'], 'Wide-column NoSQL.', 'd2'),
+      Q('The Google Cloud resource hierarchy is:', 'Organization → Folders → Projects → resources', ['Project → Org → Folder', 'Account → Region → VM', 'Billing → IAM → VPC'], 'IAM/billing inherit down it.', 'd1'),
+      Q('"Open cloud" in Google\'s messaging means:', 'Open source + multi/hybrid cloud to avoid lock-in', ['Everything is free', 'No security controls', 'Single-vendor only'], 'Portability/open source.', 'd1'),
+      Q('A primary business reason to adopt cloud is:', 'Turning large up-front CapEx into pay-as-you-go OpEx with elastic scale', ['Guaranteed zero cost', 'Eliminating all staff', 'Avoiding the internet'], 'CapEx→OpEx + elasticity.', 'd1'),
+      Q('A managed MySQL database with automatic backups and patching is:', 'Cloud SQL', ['Bigtable', 'Firestore', 'Memorystore'], 'Cloud SQL managed relational.', 'd2'),
+      Q('To run and govern containers across on-prem and multiple clouds, Google offers:', 'Anthos / GKE Enterprise', ['App Engine', 'Cloud Functions', 'Persistent Disk'], 'Hybrid/multicloud mgmt.', 'd2'),
+      Q('Digital transformation is best described as:', 'Using technology (incl. cloud/AI) to change how an organization operates and delivers value', ['Only buying new laptops', 'Moving to paper records', 'Hiring more managers'], 'Transformation of operations.', 'd1'),
+      Q('A small function that runs when a file lands in a bucket is best built with:', 'Cloud Functions (event-driven)', ['Compute Engine', 'Spanner', 'Filestore'], 'Event-driven FaaS.', 'd2')
+    ],
+    labs: []
+  });
+
+  S.push({
+    id: 'gc2', track: 'gcp', tier: 'gcp-cdl', title: 'Data, AI, security, operations & cost', code: 'GCPCDL02-BIGQUERY-IAM',
+    goal: 'Google\'s data & AI products, the security model, and how operations and cost work — the rest of Cloud Digital Leader.',
+    lesson: [
+      { h: 'Data analytics & smart analytics', html: '<ul><li><b>BigQuery</b> — serverless data warehouse for huge-scale SQL analytics (and built-in ML/GenAI). <b>Pub/Sub</b> — messaging/ingest. <b>Dataflow</b> — stream/batch processing (Apache Beam). <b>Dataproc</b> — managed Spark/Hadoop. <b>Looker</b> — BI/dashboards.</li><li>Pattern: ingest (Pub/Sub) → process (Dataflow) → store/analyze (BigQuery) → visualize (Looker).</li></ul>' },
+      { h: 'AI & ML on Google Cloud', html: '<ul><li><b>Vertex AI</b> — unified platform to build, train, deploy ML and generative AI (incl. <b>Gemini</b> models, Model Garden, AutoML).</li><li>Pre-trained APIs (no ML skills): <b>Vision AI</b>, <b>Speech-to-Text/Text-to-Speech</b>, <b>Translation</b>, <b>Natural Language</b>, <b>Document AI</b>.</li><li><b>Gemini</b> is Google\'s family of foundation models; <b>Gemini for Google Workspace</b> adds AI to Docs/Gmail, and agents are built in <b>Vertex AI</b> / Agentspace.</li></ul>' },
+      { h: 'Trust & security', html: '<ul><li><b>IAM</b> grants <b>principals</b> (users/groups/service accounts) <b>roles</b> on resources — follow <b>least privilege</b>. <b>Service accounts</b> are identities for workloads.</li><li>Google encrypts data <b>at rest and in transit by default</b>; manage keys with <b>Cloud KMS</b>. <b>Security Command Center</b> gives central risk/threat visibility. <b>Shared responsibility</b> (and "<b>shared fate</b>") model applies.</li><li><b>VPC</b> networking, firewall rules, <b>Cloud Armor</b> (DDoS/WAF), <b>Assured Workloads</b> for compliance.</li></ul>' },
+      { h: 'Operations, scaling & cost', html: '<ul><li><b>Google Cloud Observability</b> (Cloud Monitoring, Logging, Trace) runs operations. The <b>Google Cloud console</b>, <b>Cloud Shell</b> and the <b>gcloud</b> CLI manage resources.</li><li>Cost: <b>pay-as-you-go</b>, <b>sustained-use discounts</b> (automatic), <b>committed-use discounts</b> (commit 1–3 yrs), <b>per-second billing</b>, budgets/alerts, and the <b>Pricing Calculator</b> for TCO.</li></ul>' }
+    ],
+    cards: [
+      ['BigQuery', 'Serverless data warehouse for huge-scale SQL analytics (+ built-in ML).'],
+      ['Pub/Sub', 'Messaging/ingest for streaming data.'],
+      ['Dataflow', 'Managed stream/batch processing (Apache Beam).'],
+      ['Dataproc', 'Managed Spark/Hadoop.'],
+      ['Looker', 'BI and dashboards.'],
+      ['Vertex AI', 'Unified build/train/deploy platform for ML and generative AI.'],
+      ['Gemini', 'Google\'s family of foundation models.'],
+      ['Pre-trained APIs', 'Vision, Speech, Translation, Natural Language, Document AI.'],
+      ['IAM (principal/role)', 'Grant identities roles on resources; least privilege.'],
+      ['Service account', 'An identity for a workload/app, not a person.'],
+      ['Encryption by default', 'Data encrypted at rest and in transit automatically; manage keys in Cloud KMS.'],
+      ['Security Command Center', 'Central risk and threat visibility.'],
+      ['Cloud Armor', 'DDoS protection and WAF.'],
+      ['Sustained vs committed use', 'Automatic usage discount vs 1–3 yr commitment discount.'],
+      ['Cloud Observability', 'Monitoring, Logging, Trace for operations.']
+    ],
+    qs: [
+      Q('A company wants serverless SQL analytics over petabytes with no cluster to manage. Use:', 'BigQuery', ['Cloud SQL', 'Bigtable', 'Dataproc'], 'Serverless warehouse.', 'd3'),
+      Q('Ingesting a high-volume stream of events for processing uses:', 'Pub/Sub', ['Cloud Storage only', 'Filestore', 'Spanner'], 'Messaging/ingest.', 'd3'),
+      Q('The unified platform to build, train and deploy ML and generative AI is:', 'Vertex AI', ['BigQuery BI Engine', 'Looker', 'Cloud Armor'], 'Vertex AI.', 'd3'),
+      Q('Google\'s family of foundation models is called:', 'Gemini', ['Bard-X', 'Titan', 'Llama'], 'Gemini.', 'd3'),
+      Q('Extracting fields from scanned forms with a prebuilt API uses:', 'Document AI', ['Vision AI only', 'Dataflow', 'Memorystore'], 'Document AI.', 'd3'),
+      Q('In IAM, a service account is:', 'An identity used by a workload/app rather than a person', ['A billing report', 'A firewall rule', 'A storage bucket'], 'Workload identity.', 'd4'),
+      Q('By default, Google Cloud encrypts customer data:', 'At rest and in transit automatically', ['Only at rest if you ask', 'Never', 'Only in the EU'], 'Default encryption.', 'd4'),
+      Q('Central visibility into misconfigurations and threats across your org is:', 'Security Command Center', ['Cloud Shell', 'Looker', 'Pub/Sub'], 'SCC.', 'd4'),
+      Q('Which protects public apps from DDoS and common web attacks?', 'Cloud Armor', ['Cloud KMS', 'Dataproc', 'Firestore'], 'Cloud Armor = DDoS/WAF.', 'd4'),
+      Q('Committing to 1–3 years of usage for a discount is a:', 'Committed-use discount', ['Sustained-use discount', 'Spot discount', 'Free tier'], 'Commitment discount.', 'd5'),
+      Q('Discounts applied automatically the longer a VM runs in a month are:', 'Sustained-use discounts', ['Committed-use discounts', 'Preemptible pricing', 'List price'], 'Automatic sustained use.', 'd5'),
+      Q('The services for monitoring, logging and tracing are part of:', 'Google Cloud Observability', ['Security Command Center', 'Vertex AI', 'Looker'], 'Observability suite.', 'd5'),
+      Q('The least-privilege principle in IAM means:', 'Grant only the permissions a principal needs, nothing more', ['Grant Owner to everyone', 'Disable IAM', 'Share one admin account'], 'Minimal permissions.', 'd4'),
+      Q('A pipeline reads from Pub/Sub, transforms events, and loads BigQuery. The transform step best uses:', 'Dataflow', ['Looker', 'Cloud Armor', 'Firestore'], 'Stream/batch processing.', 'd3'),
+      Q('To estimate monthly cost before deploying, use the:', 'Google Cloud Pricing Calculator', ['Security Command Center', 'Cloud Shell', 'Model Garden'], 'TCO estimate.', 'd5'),
+      Q('A browser-based shell with the gcloud CLI preinstalled for managing resources is:', 'Cloud Shell', ['Cloud Armor', 'Looker', 'Dataflow'], 'Cloud Shell.', 'd5'),
+      Q('Adding AI assistance inside Docs, Gmail and Sheets is:', 'Gemini for Google Workspace', ['Dataproc', 'Cloud SQL', 'Anthos'], 'Gemini for Workspace.', 'd3')
+    ],
+    labs: []
+  });
+
+  S.push({
+    id: 'gc3', track: 'gcp', tier: 'gcp-cdlx', title: 'Capstone: Cloud Digital Leader exam simulation', code: 'GCP-DIGITAL-LEADER',
+    goal: 'A weighted exam simulation matched to the Cloud Digital Leader domains.',
+    capstone: { n: 40, minutes: 60, pool: ['gc1', 'gc2', 'gc3'], weights: { d1: 18, d2: 22, d3: 22, d4: 20, d5: 18 }, domains: CDL },
+    lesson: [{ h: 'The real exam', html: '<ul><li><b>Cloud Digital Leader</b>: ~50–60 questions, 90 minutes, business + product focus (no hands-on).</li><li>Covers digital transformation, infrastructure/app modernization, data & AI innovation, trust & security, and operations/scaling/cost.</li></ul><p>This simulation draws <b>40 questions</b> weighted across those areas. You need over 90%.</p>' }],
+    cards: [['CDL format', '~50–60 questions, 90 minutes, business/product focus.'], ['No hands-on', 'Concept and "which product" questions, not CLI.']],
+    qs: [
+      Q('A retailer wants dashboards on sales data for executives. Best tool?', 'Looker', ['Cloud Armor', 'Bigtable', 'Pub/Sub'], 'BI/dashboards.', 'd3'),
+      Q('An app must run identically on-prem and in two clouds. Google\'s answer:', 'GKE / Anthos (containers + open cloud)', ['Cloud SQL', 'Filestore', 'Memorystore'], 'Portability via containers.', 'd2'),
+      Q('Which pairing is correct?', 'Spanner = global relational; Bigtable = wide-column NoSQL', ['Spanner = cache; Bigtable = relational', 'Both are object storage', 'Both are BI tools'], 'Know the data stores.', 'd2'),
+      Q('Encryption of data in transit and at rest on Google Cloud is:', 'On by default, with optional customer-managed keys in Cloud KMS', ['Off by default', 'Manual only', 'Unavailable'], 'Default encryption.', 'd4'),
+      Q('Which gives automatic discounts simply for running an instance most of the month?', 'Sustained-use discounts', ['Committed-use discounts', 'Spot', 'Free tier'], 'Sustained use.', 'd5'),
+      Q('The best first service for petabyte-scale serverless analytics is:', 'BigQuery', ['Dataproc', 'Cloud SQL', 'Compute Engine'], 'Serverless warehouse.', 'd3'),
+      Q('A workload identity (not a person) is a:', 'Service account', ['Folder', 'Budget', 'VPC'], 'Service account.', 'd4'),
+      Q('Transforming operations and customer value using tech is:', 'Digital transformation', ['Lift and shift only', 'Downsizing', 'Outsourcing payroll'], 'Transformation.', 'd1'),
+      Q('To run a stateless container that scales to zero, choose:', 'Cloud Run', ['Compute Engine', 'Bigtable', 'Looker'], 'Serverless containers.', 'd2'),
+      Q('Central threat/misconfiguration visibility is provided by:', 'Security Command Center', ['Cloud Shell', 'Dataflow', 'Firestore'], 'SCC.', 'd4'),
+      Q('To build/train/deploy a custom ML model, a business would use:', 'Vertex AI', ['Looker', 'Cloud Armor', 'Memorystore'], 'Vertex AI.', 'd3'),
+      Q('The resource hierarchy that policies inherit through is:', 'Organization → Folders → Projects → resources', ['Project → Billing → VM', 'Region → Zone → Disk', 'User → Role → Key'], 'Hierarchy.', 'd1'),
+      Q('Monitoring, Logging and Trace belong to:', 'Google Cloud Observability', ['Vertex AI', 'Looker', 'Apigee'], 'Observability.', 'd5'),
+      Q('A managed Spark/Hadoop cluster is:', 'Dataproc', ['Dataflow', 'Pub/Sub', 'Spanner'], 'Dataproc.', 'd3'),
+      Q('To avoid vendor lock-in while modernizing, Google emphasizes:', 'Open cloud (open source + multi/hybrid)', ['Proprietary-only stacks', 'Single region', 'Manual servers'], 'Open cloud.', 'd1')
+    ],
+    labs: []
+  });
+
+  // ---------------- Generative AI Leader ----------------
+  S.push({
+    id: 'gl1', track: 'gcp', tier: 'gcp-gail', title: 'Generative AI fundamentals & Google\'s gen AI tech', code: 'GCPGAI01-GEMINI-VERTEX',
+    goal: 'What generative AI is, how foundation models work, and Google Cloud\'s gen AI stack — the first half of the Generative AI Leader exam.',
+    lesson: [
+      { h: 'Generative AI & foundation models', html: '<ul><li><b>Generative AI</b> creates new content (text, image, code, audio) from a prompt, built on <b>foundation models</b> trained on massive data.</li><li><b>LLMs</b> work on <b>tokens</b> and predict the next one; <b>embeddings</b> turn text into vectors of meaning. A <b>prompt</b> goes in; a <b>response</b> comes out via <b>inference</b>.</li><li>Gen AI differs from traditional ML: it <b>generates</b> rather than only classifying/predicting, and adapts to many tasks from one model.</li></ul>' },
+      { h: 'Google Cloud\'s gen AI stack', html: '<ul><li><b>Gemini</b> — Google\'s multimodal foundation models (text, image, audio, video, code).</li><li><b>Vertex AI</b> — the enterprise platform: <b>Model Garden</b> (choose models), tuning, grounding, deployment, and <b>Vertex AI Agent Builder</b> for agents.</li><li><b>Gemini for Google Workspace</b> (Docs/Gmail/Sheets) and <b>Gemini for Google Cloud</b> (coding/ops help). <b>Google Agentspace</b> brings search + agents to enterprise work.</li><li>Data stays yours: enterprise prompts/data are <b>not used to train</b> the base models.</li></ul>' },
+      { h: 'Why foundation models can go wrong', html: '<ul><li><b>Hallucination</b> — confident but false output. <b>Bias</b> from training data. <b>Knowledge cutoff</b> — no awareness of events after training. <b>Prompt sensitivity</b> — wording changes results.</li><li>Fixes preview: <b>grounding/RAG</b>, clear prompting, human review, and guardrails (next lesson).</li></ul>' }
+    ],
+    cards: [
+      ['Generative AI', 'Creates new content from a prompt, built on foundation models.'],
+      ['Foundation model', 'Large model pre-trained on broad data, adaptable to many tasks.'],
+      ['Token', 'Text chunk a model processes; drives context limits and cost.'],
+      ['Embedding', 'Vector representing meaning; powers semantic search and RAG.'],
+      ['Gemini', 'Google\'s multimodal foundation models.'],
+      ['Vertex AI', 'Enterprise platform for gen AI: Model Garden, tuning, grounding, agents.'],
+      ['Model Garden', 'Catalog to discover and choose models in Vertex AI.'],
+      ['Vertex AI Agent Builder', 'Build agents that use tools and data.'],
+      ['Gemini for Workspace', 'AI inside Docs, Gmail, Sheets.'],
+      ['Agentspace', 'Enterprise search + agents over your work data.'],
+      ['Hallucination', 'Confident but false model output.'],
+      ['Knowledge cutoff', 'Model is unaware of events after its training data.'],
+      ['Data privacy', 'Enterprise prompts/data are not used to train the base models.']
+    ],
+    qs: [
+      Q('Generative AI is distinguished by its ability to:', 'Create new content from a prompt', ['Only sort numbers', 'Only store data', 'Only classify spam'], 'Generation.', 'l1'),
+      Q('Google\'s family of multimodal foundation models is:', 'Gemini', ['Bard', 'PaLM-only', 'Titan'], 'Gemini.', 'l2'),
+      Q('The enterprise platform for building and deploying gen AI on Google Cloud is:', 'Vertex AI', ['Looker', 'BigQuery BI', 'Cloud Armor'], 'Vertex AI.', 'l2'),
+      Q('Where in Vertex AI do you discover and choose among many models?', 'Model Garden', ['Security Command Center', 'Cloud Shell', 'Pub/Sub'], 'Model Garden.', 'l2'),
+      Q('A token is:', 'A chunk of text a model processes (drives cost/limits)', ['A password', 'A GPU', 'A network port'], 'Tokens.', 'l1'),
+      Q('Inference, in generative AI, is:', 'The model generating a response from your prompt', ['Training the model', 'Labeling data', 'Encrypting the prompt'], 'Inference = generation.', 'l1'),
+      Q('An embedding represents:', 'Meaning as a numeric vector for similarity/search', ['An encrypted file', 'A billing unit', 'A firewall rule'], 'Vectors of meaning.', 'l1'),
+      Q('A model stating a confidently wrong fact is a:', 'Hallucination', ['Timeout', 'Bias audit', 'Token overflow'], 'Hallucination.', 'l1'),
+      Q('"Knowledge cutoff" means the model:', 'Doesn\'t know about events after its training data', ['Runs out of tokens', 'Is biased', 'Cannot be prompted'], 'Cutoff.', 'l1'),
+      Q('To add AI help inside Gmail, Docs and Sheets, use:', 'Gemini for Google Workspace', ['Dataproc', 'Cloud SQL', 'Anthos'], 'Gemini for Workspace.', 'l2'),
+      Q('Enterprise data sent to Gemini on Vertex AI is:', 'Not used to train the base foundation models', ['Shared publicly', 'Used to train the public model', 'Always deleted immediately'], 'Data privacy.', 'l2'),
+      Q('To build an agent that can use tools and your data, use:', 'Vertex AI Agent Builder', ['Looker', 'Cloud Armor', 'Memorystore'], 'Agent Builder.', 'l2'),
+      Q('Gemini being "multimodal" means it can work with:', 'Multiple input types such as text, images, audio and video', ['Only English text', 'Only numbers', 'Only images'], 'Multimodal.', 'l2'),
+      Q('A foundation model differs from a traditional single-task model because it:', 'Is broadly pre-trained and adaptable to many tasks', ['Needs no data ever', 'Only does regression', 'Cannot be fine-tuned'], 'Broad + adaptable.', 'l1'),
+      Q('Changing the wording of a prompt changes the output — this is:', 'Prompt sensitivity', ['A hardware fault', 'A billing error', 'A network issue'], 'Prompt sensitivity.', 'l1')
+    ],
+    labs: []
+  });
+
+  S.push({
+    id: 'gl2', track: 'gcp', tier: 'gcp-gail', title: 'Prompting, grounding/RAG, agents & responsible adoption', code: 'GCPGAI02-GROUND-AND-GOVERN',
+    goal: 'The techniques to get good, grounded results and how to adopt gen AI responsibly — the second half of the Generative AI Leader exam.',
+    lesson: [
+      { h: 'Prompting & tuning (cheapest first)', html: '<ol><li><b>Prompt engineering</b> — clear role, task, context, format; <b>zero-shot</b> vs <b>few-shot</b> (examples). <b>Chain-of-thought</b> for reasoning.</li><li><b>Grounding / RAG</b> — connect the model to your data (via <b>embeddings</b> and retrieval, e.g. Vertex AI Search) so answers use current, private facts and cite sources.</li><li><b>Tuning</b> (supervised/adapter) — adjust a model with your examples when prompting isn\'t enough. Most costly: training your own.</li></ol>' },
+      { h: 'Agents', html: '<p>An <b>agent</b> uses a model plus <b>tools/function calling</b>, memory and steps to <b>act</b> — look things up, call APIs, complete multi-step tasks — not just chat. Built with <b>Vertex AI Agent Builder</b> / Agentspace. Keep a human in the loop for consequential actions.</p>' },
+      { h: 'Responsible AI (Google\'s principles)', html: '<ul><li>Google\'s AI principles stress <b>social benefit</b>, <b>avoiding unfair bias</b>, <b>safety</b>, <b>accountability</b>, <b>privacy</b>, and <b>scientific rigor</b> — and things it <b>won\'t</b> pursue (e.g., weapons/surveillance violating norms).</li><li>Practical guardrails: content <b>safety filters</b>, grounding to cut hallucination, <b>human oversight</b>, transparency with users, and data governance.</li></ul>' },
+      { h: 'Adopting gen AI in a business', html: '<ul><li>Pick high-value, low-risk use cases first; measure ROI; manage <b>change</b> and skills.</li><li>Watch <b>cost</b> (tokens, model size — use the smallest model that\'s "good enough"), <b>latency</b>, <b>data readiness</b>, and <b>governance/compliance</b>.</li><li>Risks: hallucination, IP/copyright, data leakage, over-reliance — mitigate with grounding, review and policy.</li></ul>' }
+    ],
+    cards: [
+      ['Prompt engineering', 'Clear role/task/context/format; zero-shot vs few-shot; chain-of-thought.'],
+      ['Grounding / RAG', 'Connect the model to your data so answers are current and cited.'],
+      ['Vertex AI Search', 'Retrieval over your content for grounding/RAG.'],
+      ['Tuning', 'Adjust a model with your examples when prompting isn\'t enough.'],
+      ['Agent', 'Model + tools + steps that takes actions, not just chats.'],
+      ['Function calling', 'Lets a model invoke tools/APIs.'],
+      ['Google AI principles', 'Social benefit, avoid unfair bias, safety, accountability, privacy, rigor.'],
+      ['Safety filters', 'Block harmful generative content.'],
+      ['Human in the loop', 'Review consequential AI actions/outputs.'],
+      ['Smallest good-enough model', 'Control cost/latency by right-sizing the model.'],
+      ['Gen AI business risks', 'Hallucination, IP/copyright, data leakage, over-reliance.'],
+      ['ROI & change mgmt', 'Pick high-value use cases; manage skills and adoption.']
+    ],
+    qs: [
+      Q('Giving the model two worked examples in the prompt is:', 'Few-shot prompting', ['Zero-shot prompting', 'Fine-tuning', 'Grounding'], 'Examples in prompt.', 'l3'),
+      Q('To make a chatbot answer from a company\'s current private docs with citations:', 'Grounding / RAG (e.g., Vertex AI Search)', ['Raise temperature', 'Train from scratch', 'Use zero-shot only'], 'RAG grounds answers.', 'l3'),
+      Q('The cheapest way to improve output quality, tried first, is:', 'Prompt engineering', ['Full fine-tuning', 'Training a new model', 'Buying more GPUs'], 'Prompting first.', 'l3'),
+      Q('An AI agent differs from a chatbot because it:', 'Uses tools and steps to take actions, not just respond', ['Only answers once', 'Cannot use data', 'Runs offline only'], 'Agents act.', 'l3'),
+      Q('What lets a model call an external API or tool?', 'Function calling', ['OCR', 'A dashboard', 'A budget alert'], 'Function calling.', 'l3'),
+      Q('To reduce hallucinations in production, best practice is:', 'Ground answers in retrieved data and keep human review', ['Increase temperature', 'Remove safety filters', 'Hide sources'], 'Grounding + oversight.', 'l3'),
+      Q('Which reflects Google\'s AI principles?', 'Avoid creating or reinforcing unfair bias; be socially beneficial and accountable', ['Maximize engagement at any cost', 'Avoid all transparency', 'Ignore privacy'], 'Responsible AI principles.', 'l4'),
+      Q('Controlling gen AI cost in a business is best done by:', 'Using the smallest model that is good enough and watching token usage', ['Always using the largest model', 'Disabling monitoring', 'Ignoring latency'], 'Right-size the model.', 'l4'),
+      Q('A key risk when adopting gen AI with sensitive data is:', 'Data leakage / governance gaps', ['Lower electricity use', 'Faster typing', 'Fewer meetings'], 'Data governance risk.', 'l4'),
+      Q('For a consequential action (e.g., issuing a refund), you should:', 'Keep a human in the loop / require approval', ['Let the agent act unchecked', 'Raise temperature', 'Remove logging'], 'Human oversight.', 'l4'),
+      Q('Chain-of-thought prompting helps most with:', 'Multi-step reasoning problems', ['Image storage', 'Billing', 'Networking'], 'Reasoning tasks.', 'l3'),
+      Q('A good first gen AI use case for a business is one that is:', 'High value and low risk, with measurable ROI', ['Maximally risky', 'Impossible to measure', 'Purely experimental with no goal'], 'Value + low risk.', 'l4'),
+      Q('Grounding primarily addresses which limitation?', 'Hallucination / outdated knowledge', ['Slow typing', 'High screen brightness', 'Network latency only'], 'Grounding vs hallucination.', 'l3'),
+      Q('Transparency with users about AI use supports which principle?', 'Accountability', ['Economies of scale', 'Vendor lock-in', 'Over-reliance'], 'Accountability/transparency.', 'l4')
+    ],
+    labs: []
+  });
+
+  S.push({
+    id: 'gl3', track: 'gcp', tier: 'gcp-gailx', title: 'Capstone: Generative AI Leader exam simulation', code: 'GCP-GENAI-LEADER',
+    goal: 'A weighted exam simulation matched to the Generative AI Leader domains.',
+    capstone: { n: 40, minutes: 60, pool: ['gl1', 'gl2', 'gl3'], weights: { l1: 25, l2: 25, l3: 25, l4: 25 }, domains: GAIL },
+    lesson: [{ h: 'The real exam', html: '<ul><li><b>Generative AI Leader</b>: Google\'s foundational, business-focused gen AI certification — fundamentals, Google\'s gen AI tech (Gemini/Vertex AI), techniques (prompting, grounding, agents), and responsible AI/adoption.</li></ul><p>This simulation draws <b>40 questions</b> evenly across the four areas. You need over 90%.</p>' }],
+    cards: [['Gen AI Leader', 'Foundational, business-focused Google gen AI cert.'], ['Focus', 'Fundamentals, Gemini/Vertex, techniques, responsible adoption.']],
+    qs: [
+      Q('A bank wants an internal assistant answering from its own policies with citations. Best approach:', 'Grounding/RAG on Vertex AI with Gemini', ['Train a model from scratch', 'Raise temperature', 'Use a spreadsheet'], 'RAG.', 'l3'),
+      Q('The platform to deploy and govern enterprise gen AI on Google Cloud is:', 'Vertex AI', ['Looker', 'Cloud Armor', 'Dataproc'], 'Vertex AI.', 'l2'),
+      Q('An agent is best described as a model that:', 'Uses tools and multiple steps to accomplish tasks', ['Only completes one prompt', 'Stores files', 'Renders dashboards'], 'Agents act.', 'l3'),
+      Q('Which is a core Google AI principle?', 'Avoid creating or reinforcing unfair bias', ['Maximize data collection', 'Avoid transparency', 'Ship without testing'], 'Responsible AI.', 'l4'),
+      Q('To control cost and latency, choose:', 'The smallest model that meets the need', ['Always the biggest model', 'Random models', 'No monitoring'], 'Right-size.', 'l4'),
+      Q('Tokens matter because they:', 'Determine context limits and billing', ['Encrypt the prompt', 'Store the model', 'Are network packets'], 'Tokens.', 'l1'),
+      Q('Gemini is:', 'Google\'s multimodal foundation model family', ['A database', 'A firewall', 'A BI tool'], 'Gemini.', 'l2'),
+      Q('Few-shot prompting means:', 'Including a few examples in the prompt', ['No examples', 'Fine-tuning', 'Using fewer tokens only'], 'Examples.', 'l3'),
+      Q('A major risk of ungrounded gen AI is:', 'Confident hallucinations presented as fact', ['Lower costs', 'Faster networks', 'Better encryption'], 'Hallucination.', 'l1'),
+      Q('For a refund-issuing workflow, responsible design requires:', 'Human approval for the consequential action', ['Full autonomy always', 'No logging', 'Max temperature'], 'Human in the loop.', 'l4'),
+      Q('Discovering and comparing available models in Vertex AI is done in:', 'Model Garden', ['Cloud Shell', 'Security Command Center', 'Looker'], 'Model Garden.', 'l2'),
+      Q('Embeddings are used to:', 'Represent meaning for retrieval/grounding', ['Bill per hour', 'Open firewall ports', 'Compress video only'], 'Embeddings for RAG.', 'l3'),
+      Q('Enterprise data in Vertex AI gen AI is:', 'Not used to train the base models', ['Published openly', 'Used to train public models', 'Sold to partners'], 'Data privacy.', 'l2'),
+      Q('The first step to adopt gen AI well is to:', 'Target a high-value, low-risk use case and measure ROI', ['Deploy everywhere at once', 'Avoid measuring', 'Pick the riskiest case'], 'Smart adoption.', 'l4')
+    ],
+    labs: []
+  });
+})();
+
+;
+/* Google Cloud track — Associate Cloud Engineer (ACE) + Professional Machine Learning Engineer (PMLE). */
+(function () {
+  var S = COURSE.stages, Q = window.Q, T = window.TYPE;
+  var ACE = { k1: '1. Set up & plan the environment', k2: '2. Configure compute & storage', k3: '3. Deploy & implement', k4: '4. Ensure successful operation', k5: '5. Access & security' };
+  var PMLE = { p1: '1. Problem framing & low-code AI', p2: '2. Data & feature management', p3: '3. Model development & training', p4: '4. Serving & scaling', p5: '5. MLOps, monitoring & responsible AI' };
+
+  // ---------------- Associate Cloud Engineer ----------------
+  S.push({
+    id: 'ge1', track: 'gcp', tier: 'gcp-ace', title: 'Projects, IAM, compute & storage (hands-on)', code: 'GCPACE01-GCLOUD-IAM',
+    goal: 'Set up projects and billing, grant access with IAM, and provision compute and storage with gcloud — the setup/config core of ACE.',
+    lesson: [
+      { h: 'Projects, billing & the gcloud CLI', html: '<ul><li>Everything lives in a <b>project</b> (its own ID, resources, billing). Set context: <code>gcloud config set project PROJECT_ID</code>.</li><li>Manage from the <b>Console</b>, <b>Cloud Shell</b>, or the <b>gcloud</b> CLI (<code>gcloud</code>, <code>gsutil</code>/<code>gcloud storage</code>, <code>bq</code>, <code>kubectl</code>).</li><li>Link a <b>billing account</b>; set <b>budgets &amp; alerts</b>; use <b>labels</b> to track cost.</li></ul>' },
+      { h: 'IAM', html: '<ul><li>IAM binds a <b>principal</b> (user, group, service account) to a <b>role</b> on a resource. Role types: <b>basic</b> (Owner/Editor/Viewer — avoid in prod), <b>predefined</b> (fine-grained per service), <b>custom</b>.</li><li><b>Service accounts</b> are identities for workloads; prefer attaching one to a VM/GKE workload over using keys. Follow <b>least privilege</b>.</li><li>Policies are set at org/folder/project/resource and <b>inherit downward</b>.</li></ul>' },
+      { h: 'Compute Engine', html: '<ul><li>Create a VM: <code>gcloud compute instances create</code> — choose <b>machine type</b> (e2/n2…), image, zone. <b>Preemptible/Spot VMs</b> are cheap but can be reclaimed.</li><li><b>Managed instance groups (MIGs)</b> give <b>autoscaling</b>, health checks and rolling updates; front them with a <b>load balancer</b>.</li><li><b>Snapshots</b> back up persistent disks; images create reusable VM templates.</li></ul>' },
+      { h: 'Storage', html: '<ul><li><b>Cloud Storage</b> buckets: <code>gcloud storage cp</code>; set a <b>storage class</b> and <b>lifecycle rules</b> (auto-move/delete); <b>signed URLs</b> grant temporary access.</li><li><b>Persistent Disk</b> (block) for VMs, <b>Filestore</b> (NFS) for shared files.</li><li>Databases via <b>Cloud SQL</b> (<code>gcloud sql</code>) etc.</li></ul>' }
+    ],
+    cards: [
+      ['Project', 'The container for resources, IDs and billing.'],
+      ['gcloud CLI', 'Primary command-line tool (gcloud, gcloud storage, bq, kubectl).'],
+      ['Cloud Shell', 'Browser terminal with tools preinstalled.'],
+      ['IAM binding', 'Principal + role on a resource.'],
+      ['Basic vs predefined vs custom roles', 'Broad (avoid) vs fine-grained per-service vs tailored.'],
+      ['Service account', 'Identity for a workload; attach to VM/GKE, avoid keys.'],
+      ['Policy inheritance', 'IAM set high in the hierarchy flows down.'],
+      ['Machine type', 'VM size family (e2/n2…).'],
+      ['Preemptible/Spot VM', 'Cheap VMs that can be reclaimed anytime.'],
+      ['Managed instance group', 'Autoscaling, health checks, rolling updates for VMs.'],
+      ['Snapshot', 'Point-in-time backup of a persistent disk.'],
+      ['Storage class + lifecycle', 'Standard/Nearline/Coldline/Archive + auto transition/delete rules.'],
+      ['Signed URL', 'Time-limited access to a Cloud Storage object.'],
+      ['Budgets & alerts', 'Track and cap spend; labels for cost attribution.']
+    ],
+    qs: [
+      Q('Which command sets your active project for gcloud?', 'gcloud config set project PROJECT_ID', ['gcloud project use ID', 'gcloud set-project ID', 'gcloud init project'], 'config set project.', 'k1'),
+      Q('Before a project can use the Compute Engine API, you must first:', 'Enable the API (gcloud services enable)', ['Delete the project', 'Buy a license', 'Open a firewall'], 'Enable the service/API.', 'k1'),
+      Q('To grant the least-privilege permission to read only Cloud Storage, use a:', 'Predefined role (e.g., Storage Object Viewer)', ['Basic Owner role', 'No role', 'A custom Owner'], 'Predefined fine-grained role.', 'k5'),
+      Q('A workload on a VM should authenticate to Google APIs using:', 'An attached service account', ['A hard-coded user password', 'A downloaded key in the repo', 'Anonymous access'], 'Attached service account.', 'k5'),
+      Q('Basic roles (Owner/Editor/Viewer) should be:', 'Avoided in production in favor of predefined/custom roles', ['Used everywhere', 'The only option', 'Granted to all users'], 'Too broad.', 'k5'),
+      Q('To autoscale a fleet of identical VMs behind a load balancer, use:', 'A managed instance group (MIG)', ['A single large VM', 'Cloud Run', 'A snapshot'], 'MIG autoscaling.', 'k2'),
+      Q('The cheapest VMs that may be reclaimed at any time are:', 'Preemptible / Spot VMs', ['Committed-use VMs', 'Sole-tenant nodes', 'Shielded VMs'], 'Spot/preemptible.', 'k2'),
+      Q('To back up a VM\'s persistent disk, create a:', 'Snapshot', ['Bucket lifecycle rule', 'Signed URL', 'Firewall rule'], 'Snapshot.', 'k2'),
+      Q('Automatically moving objects to Archive after 365 days uses:', 'A Cloud Storage lifecycle rule', ['A signed URL', 'A MIG', 'A custom role'], 'Lifecycle rule.', 'k2'),
+      Q('To grant a partner temporary download access to one object without IAM, use:', 'A signed URL', ['Owner role', 'Public bucket forever', 'A service account key'], 'Signed URL.', 'k5'),
+      Q('IAM policy set on a folder applies to:', 'All projects and resources beneath it (inheritance)', ['Only that folder object', 'Nothing', 'Only the org node'], 'Inherits downward.', 'k1'),
+      Q('The tool to copy a file to a bucket from the CLI is:', 'gcloud storage cp (or gsutil cp)', ['gcloud vm copy', 'bq load', 'kubectl cp'], 'Storage copy.', 'k2'),
+      Q('To cap and watch spend on a project, configure:', 'Budgets and alerts', ['A snapshot schedule', 'A firewall rule', 'A custom image'], 'Budgets/alerts.', 'k1'),
+      Q('Shared NFS file storage for several VMs is:', 'Filestore', ['Cloud Storage', 'Bigtable', 'Persistent Disk (single VM)'], 'Filestore = NFS.', 'k2'),
+      Q('A custom IAM role is appropriate when:', 'Predefined roles don\'t match the exact permissions needed', ['You want Owner for all', 'You never need permissions', 'Basic roles are required'], 'Tailored permissions.', 'k5')
+    ],
+    labs: []
+  });
+
+  S.push({
+    id: 'ge2', track: 'gcp', tier: 'gcp-ace', title: 'Networking, deployment & operations', code: 'GCPACE02-VPC-DEPLOY-OPS', gateN: 14,
+    goal: 'Networking, deploying apps to containers/serverless, and keeping them running — the deploy/ops half of ACE.',
+    lesson: [
+      { h: 'Networking', html: '<ul><li><b>VPC</b> is global; <b>subnets</b> are regional. <b>Firewall rules</b> allow/deny by tags/service accounts and ports (default-deny ingress).</li><li><b>Cloud Load Balancing</b> (global HTTP(S), regional) spreads traffic; <b>Cloud NAT</b> gives private instances outbound internet; <b>Cloud DNS</b> resolves names; <b>Cloud CDN</b> caches at the edge.</li><li>Connect on-prem with <b>Cloud VPN</b> or <b>Cloud Interconnect</b>; peer networks with <b>VPC Peering</b>.</li></ul>' },
+      { h: 'Deploying apps', html: '<ul><li><b>Compute Engine</b> (VMs), <b>GKE</b> (<code>kubectl apply</code> manifests; deployments/services), <b>Cloud Run</b> (<code>gcloud run deploy</code> a container), <b>App Engine</b> (<code>gcloud app deploy</code>).</li><li><b>Infrastructure as code</b>: <b>Terraform</b> (or Infrastructure Manager) to declare resources repeatably.</li></ul>' },
+      { h: 'Operations', html: '<ul><li><b>Cloud Monitoring</b> (metrics, dashboards, uptime checks, alerting), <b>Cloud Logging</b> (logs, log-based metrics), <b>Error Reporting</b>, <b>Cloud Trace</b>.</li><li>Scale: autoscaling MIGs, GKE Horizontal Pod Autoscaler, Cloud Run concurrency. Manage <b>quotas</b> and request increases.</li></ul>' },
+      { h: 'Common ACE scenarios', html: '<table><tr><th>Need</th><th>Do</th></tr><tr><td>Private VM needs outbound updates</td><td>Cloud NAT</td></tr><tr><td>Global web app, one anycast IP</td><td>Global HTTP(S) Load Balancer</td></tr><tr><td>Deploy a container, no servers</td><td>Cloud Run</td></tr><tr><td>Repeatable infra</td><td>Terraform</td></tr><tr><td>Alert when latency is high</td><td>Cloud Monitoring alerting policy</td></tr></table>' }
+    ],
+    cards: [
+      ['VPC vs subnet', 'VPC is global; subnets are regional.'],
+      ['Firewall rule', 'Allow/deny by tags/SAs and ports; default-deny ingress.'],
+      ['Cloud Load Balancing', 'Global/regional traffic distribution.'],
+      ['Cloud NAT', 'Outbound internet for private instances.'],
+      ['Cloud DNS / CDN', 'Name resolution / edge caching.'],
+      ['Cloud VPN / Interconnect', 'Connect on-prem to Google Cloud.'],
+      ['VPC Peering', 'Private connectivity between VPCs.'],
+      ['kubectl apply', 'Deploy workloads to GKE from manifests.'],
+      ['gcloud run deploy', 'Deploy a container to Cloud Run.'],
+      ['gcloud app deploy', 'Deploy to App Engine.'],
+      ['Terraform / Infra Manager', 'Infrastructure as code on Google Cloud.'],
+      ['Cloud Monitoring', 'Metrics, dashboards, uptime checks, alerting.'],
+      ['Cloud Logging', 'Centralized logs + log-based metrics.'],
+      ['Quotas', 'Service limits you can request to raise.']
+    ],
+    qs: [
+      Q('In Google Cloud, a VPC is ___ and a subnet is ___:', 'global; regional', ['regional; global', 'zonal; global', 'global; zonal'], 'VPC global, subnet regional.', 'k2'),
+      Q('Private VMs need to reach the internet for updates without public IPs. Use:', 'Cloud NAT', ['A public IP on each VM', 'Cloud CDN', 'VPC Peering'], 'Cloud NAT.', 'k3'),
+      Q('To serve a global web app behind a single anycast IP, use:', 'Global HTTP(S) Load Balancer', ['A single VM', 'Cloud NAT', 'Filestore'], 'Global LB.', 'k3'),
+      Q('Deploying a container to a fully managed serverless runtime uses:', 'gcloud run deploy (Cloud Run)', ['kubectl apply only', 'gcloud compute instances create', 'bq query'], 'Cloud Run.', 'k3'),
+      Q('To deploy a workload to GKE from a YAML manifest:', 'kubectl apply -f manifest.yaml', ['gcloud app deploy', 'gcloud run deploy', 'gsutil cp'], 'kubectl apply.', 'k3'),
+      Q('Repeatable, version-controlled infrastructure is best created with:', 'Terraform (or Infrastructure Manager)', ['Clicking in the console each time', 'A spreadsheet', 'Manual gcloud only'], 'IaC.', 'k3'),
+      Q('To be alerted when request latency crosses a threshold, configure:', 'A Cloud Monitoring alerting policy', ['A firewall rule', 'A snapshot', 'A lifecycle rule'], 'Monitoring alert.', 'k4'),
+      Q('Centralized application and system logs are in:', 'Cloud Logging', ['Cloud CDN', 'Cloud DNS', 'Cloud NAT'], 'Cloud Logging.', 'k4'),
+      Q('A log-based metric that counts error entries is created from:', 'Cloud Logging entries', ['A firewall rule', 'A snapshot', 'A signed URL'], 'Log-based metric.', 'k4'),
+      Q('To connect an on-prem data center privately to Google Cloud, use:', 'Cloud VPN or Cloud Interconnect', ['Cloud CDN', 'Signed URLs', 'A public bucket'], 'VPN/Interconnect.', 'k3'),
+      Q('Default ingress firewall behavior in a VPC is:', 'Deny (you add allow rules)', ['Allow all', 'Depends on the zone', 'Allow only ICMP'], 'Default-deny ingress.', 'k2'),
+      Q('To automatically add/remove GKE pods under load, use:', 'Horizontal Pod Autoscaler', ['A bigger node only', 'Cloud NAT', 'A snapshot'], 'HPA.', 'k4'),
+      Q('You hit a service limit creating VMs. You should:', 'Request a quota increase', ['Delete the project', 'Switch clouds', 'Ignore it'], 'Quotas.', 'k4'),
+      Q('Private connectivity between two VPC networks uses:', 'VPC Peering', ['Cloud CDN', 'Cloud DNS', 'A signed URL'], 'VPC Peering.', 'k2'),
+      Q('An uptime check that pages you when a site is down is configured in:', 'Cloud Monitoring', ['Cloud Logging only', 'IAM', 'Cloud Storage'], 'Monitoring uptime check.', 'k4'),
+      Q('Deploying a traditional app to a managed PaaS without containers uses:', 'App Engine (gcloud app deploy)', ['Compute Engine only', 'Bigtable', 'Cloud DNS'], 'App Engine.', 'k3')
+    ],
+    labs: []
+  });
+
+  S.push({
+    id: 'ge3', track: 'gcp', tier: 'gcp-acex', title: 'Capstone: Associate Cloud Engineer exam simulation', code: 'GCP-ACE',
+    goal: 'A weighted exam simulation matched to the Associate Cloud Engineer domains.',
+    capstone: { n: 40, minutes: 60, pool: ['ge1', 'ge2', 'ge3'], weights: { k1: 15, k2: 25, k3: 25, k4: 20, k5: 15 }, domains: ACE },
+    lesson: [{ h: 'The real exam', html: '<ul><li><b>Associate Cloud Engineer</b>: ~50 questions, 2 hours, hands-on focus — deploying and managing Google Cloud with the console and gcloud.</li><li>Expect scenario questions on compute, storage, networking, IAM and operations.</li></ul><p>This simulation draws <b>40 questions</b> weighted across those areas. You need over 90%.</p>' }],
+    cards: [['ACE format', '~50 questions, 2 hours, hands-on console/gcloud focus.'], ['Core skills', 'Compute, storage, networking, IAM, operations.']],
+    qs: [
+      Q('A fleet must scale with traffic and self-heal. Best construct:', 'Managed instance group with autoscaling + health checks', ['One large VM', 'Preemptible single VM', 'A snapshot'], 'MIG.', 'k2'),
+      Q('Grant a data analyst read-only BigQuery access:', 'A predefined BigQuery viewer role, not Owner', ['Project Owner', 'No role', 'Custom Owner'], 'Least privilege.', 'k5'),
+      Q('Deploy a stateless container with zero servers to manage:', 'Cloud Run', ['Compute Engine', 'Filestore', 'Bigtable'], 'Cloud Run.', 'k3'),
+      Q('Private instances need outbound package updates:', 'Cloud NAT', ['Public IPs on all', 'VPC Peering', 'Cloud CDN'], 'Cloud NAT.', 'k3'),
+      Q('Make infrastructure reproducible across environments:', 'Terraform / Infrastructure as Code', ['Manual console clicks', 'Email instructions', 'Screenshots'], 'IaC.', 'k3'),
+      Q('Set your working project in gcloud:', 'gcloud config set project PROJECT_ID', ['gcloud use PROJECT', 'gcloud project set ID', 'gcloud init --project only'], 'config set project.', 'k1'),
+      Q('Attach identity to a VM workload securely:', 'Use an attached service account', ['Embed a key file', 'Use a user password', 'Anonymous'], 'Service account.', 'k5'),
+      Q('Alert when CPU stays above 90%:', 'Cloud Monitoring alerting policy', ['A firewall rule', 'A lifecycle rule', 'A signed URL'], 'Monitoring.', 'k4'),
+      Q('Archive logs/objects cheaply after a year:', 'Cloud Storage lifecycle rule to Archive class', ['Delete the bucket', 'Signed URL', 'Snapshot'], 'Lifecycle.', 'k2'),
+      Q('Global web app, one IP, HTTPS:', 'Global HTTP(S) Load Balancer', ['Regional VM', 'Cloud DNS only', 'Cloud NAT'], 'Global LB.', 'k3'),
+      Q('Back up a boot disk before a risky change:', 'Create a snapshot', ['Delete and recreate', 'Change firewall', 'Add a label'], 'Snapshot.', 'k2'),
+      Q('View centralized logs with log-based metrics:', 'Cloud Logging', ['Cloud CDN', 'Cloud DNS', 'IAM'], 'Cloud Logging.', 'k4'),
+      Q('IAM at the folder level affects:', 'All projects/resources under it', ['Only the folder', 'Nothing', 'Only billing'], 'Inheritance.', 'k1'),
+      Q('Cheapest compute for a fault-tolerant batch job:', 'Preemptible/Spot VMs', ['Committed on-demand', 'Sole-tenant', 'Shielded VMs'], 'Spot.', 'k2')
+    ],
+    labs: []
+  });
+
+  // ---------------- Professional Machine Learning Engineer ----------------
+  S.push({
+    id: 'gp1', track: 'gcp', tier: 'gcp-mle', title: 'Framing problems, low-code AI & managing data', code: 'GCPMLE01-VERTEX-FEATURES',
+    goal: 'Translate a business problem to ML, choose low-code vs custom, and manage data/features on Vertex AI — the first half of PMLE.',
+    lesson: [
+      { h: 'Framing & build-vs-buy', html: '<ul><li>Define the <b>ML objective</b> and <b>success metric</b> tied to a business KPI; confirm ML is the right tool and data exists.</li><li>Ladder of effort: <b>pre-trained APIs</b> (Vision, Speech, NL, Document AI) → <b>BigQuery ML</b> (SQL-based models) / <b>AutoML</b> (low-code) → <b>custom training</b> on Vertex AI.</li></ul>' },
+      { h: 'Data & features on Vertex AI', html: '<ul><li>Prepare data with <b>Dataflow</b>/<b>Dataprep</b>/<b>BigQuery</b>; version datasets. Handle <b>missing values</b>, <b>imbalance</b>, <b>leakage</b>, and do <b>feature engineering</b>.</li><li><b>Vertex AI Feature Store</b> serves consistent features for training and online inference. Detect bias/importance with <b>Vertex Explainable AI</b>.</li><li>Split train/validation/test; use cross-validation for small data.</li></ul>' },
+      { h: 'BigQuery ML & AutoML', html: '<ul><li><b>BigQuery ML</b>: train/evaluate models with SQL (<code>CREATE MODEL</code>) right where the data lives — great for analysts and tabular data.</li><li><b>AutoML</b> (in Vertex): train high-quality models for tabular/image/text with little code, handling arch search and tuning.</li></ul>' },
+      { h: 'Choosing metrics', html: '<ul><li>Classification: precision/recall/F1, AUC/ROC, confusion matrix; pick by cost of false positives vs negatives. Regression: RMSE/MAE/R².</li><li>Guard against <b>training-serving skew</b> (features computed differently in prod) — a top cause of degraded models.</li></ul>' }
+    ],
+    cards: [
+      ['ML objective + success metric', 'Tie the model to a measurable business KPI.'],
+      ['Effort ladder', 'Pre-trained API → BigQuery ML/AutoML → custom training.'],
+      ['Pre-trained APIs', 'Vision, Speech, Natural Language, Document AI — no training.'],
+      ['BigQuery ML', 'Train models with SQL where the data lives.'],
+      ['AutoML (Vertex)', 'Low-code high-quality models for tabular/image/text.'],
+      ['Vertex Feature Store', 'Consistent features for training and online serving.'],
+      ['Explainable AI', 'Feature attributions/importance on Vertex.'],
+      ['Data leakage', 'Future/target info in features; inflates offline scores.'],
+      ['Class imbalance', 'Resample/weight; judge with precision/recall/F1.'],
+      ['Training-serving skew', 'Features differ between training and production — degrades models.'],
+      ['Classification metrics', 'Precision, recall, F1, AUC, confusion matrix.'],
+      ['Regression metrics', 'RMSE, MAE, R².'],
+      ['Cross-validation', 'k-fold for small datasets.']
+    ],
+    qs: [
+      Q('An analyst wants to train a churn model using SQL on data already in BigQuery. Best option:', 'BigQuery ML', ['Custom Vertex training', 'Pre-trained Vision API', 'Dataproc Spark'], 'BQML = SQL models.', 'p1'),
+      Q('The cheapest way to add image labeling when a prebuilt category fits is:', 'A pre-trained Vision API', ['Custom training from scratch', 'AutoML with millions of images', 'BigQuery ML'], 'Use prebuilt first.', 'p1'),
+      Q('To get a quality tabular model with minimal code and automatic tuning:', 'Vertex AI AutoML', ['Hand-rolled TensorFlow only', 'A spreadsheet', 'Pre-trained NL API'], 'AutoML low-code.', 'p1'),
+      Q('To ensure the same feature values at training and serving time, use:', 'Vertex AI Feature Store', ['Two separate scripts', 'A CSV emailed around', 'Different pipelines'], 'Feature Store consistency.', 'p2'),
+      Q('A feature known only AFTER the predicted event indicates:', 'Data leakage', ['Good signal', 'Class balance', 'Normalization'], 'Leakage.', 'p2'),
+      Q('Features computed differently in production than in training cause:', 'Training-serving skew', ['Better accuracy', 'Lower cost', 'Faster training'], 'Skew degrades models.', 'p2'),
+      Q('For a fraud model where missing fraud is very costly, prioritize:', 'Recall (catch positives)', ['Only accuracy', 'Only training speed', 'Only RMSE'], 'Cost of false negatives.', 'p1'),
+      Q('A house-price model is evaluated with:', 'RMSE / MAE / R²', ['Precision/recall', 'AUC', 'Confusion matrix'], 'Regression metrics.', 'p1'),
+      Q('To explain which features drove a Vertex prediction, use:', 'Vertex Explainable AI (feature attributions)', ['Cloud NAT', 'Cloud DNS', 'A snapshot'], 'Explainable AI.', 'p2'),
+      Q('Imbalanced training data is best handled by:', 'Resampling/class weights and recall/F1 evaluation', ['Ignoring it', 'Using accuracy only', 'Deleting the majority class entirely'], 'Rebalance + right metric.', 'p2'),
+      Q('The first question before building any ML solution is:', 'Is ML the right tool, and is there quality data and a clear success metric?', ['Which GPU is fastest', 'What color the UI is', 'How many endpoints to buy'], 'Frame the problem.', 'p1'),
+      Q('Preparing and transforming large datasets at scale for ML uses:', 'Dataflow / BigQuery / Dataprep', ['Cloud DNS', 'Cloud Armor', 'Filestore'], 'Data processing tools.', 'p2'),
+      Q('k-fold cross-validation is most useful when:', 'The dataset is small', ['The dataset is huge', 'There is no validation need', 'Only for images'], 'Small-data validation.', 'p1'),
+      Q('Document AI is categorized as a:', 'Pre-trained API for document extraction', ['Custom training framework', 'A database', 'A load balancer'], 'Pre-trained API.', 'p1')
+    ],
+    labs: []
+  });
+
+  S.push({
+    id: 'gp2', track: 'gcp', tier: 'gcp-mle', title: 'Training, serving, MLOps & monitoring', code: 'GCPMLE02-PIPELINE-MONITOR', gateN: 14,
+    goal: 'Train at scale, serve models, automate pipelines, and monitor in production — the second half of PMLE.',
+    lesson: [
+      { h: 'Custom training & tuning', html: '<ul><li><b>Vertex AI Training</b> runs custom jobs (TensorFlow/PyTorch/sklearn containers); scale with <b>GPUs/TPUs</b> and <b>distributed training</b>.</li><li><b>Vertex AI Vizier</b> / hyperparameter tuning searches for the best config. <b>Workbench</b> notebooks for development.</li></ul>' },
+      { h: 'Serving & scaling', html: '<ul><li><b>Online prediction</b>: deploy a model to a <b>Vertex AI Endpoint</b> for low-latency requests; enable <b>autoscaling</b>; split traffic for A/B.</li><li><b>Batch prediction</b>: score a whole dataset offline, no endpoint. Choose online vs batch by latency need.</li><li>Optimize with the right machine/accelerator and model size; use <b>Model Registry</b> to version.</li></ul>' },
+      { h: 'MLOps: pipelines & CI/CD', html: '<ul><li><b>Vertex AI Pipelines</b> (Kubeflow/TFX) orchestrate: ingest → validate → train → evaluate → register → deploy, and enable <b>automated retraining</b>.</li><li>Trigger on new data or a schedule; keep <b>metadata/lineage</b>; gate deploys on evaluation.</li></ul>' },
+      { h: 'Monitoring & responsible AI', html: '<ul><li><b>Vertex AI Model Monitoring</b> watches <b>training-serving skew</b> and <b>prediction drift</b> and alerts; retrain when thresholds trip.</li><li>Apply responsible AI: fairness checks, Explainable AI, data governance, and keep humans in the loop for high-impact decisions.</li><li>Secure with IAM, VPC Service Controls, CMEK (customer-managed keys).</li></ul>' }
+    ],
+    cards: [
+      ['Vertex AI Training', 'Custom training jobs with your own containers.'],
+      ['GPUs/TPUs + distributed', 'Scale training for big models/data.'],
+      ['Vizier / HP tuning', 'Hyperparameter search for best config.'],
+      ['Vertex Endpoint (online)', 'Low-latency real-time predictions with autoscaling.'],
+      ['Batch prediction', 'Score a whole dataset offline, no endpoint.'],
+      ['Model Registry', 'Version and manage models.'],
+      ['Vertex AI Pipelines', 'Kubeflow/TFX orchestration + automated retraining.'],
+      ['Metadata/lineage', 'Track datasets, runs and artifacts.'],
+      ['Model Monitoring', 'Detect training-serving skew and prediction drift.'],
+      ['Prediction drift', 'Live input/output distribution moves from training.'],
+      ['Explainable AI', 'Feature attributions for trust/debugging.'],
+      ['VPC Service Controls / CMEK', 'Network isolation and customer-managed encryption keys.']
+    ],
+    qs: [
+      Q('Low-latency real-time predictions require:', 'Deploying to a Vertex AI online Endpoint (with autoscaling)', ['Batch prediction', 'A BigQuery table only', 'Cloud DNS'], 'Online endpoint.', 'p4'),
+      Q('Scoring a 100M-row dataset nightly with no always-on server:', 'Batch prediction', ['Online endpoint', 'A single VM loop', 'Cloud NAT'], 'Batch prediction.', 'p4'),
+      Q('To orchestrate ingest→train→evaluate→deploy and retrain automatically:', 'Vertex AI Pipelines', ['Cloud Armor', 'Cloud DNS', 'Filestore'], 'Pipelines/MLOps.', 'p5'),
+      Q('Detecting that live input distributions have moved from training data is:', 'Prediction/data drift (Vertex Model Monitoring)', ['A firewall event', 'A billing alert', 'A quota error'], 'Drift monitoring.', 'p5'),
+      Q('To find the best hyperparameters automatically on Vertex:', 'Hyperparameter tuning / Vizier', ['Guess manually once', 'Use defaults forever', 'Disable validation'], 'HP tuning.', 'p3'),
+      Q('To version and approve models before deployment:', 'Vertex AI Model Registry', ['Feature Store', 'Cloud Logging', 'Cloud DNS'], 'Model Registry.', 'p4'),
+      Q('Large deep-learning training is accelerated with:', 'GPUs/TPUs and distributed training', ['A single CPU only', 'More disk only', 'A bigger bucket'], 'Accelerators.', 'p3'),
+      Q('Model accuracy silently drops as real-world behavior changes. Response:', 'Monitor drift and trigger retraining via pipelines', ['Ignore it', 'Delete the model', 'Raise the endpoint size only'], 'Monitor + retrain.', 'p5'),
+      Q('To run custom PyTorch training at scale on Google Cloud:', 'Vertex AI custom training (container)', ['BigQuery ML only', 'Pre-trained API', 'Cloud Run cron'], 'Vertex custom training.', 'p3'),
+      Q('Gating a deployment on an evaluation step is part of:', 'An MLOps pipeline (CI/CD for ML)', ['Manual email approval only', 'A snapshot', 'A firewall rule'], 'Pipeline gating.', 'p5'),
+      Q('To split live traffic between two model versions for A/B:', 'Traffic splitting on a Vertex Endpoint', ['Two separate projects', 'Batch prediction', 'Cloud CDN'], 'Endpoint traffic split.', 'p4'),
+      Q('Keeping ML data/keys private and isolated uses:', 'VPC Service Controls and CMEK', ['A public bucket', 'Owner for everyone', 'No encryption'], 'Isolation + CMEK.', 'p5'),
+      Q('Responsible deployment of a high-impact model should include:', 'Fairness checks, explainability and human oversight', ['Max autonomy, no review', 'Hiding metrics', 'Skipping evaluation'], 'Responsible AI.', 'p5'),
+      Q('Notebook-based development on Vertex uses:', 'Vertex AI Workbench', ['Cloud Armor', 'Cloud DNS', 'Filestore'], 'Workbench.', 'p3'),
+      Q('Choosing AutoML vs custom training depends mainly on:', 'Needed control/complexity vs how much code you want to write', ['The region name', 'The billing account', 'The bucket class'], 'Control vs effort.', 'p3'),
+      Q('Early stopping during training helps by:', 'Preventing overfitting and saving compute cost', ['Increasing bias always', 'Deleting the dataset', 'Disabling metrics'], 'Early stopping.', 'p3'),
+      Q('Running a custom TensorFlow job on managed infrastructure uses:', 'A Vertex AI custom training job (container)', ['BigQuery ML only', 'A pre-trained API', 'Cloud DNS'], 'Custom training job.', 'p3'),
+      Q('To handle more online prediction traffic automatically, configure:', 'Endpoint autoscaling (min/max replicas)', ['A larger bucket', 'Batch prediction', 'A firewall rule'], 'Endpoint autoscaling.', 'p4')
+    ],
+    labs: []
+  });
+
+  S.push({
+    id: 'gp3', track: 'gcp', tier: 'gcp-mlex', title: 'Capstone: Professional ML Engineer exam simulation', code: 'GCP-ML-ENGINEER',
+    goal: 'A weighted exam simulation matched to the Professional Machine Learning Engineer domains.',
+    capstone: { n: 40, minutes: 60, pool: ['gp1', 'gp2', 'gp3'], weights: { p1: 18, p2: 20, p3: 22, p4: 20, p5: 20 }, domains: PMLE },
+    lesson: [{ h: 'The real exam', html: '<ul><li><b>Professional Machine Learning Engineer</b>: ~50–60 questions, 2 hours; one of Google\'s most rigorous — framing, data/features, training, serving/scaling, MLOps and monitoring, all Vertex AI-centric.</li></ul><p>This simulation draws <b>40 questions</b> weighted across those domains. You need over 90%.</p>' }],
+    cards: [['PMLE format', '~50–60 questions, 2 hours; rigorous, Vertex AI-centric.'], ['Scope', 'Framing, data, training, serving, MLOps, monitoring.']],
+    qs: [
+      Q('Analyst-built tabular model directly on warehouse data, minimal code:', 'BigQuery ML', ['Custom Vertex training', 'Pre-trained Speech API', 'Dataproc'], 'BQML.', 'p1'),
+      Q('Consistent features for both training and online serving:', 'Vertex AI Feature Store', ['Two scripts', 'A CSV', 'Different pipelines'], 'Feature Store.', 'p2'),
+      Q('Real-time, low-latency predictions:', 'Vertex online Endpoint with autoscaling', ['Batch prediction', 'A nightly job', 'BigQuery export'], 'Online endpoint.', 'p4'),
+      Q('Automate retrain-on-new-data with evaluation gates:', 'Vertex AI Pipelines', ['Manual steps', 'Cloud DNS', 'Cloud Armor'], 'Pipelines.', 'p5'),
+      Q('Catch production degradation from shifting inputs:', 'Vertex Model Monitoring (drift/skew)', ['A firewall rule', 'A budget alert', 'A snapshot'], 'Monitoring.', 'p5'),
+      Q('A costly false negative (missed disease) means optimize:', 'Recall', ['Only accuracy', 'Training time', 'Bucket size'], 'Recall.', 'p1'),
+      Q('Score a huge dataset once, offline:', 'Batch prediction', ['Online endpoint', 'Streaming only', 'Cloud NAT'], 'Batch.', 'p4'),
+      Q('Find best hyperparameters automatically:', 'Vertex hyperparameter tuning / Vizier', ['Guess once', 'Defaults forever', 'Skip tuning'], 'HP tuning.', 'p3'),
+      Q('Features differ train vs serve → the model underperforms. This is:', 'Training-serving skew', ['Good generalization', 'Overfitting only', 'A billing bug'], 'Skew.', 'p2'),
+      Q('Version/approve models before release:', 'Model Registry', ['Feature Store', 'Cloud Logging', 'Cloud DNS'], 'Model Registry.', 'p4'),
+      Q('Explain which features drove a prediction:', 'Vertex Explainable AI', ['Cloud Armor', 'Cloud NAT', 'A snapshot'], 'Explainable AI.', 'p2'),
+      Q('Accelerate large-scale deep learning training:', 'GPUs/TPUs + distributed training', ['One CPU', 'More disk only', 'A bigger bucket'], 'Accelerators.', 'p3'),
+      Q('Keep ML data isolated and encrypted with your keys:', 'VPC Service Controls + CMEK', ['Public bucket', 'Owner for all', 'No keys'], 'Isolation + CMEK.', 'p5'),
+      Q('Before building, confirm:', 'ML is appropriate, data exists, and a success metric is defined', ['The largest GPU is available', 'The UI theme', 'The number of endpoints'], 'Problem framing.', 'p1')
     ],
     labs: []
   });
