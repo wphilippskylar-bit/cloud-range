@@ -233,7 +233,7 @@ html,body{overflow-x:hidden}
 <body>
 <noscript>This study app needs JavaScript enabled.</noscript>
 <script>
-/* build f35624c24a */
+/* build 4512276091 */
 /* CloudSim — a small AWS CLI + Azure CLI simulator over a working cloud model.
    AWS: VPC, subnets, IGW, route tables, NAT, EIP, security groups, EC2, S3, IAM, SNS, CloudWatch.
    Azure: resource groups, locks, VNets, subnets, NSGs (priority rules), VMs, public IPs,
@@ -980,7 +980,8 @@ window.COURSE = {
   codeExample: 'AWS01-FIRST-REGION',
   passPct: 90,
   tracks: [
-    { id: 'aws', name: 'AWS', short: 'AWS', subtitle: 'Zero → Cloud Practitioner (CLF-C02) → Solutions Architect (SAA-C03) → AI Practitioner (AIF-C01) → senior' },
+    { id: 'aws', name: 'AWS', short: 'AWS', subtitle: 'Zero → Cloud Practitioner (CLF-C02) → Solutions Architect Associate (SAA-C03) → senior' },
+    { id: 'awsai', name: 'AWS AI', short: 'AWS·AI', subtitle: 'AI Practitioner (AIF-C01) → Machine Learning Engineer → generative AI (independent path)' },
     { id: 'az', name: 'Azure', short: 'AZ', subtitle: 'Zero → Azure Fundamentals (AZ-900) → Azure Administrator (AZ-104) → senior' }
   ],
   tiers: [
@@ -989,8 +990,8 @@ window.COURSE = {
     { id: 'a-c', track: 'aws', name: 'Solutions Architect Associate (SAA-C03)', desc: 'Design secure, resilient, high-performing, cost-optimized architectures.' },
     { id: 'a-x2', track: 'aws', name: 'SAA-C03 Exam Ready', desc: '65 questions, 130 minutes, official domain weights.' },
     { id: 'a-pro', track: 'aws', name: 'Pro Track', desc: 'What senior AWS engineers do: hybrid networks, security engineering, IaC, FinOps.' },
-    { id: 'a-ai', track: 'aws', name: 'AI Practitioner (AIF-C01)', desc: 'AI/ML & generative AI foundations, AWS AI services, RAG, responsible & secure AI.' },
-    { id: 'a-aix', track: 'aws', name: 'AIF-C01 Exam Ready', desc: '65 questions, 90 minutes, official domain weights.' },
+    { id: 'a-ai', track: 'awsai', name: 'AI Practitioner (AIF-C01)', desc: 'AI/ML & generative AI foundations, AWS AI services, RAG, responsible & secure AI.' },
+    { id: 'a-aix', track: 'awsai', name: 'AIF-C01 Exam Ready', desc: 'Weighted exam simulation at the official domain percentages.' },
     { id: 'z-f', track: 'az', name: 'Azure Fundamentals (AZ-900)', desc: 'Cloud concepts, Azure architecture & services, management & governance.' },
     { id: 'z-x1', track: 'az', name: 'AZ-900 Exam Ready', desc: '50 questions, 45 minutes, official domain weights.' },
     { id: 'z-c', track: 'az', name: 'Azure Administrator (AZ-104)', desc: 'Identity, storage, compute, networking, monitoring — hands-on.' },
@@ -1527,7 +1528,7 @@ window.COURSE = {
   var AIF = { f1: '1. Fundamentals of AI & ML', f2: '2. Fundamentals of Generative AI', f3: '3. Applications of Foundation Models', f4: '4. Guidelines for Responsible AI', f5: '5. Security, Compliance & Governance' };
 
   S.push({
-    id: 'a15', track: 'aws', tier: 'a-ai', title: 'AI, ML & generative AI foundations', code: 'AWSAI01-MODEL-LEARNS',
+    id: 'a15', track: 'awsai', tier: 'a-ai', title: 'AI, ML & generative AI foundations', code: 'AWSAI01-MODEL-LEARNS',
     goal: 'The vocabulary the exam is built on: AI vs ML vs deep learning, learning types, the ML lifecycle, and what a foundation model/LLM actually is.',
     lesson: [
       { h: 'AI vs ML vs deep learning vs generative AI', html: '<ul><li><b>Artificial intelligence (AI)</b> — the broad field of machines doing tasks that seem to need human intelligence.</li><li><b>Machine learning (ML)</b> — a subset of AI where a model <b>learns patterns from data</b> instead of being explicitly programmed.</li><li><b>Deep learning</b> — ML using multi-layer <b>neural networks</b>; powers vision, speech and language.</li><li><b>Generative AI</b> — deep-learning models that <b>create new content</b> (text, images, code) from a prompt, built on <b>foundation models</b>.</li></ul>' },
@@ -1577,7 +1578,7 @@ window.COURSE = {
   });
 
   S.push({
-    id: 'a16', track: 'aws', tier: 'a-ai', title: 'AWS AI services, prompting, RAG & responsible AI', code: 'AWSAI02-BEDROCK-GUARDRAIL',
+    id: 'a16', track: 'awsai', tier: 'a-ai', title: 'AWS AI services, prompting, RAG & responsible AI', code: 'AWSAI02-BEDROCK-GUARDRAIL',
     goal: 'The AWS AI/ML service map, how to adapt a foundation model (prompting, RAG, fine-tuning), and the responsible-AI, security and governance material that is a third of the exam.',
     lesson: [
       { h: 'The AWS AI/ML service map', html: '<ul><li><b>Amazon Bedrock</b> — fully managed access to foundation models (Anthropic Claude, Amazon Titan/Nova, Meta Llama, etc.) via one API; build generative AI apps, agents, knowledge bases, guardrails. <b>Serverless.</b></li><li><b>Amazon SageMaker</b> — build, train and deploy your <b>own</b> ML models end to end (the data-scientist platform). <b>Amazon Q</b> — generative AI assistant (Q Developer for coding, Q Business for your company data).</li><li><b>Pre-trained AI services</b> (no ML skills needed, just an API): <b>Rekognition</b> (images/video), <b>Textract</b> (document text/forms), <b>Comprehend</b> (text/NLP + sentiment), <b>Transcribe</b> (speech→text), <b>Polly</b> (text→speech), <b>Translate</b>, <b>Lex</b> (chatbots), <b>Kendra</b> (intelligent search), <b>Personalize</b> (recommendations), <b>Forecast</b> (time-series).</li></ul><div class="callout"><b class="k">Pick-the-service pattern</b>Custom model from your data → <b>SageMaker</b>. Generative app on an existing FM → <b>Bedrock</b>. Ready-made task (OCR, sentiment, captions) → the matching managed service.</div>' },
@@ -1632,7 +1633,7 @@ window.COURSE = {
   });
 
   S.push({
-    id: 'a17', track: 'aws', tier: 'a-aix', title: 'Capstone: AIF-C01 exam simulation', code: 'AWSAI-PRACTITIONER',
+    id: 'a17', track: 'awsai', tier: 'a-aix', title: 'Capstone: AIF-C01 exam simulation', code: 'AWSAI-PRACTITIONER',
     goal: 'A weighted exam simulation matched to the real AI Practitioner domain percentages. Pass this and book AIF-C01.',
     capstone: { n: 40, minutes: 60, pool: ['a15', 'a16', 'a17'], weights: { f1: 20, f2: 24, f3: 28, f4: 14, f5: 14 }, domains: AIF },
     lesson: [{ h: 'The real exam', html: '<ul><li><b>AIF-C01</b>: 65 questions (50 scored + 15 unscored), 90 minutes, pass <b>700</b> / 1000. No deep math or coding.</li><li>Domains: Fundamentals of AI & ML <b>20%</b>, Fundamentals of Generative AI <b>24%</b>, Applications of Foundation Models <b>28%</b>, Guidelines for Responsible AI <b>14%</b>, Security/Compliance/Governance <b>14%</b>.</li></ul><p>This simulation draws <b>40 questions</b> from both AI Practitioner steps, weighted to those exact percentages. You need over 90%.</p>'}],
