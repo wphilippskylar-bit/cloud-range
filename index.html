@@ -233,7 +233,7 @@ html,body{overflow-x:hidden}
 <body>
 <noscript>This study app needs JavaScript enabled.</noscript>
 <script>
-/* build f703c5f9c1 */
+/* build f35624c24a */
 /* CloudSim — a small AWS CLI + Azure CLI simulator over a working cloud model.
    AWS: VPC, subnets, IGW, route tables, NAT, EIP, security groups, EC2, S3, IAM, SNS, CloudWatch.
    Azure: resource groups, locks, VNets, subnets, NSGs (priority rules), VMs, public IPs,
@@ -980,7 +980,7 @@ window.COURSE = {
   codeExample: 'AWS01-FIRST-REGION',
   passPct: 90,
   tracks: [
-    { id: 'aws', name: 'AWS', short: 'AWS', subtitle: 'Zero → Cloud Practitioner (CLF-C02) → Solutions Architect Associate (SAA-C03) → senior' },
+    { id: 'aws', name: 'AWS', short: 'AWS', subtitle: 'Zero → Cloud Practitioner (CLF-C02) → Solutions Architect (SAA-C03) → AI Practitioner (AIF-C01) → senior' },
     { id: 'az', name: 'Azure', short: 'AZ', subtitle: 'Zero → Azure Fundamentals (AZ-900) → Azure Administrator (AZ-104) → senior' }
   ],
   tiers: [
@@ -989,6 +989,8 @@ window.COURSE = {
     { id: 'a-c', track: 'aws', name: 'Solutions Architect Associate (SAA-C03)', desc: 'Design secure, resilient, high-performing, cost-optimized architectures.' },
     { id: 'a-x2', track: 'aws', name: 'SAA-C03 Exam Ready', desc: '65 questions, 130 minutes, official domain weights.' },
     { id: 'a-pro', track: 'aws', name: 'Pro Track', desc: 'What senior AWS engineers do: hybrid networks, security engineering, IaC, FinOps.' },
+    { id: 'a-ai', track: 'aws', name: 'AI Practitioner (AIF-C01)', desc: 'AI/ML & generative AI foundations, AWS AI services, RAG, responsible & secure AI.' },
+    { id: 'a-aix', track: 'aws', name: 'AIF-C01 Exam Ready', desc: '65 questions, 90 minutes, official domain weights.' },
     { id: 'z-f', track: 'az', name: 'Azure Fundamentals (AZ-900)', desc: 'Cloud concepts, Azure architecture & services, management & governance.' },
     { id: 'z-x1', track: 'az', name: 'AZ-900 Exam Ready', desc: '50 questions, 45 minutes, official domain weights.' },
     { id: 'z-c', track: 'az', name: 'Azure Administrator (AZ-104)', desc: 'Identity, storage, compute, networking, monitoring — hands-on.' },
@@ -1512,6 +1514,145 @@ window.COURSE = {
       Q('Store Terraform state for a team safely.', 'Remote backend in S3 with state locking and encryption', ['Local laptop file', 'Public Git repo', 'EBS volume'], 'Remote state.'),
       Q('Standard multi-account baseline with log archive and audit accounts, set up quickly.', 'AWS Control Tower landing zone', ['Single account with VPCs', 'Manual Organizations only', 'AWS Artifact'], 'Control Tower.'),
       T('Type the CloudFormation section name where you declare the resources to create.', ['Resources'], 'Resources (the only required section).', 0)
+    ],
+    labs: []
+  });
+})();
+
+;
+/* AWS track — AI Practitioner (AIF-C01). Added 2026 after ML Specialty retired. */
+(function () {
+  var S = COURSE.stages, Q = window.Q, T = window.TYPE;
+  // Official AIF-C01 domains + weights
+  var AIF = { f1: '1. Fundamentals of AI & ML', f2: '2. Fundamentals of Generative AI', f3: '3. Applications of Foundation Models', f4: '4. Guidelines for Responsible AI', f5: '5. Security, Compliance & Governance' };
+
+  S.push({
+    id: 'a15', track: 'aws', tier: 'a-ai', title: 'AI, ML & generative AI foundations', code: 'AWSAI01-MODEL-LEARNS',
+    goal: 'The vocabulary the exam is built on: AI vs ML vs deep learning, learning types, the ML lifecycle, and what a foundation model/LLM actually is.',
+    lesson: [
+      { h: 'AI vs ML vs deep learning vs generative AI', html: '<ul><li><b>Artificial intelligence (AI)</b> — the broad field of machines doing tasks that seem to need human intelligence.</li><li><b>Machine learning (ML)</b> — a subset of AI where a model <b>learns patterns from data</b> instead of being explicitly programmed.</li><li><b>Deep learning</b> — ML using multi-layer <b>neural networks</b>; powers vision, speech and language.</li><li><b>Generative AI</b> — deep-learning models that <b>create new content</b> (text, images, code) from a prompt, built on <b>foundation models</b>.</li></ul>' },
+      { h: 'The three learning types', html: '<table><tr><th>Type</th><th>Data</th><th>Use</th></tr><tr><td><b>Supervised</b></td><td>Labeled (input → known answer)</td><td>Classification (spam/not), regression (predict a price)</td></tr><tr><td><b>Unsupervised</b></td><td>Unlabeled</td><td>Clustering, anomaly detection, grouping customers</td></tr><tr><td><b>Reinforcement</b></td><td>Reward signal from an environment</td><td>Robotics, game-playing, RLHF for tuning LLMs</td></tr></table><p><b>Classification</b> predicts a category; <b>regression</b> predicts a number. Know which a scenario needs.</p>' },
+      { h: 'The ML lifecycle', html: '<p>A repeatable loop: <b>business problem → collect & prepare data → feature engineering → train → evaluate → deploy → monitor</b>, then iterate. Most real effort is <b>data</b>. Key splits: <b>training</b> set (learn), <b>validation</b> set (tune), <b>test</b> set (final unbiased score). <b>Overfitting</b> = memorized the training data, fails on new data (high variance). <b>Underfitting</b> = too simple to capture the pattern (high bias).</p>' },
+      { h: 'Foundation models, LLMs, tokens & embeddings', html: '<ul><li>A <b>foundation model (FM)</b> is a large model pre-trained on huge, broad data that can be adapted to many tasks. A <b>large language model (LLM)</b> is an FM for text.</li><li>Text is split into <b>tokens</b> (word pieces); models predict the next token. Pricing and context limits are measured in tokens.</li><li>An <b>embedding</b> is a vector (list of numbers) representing meaning, so similar things sit close together — the basis of semantic search and RAG.</li><li>A <b>prompt</b> is your input; <b>inference</b> is the model generating an answer. <b>Temperature</b> raises/lowers randomness; low = focused, high = creative.</li></ul>' },
+      { h: 'When NOT to use ML', html: '<div class="callout trap"><b class="k">Exam favorite</b>ML is the wrong tool when you need <b>deterministic, exact, fully explainable</b> results, when <b>simple rules</b> already solve it, or when you <b>lack enough quality data</b>. Don\'t use a probabilistic model where a plain calculation or if/else is correct and auditable.</div>' }
+    ],
+    cards: [
+      ['AI', 'Broad field: machines doing tasks that seem to need human intelligence.'],
+      ['Machine learning', 'A model learns patterns from data instead of being explicitly programmed.'],
+      ['Deep learning', 'ML with multi-layer neural networks.'],
+      ['Generative AI', 'Models that create new content from prompts, built on foundation models.'],
+      ['Supervised learning', 'Learns from labeled data; classification and regression.'],
+      ['Unsupervised learning', 'Finds structure in unlabeled data; clustering, anomaly detection.'],
+      ['Reinforcement learning', 'Learns via rewards from an environment; used in RLHF.'],
+      ['Classification vs regression', 'Predict a category vs predict a number.'],
+      ['Overfitting', 'Memorized training data; poor on new data (high variance).'],
+      ['Underfitting', 'Too simple to capture the pattern (high bias).'],
+      ['Train / validation / test', 'Learn / tune / final unbiased evaluation splits.'],
+      ['Foundation model', 'Large pre-trained model adaptable to many tasks.'],
+      ['LLM', 'A foundation model for language.'],
+      ['Token', 'A word piece; models predict the next token; pricing/context in tokens.'],
+      ['Embedding', 'A numeric vector capturing meaning; powers semantic search and RAG.'],
+      ['Temperature', 'Controls randomness of generation: low = focused, high = creative.'],
+      ['Inference', 'The model generating output from a prompt.']
+    ],
+    qs: [
+      Q('A bank wants to predict the dollar amount a customer will spend next month. Which ML approach?', 'Supervised learning — regression', ['Unsupervised learning — clustering', 'Reinforcement learning', 'Supervised learning — classification'], 'Predicting a number = regression (labeled historical data).', 'f1'),
+      Q('Sorting incoming email into "spam" or "not spam" is which task?', 'Classification (supervised)', ['Regression', 'Clustering', 'Dimensionality reduction'], 'Predicting a category.', 'f1'),
+      Q('You have customer data with no labels and want to discover natural groupings. Which approach?', 'Unsupervised learning (clustering)', ['Supervised classification', 'Regression', 'Reinforcement learning'], 'No labels → unsupervised.', 'f1'),
+      Q('Deep learning is best described as:', 'ML using multi-layer neural networks', ['A rules engine', 'A type of database', 'A spreadsheet macro'], 'Neural networks with many layers.', 'f1'),
+      Q('A model scores 99% on training data but 60% on new data. This is:', 'Overfitting', ['Underfitting', 'Good generalization', 'Data leakage prevention'], 'Memorized training set; high variance.', 'f1'),
+      Q('Which split gives the final, unbiased estimate of model performance?', 'The test set', ['The training set', 'The validation set', 'The feature set'], 'Held out until the end.', 'f1'),
+      Q('When is ML the WRONG choice?', 'When simple deterministic rules already solve the problem exactly', ['When you have lots of data', 'When the task is complex', 'When accuracy matters'], 'Don\'t use ML where exact rules work.', 'f1'),
+      Q('Reinforcement learning is used in LLM tuning via:', 'RLHF (reinforcement learning from human feedback)', ['ETL', 'OCR', 'A/B testing only'], 'RLHF aligns model behavior.', 'f1'),
+      Q('A foundation model is:', 'A large model pre-trained on broad data, adaptable to many tasks', ['A small single-task model', 'A database index', 'A firewall rule set'], 'Broad pretraining, many downstream uses.', 'f2'),
+      Q('What is a token in the context of LLMs?', 'A chunk of text (word piece) the model processes and bills by', ['An access credential', 'A network packet', 'A GPU'], 'Models predict the next token.', 'f2'),
+      Q('An embedding is:', 'A numeric vector that represents meaning so similar items are close', ['An encrypted password', 'A container image', 'A billing alarm'], 'Vectors enable semantic search/RAG.', 'f2'),
+      Q('Raising the temperature setting on an LLM generally makes output:', 'More random and creative', ['More deterministic', 'Shorter always', 'Cheaper'], 'Temperature controls randomness.', 'f2'),
+      Q('Generative AI differs from traditional ML classification because it:', 'Creates new content rather than only predicting a label or number', ['Never uses neural networks', 'Requires no data', 'Cannot be wrong'], 'Generation vs prediction.', 'f2'),
+      Q('Which is an appropriate generative AI use case?', 'Drafting a first version of marketing copy for a human to review', ['Computing an exact payroll total', 'Enforcing a firewall rule', 'Storing audit logs'], 'Content drafting fits GenAI; exact math does not.', 'f2'),
+      Q('"Inference" in ML means:', 'Using a trained model to generate predictions/output', ['Training the model', 'Labeling the data', 'Deleting the model'], 'Inference = serving/predicting.', 'f2'),
+      Q('A company has very little labeled data and needs exact, auditable results. You should:', 'Consider a non-ML, rules-based solution', ['Force a deep learning model', 'Use the largest LLM available', 'Skip evaluation'], 'ML needs data and is probabilistic.', 'f1')
+    ],
+    labs: []
+  });
+
+  S.push({
+    id: 'a16', track: 'aws', tier: 'a-ai', title: 'AWS AI services, prompting, RAG & responsible AI', code: 'AWSAI02-BEDROCK-GUARDRAIL',
+    goal: 'The AWS AI/ML service map, how to adapt a foundation model (prompting, RAG, fine-tuning), and the responsible-AI, security and governance material that is a third of the exam.',
+    lesson: [
+      { h: 'The AWS AI/ML service map', html: '<ul><li><b>Amazon Bedrock</b> — fully managed access to foundation models (Anthropic Claude, Amazon Titan/Nova, Meta Llama, etc.) via one API; build generative AI apps, agents, knowledge bases, guardrails. <b>Serverless.</b></li><li><b>Amazon SageMaker</b> — build, train and deploy your <b>own</b> ML models end to end (the data-scientist platform). <b>Amazon Q</b> — generative AI assistant (Q Developer for coding, Q Business for your company data).</li><li><b>Pre-trained AI services</b> (no ML skills needed, just an API): <b>Rekognition</b> (images/video), <b>Textract</b> (document text/forms), <b>Comprehend</b> (text/NLP + sentiment), <b>Transcribe</b> (speech→text), <b>Polly</b> (text→speech), <b>Translate</b>, <b>Lex</b> (chatbots), <b>Kendra</b> (intelligent search), <b>Personalize</b> (recommendations), <b>Forecast</b> (time-series).</li></ul><div class="callout"><b class="k">Pick-the-service pattern</b>Custom model from your data → <b>SageMaker</b>. Generative app on an existing FM → <b>Bedrock</b>. Ready-made task (OCR, sentiment, captions) → the matching managed service.</div>' },
+      { h: 'Adapting a foundation model — cheapest first', html: '<ol><li><b>Prompt engineering</b> — write better prompts (clear instruction, context, examples = <b>few-shot</b>; <b>zero-shot</b> = none). Cheapest, no training.</li><li><b>RAG (Retrieval-Augmented Generation)</b> — retrieve your own documents (via embeddings in a vector store / Bedrock Knowledge Bases) and feed them into the prompt so the model answers from <b>current, private</b> data without retraining. The standard fix for "the model doesn\'t know our data."</li><li><b>Fine-tuning</b> — further-train the FM on your labeled examples to change its style/behavior. More cost and data.</li><li><b>Train from scratch</b> — rarely needed; most expensive.</li></ol>' },
+      { h: 'Responsible AI', html: '<ul><li>Core concerns: <b>bias & fairness</b>, <b>transparency & explainability</b>, <b>robustness</b>, <b>privacy</b>, <b>safety</b>, and <b>human oversight</b>.</li><li><b>Hallucination</b> — a model stating something false with confidence; mitigate with RAG, grounding, and human review.</li><li><b>Amazon Bedrock Guardrails</b> — block harmful content and topics and redact PII. <b>SageMaker Clarify</b> — detect bias and explain feature importance. <b>SageMaker Model Monitor</b> — watch for drift in production. <b>AWS AI Service Cards</b> — document intended use and limitations.</li></ul>' },
+      { h: 'Security, compliance & governance for AI', html: '<ul><li><b>Shared Responsibility Model</b> still applies: AWS secures the infrastructure; you secure your data, access (<b>IAM least privilege</b>), and configuration.</li><li>Keep data private: <b>your prompts/data are not used to train the base FMs</b> in Bedrock; use <b>VPC/PrivateLink</b> to keep traffic off the public internet and <b>KMS</b> to encrypt.</li><li>Governance: data lineage, <b>human-in-the-loop</b> review (Amazon <b>A2I</b>), logging with <b>CloudTrail</b>, and compliance evidence via <b>AWS Artifact</b>.</li></ul>' },
+      { h: 'Choosing & evaluating a model', html: '<p>Trade-offs: <b>accuracy vs cost vs latency</b>, context-window size, modality (text/image/multimodal), and language support. Evaluate generation with human review and metrics/benchmarks; smaller or distilled models are often cheaper and faster when they\'re "good enough."</p>' }
+    ],
+    cards: [
+      ['Amazon Bedrock', 'Managed, serverless access to foundation models via one API; build GenAI apps, agents, knowledge bases, guardrails.'],
+      ['Amazon SageMaker', 'Build, train and deploy your own ML models end to end.'],
+      ['Amazon Q', 'Generative AI assistant — Q Developer (code), Q Business (company data).'],
+      ['Rekognition', 'Image and video analysis (objects, faces, moderation).'],
+      ['Textract', 'Extract text, forms and tables from documents (OCR+).'],
+      ['Comprehend', 'NLP: sentiment, entities, key phrases, language.'],
+      ['Transcribe / Polly', 'Speech-to-text / text-to-speech.'],
+      ['Translate / Lex / Kendra', 'Translation / chatbots / intelligent search.'],
+      ['Personalize / Forecast', 'Recommendations / time-series forecasting.'],
+      ['Prompt engineering', 'Improve output by writing better prompts; zero-shot vs few-shot.'],
+      ['RAG', 'Retrieve your own data into the prompt so the FM answers from current/private info without retraining.'],
+      ['Fine-tuning', 'Further-train an FM on your labeled data to change behavior/style.'],
+      ['Hallucination', 'Confident but false output; mitigate with RAG + human review.'],
+      ['Bedrock Guardrails', 'Block harmful content/topics and redact PII.'],
+      ['SageMaker Clarify', 'Detect bias and explain feature importance.'],
+      ['Model Monitor', 'Detect data/model drift in production.'],
+      ['AI Service Cards', 'AWS docs of a service\'s intended use and limitations.'],
+      ['Data privacy in Bedrock', 'Your prompts/data are not used to train the base models; use PrivateLink + KMS.'],
+      ['Amazon A2I', 'Human-in-the-loop review of ML predictions.'],
+      ['Shared Responsibility (AI)', 'AWS secures infrastructure; you secure data, access and config.']
+    ],
+    qs: [
+      Q('A team wants to build a generative AI chatbot on top of an existing foundation model with minimal infrastructure. Best service?', 'Amazon Bedrock', ['Amazon SageMaker', 'Amazon Rekognition', 'Amazon EC2'], 'Bedrock = managed access to FMs.', 'f3'),
+      Q('A data science team needs to build and train a custom ML model from their own dataset. Best service?', 'Amazon SageMaker', ['Amazon Bedrock', 'Amazon Comprehend', 'Amazon Q'], 'SageMaker = build/train/deploy your own models.', 'f3'),
+      Q('You need to extract text and form fields from scanned invoices. Which service?', 'Amazon Textract', ['Amazon Polly', 'Amazon Translate', 'Amazon Lex'], 'Textract = document OCR + forms.', 'f3'),
+      Q('Which service determines whether customer reviews are positive or negative?', 'Amazon Comprehend', ['Amazon Rekognition', 'Amazon Transcribe', 'Amazon Kendra'], 'Comprehend = NLP/sentiment.', 'f3'),
+      Q('A chatbot must answer from the company\'s private, frequently-updated policy documents. Cheapest effective approach?', 'Retrieval-Augmented Generation (RAG)', ['Train a model from scratch', 'Fine-tune daily', 'Increase temperature'], 'RAG grounds answers in your current data without retraining.', 'f3'),
+      Q('Which model-adaptation method requires the LEAST cost and no training?', 'Prompt engineering', ['Fine-tuning', 'Training from scratch', 'Continued pre-training'], 'Prompting is cheapest.', 'f3'),
+      Q('Giving the model two worked examples inside the prompt is called:', 'Few-shot prompting', ['Zero-shot prompting', 'Fine-tuning', 'RAG'], 'Examples in the prompt = few-shot.', 'f3'),
+      Q('Fine-tuning a foundation model means:', 'Further training it on your labeled examples to adjust its behavior', ['Writing a better prompt', 'Adding documents at query time', 'Raising temperature'], 'Fine-tune = additional training.', 'f3'),
+      Q('A model confidently returns a made-up policy number. This is a:', 'Hallucination', ['Drift', 'Bias', 'Overfit test set'], 'Confident but false output.', 'f4'),
+      Q('Which AWS feature detects bias in data/models and explains feature importance?', 'SageMaker Clarify', ['Bedrock Guardrails', 'CloudTrail', 'AWS Artifact'], 'Clarify = bias + explainability.', 'f4'),
+      Q('Which Bedrock feature blocks harmful topics and redacts PII from prompts/responses?', 'Guardrails for Amazon Bedrock', ['Model Monitor', 'Macie', 'Inspector'], 'Bedrock Guardrails.', 'f4'),
+      Q('Which responsible-AI practice adds a person to review AI outputs before they are used?', 'Human-in-the-loop (e.g., Amazon A2I)', ['Higher temperature', 'Removing logging', 'Auto-approval'], 'Human oversight.', 'f4'),
+      Q('"Explainability" in responsible AI refers to:', 'Being able to understand/communicate why a model produced an output', ['How fast the model runs', 'The number of parameters', 'The storage cost'], 'Transparency into decisions.', 'f4'),
+      Q('In Amazon Bedrock, your prompts and fine-tuning data are:', 'Not used to train the base foundation models and kept private to you', ['Shared with other customers', 'Used to train the public model', 'Published automatically'], 'Data privacy guarantee.', 'f5'),
+      Q('To keep traffic between your app and Bedrock off the public internet, use:', 'VPC endpoints / AWS PrivateLink', ['A public IP', 'An open security group', 'Disabling encryption'], 'PrivateLink keeps it internal.', 'f5'),
+      Q('Who is responsible for applying least-privilege IAM permissions to an AI application\'s data access?', 'The customer (shared responsibility)', ['AWS alone', 'The model vendor', 'Nobody'], 'You own access/config.', 'f5'),
+      Q('Which resource documents an AWS AI service\'s intended uses and limitations?', 'AWS AI Service Cards', ['AWS Artifact', 'AWS Budgets', 'Trusted Advisor'], 'AI Service Cards.', 'f5'),
+      Q('Which service records API activity for auditing an AI workload\'s access?', 'AWS CloudTrail', ['Amazon Polly', 'Amazon Lex', 'Amazon Forecast'], 'CloudTrail = audit log.', 'f5')
+    ],
+    labs: []
+  });
+
+  S.push({
+    id: 'a17', track: 'aws', tier: 'a-aix', title: 'Capstone: AIF-C01 exam simulation', code: 'AWSAI-PRACTITIONER',
+    goal: 'A weighted exam simulation matched to the real AI Practitioner domain percentages. Pass this and book AIF-C01.',
+    capstone: { n: 40, minutes: 60, pool: ['a15', 'a16', 'a17'], weights: { f1: 20, f2: 24, f3: 28, f4: 14, f5: 14 }, domains: AIF },
+    lesson: [{ h: 'The real exam', html: '<ul><li><b>AIF-C01</b>: 65 questions (50 scored + 15 unscored), 90 minutes, pass <b>700</b> / 1000. No deep math or coding.</li><li>Domains: Fundamentals of AI & ML <b>20%</b>, Fundamentals of Generative AI <b>24%</b>, Applications of Foundation Models <b>28%</b>, Guidelines for Responsible AI <b>14%</b>, Security/Compliance/Governance <b>14%</b>.</li></ul><p>This simulation draws <b>40 questions</b> from both AI Practitioner steps, weighted to those exact percentages. You need over 90%.</p>'}],
+    cards: [['AIF-C01 format', '65 questions, 90 minutes, pass 700/1000. No coding.'], ['AIF-C01 domains', 'AI/ML 20%, GenAI 24%, FM apps 28%, Responsible AI 14%, Security/Gov 14%.']],
+    qs: [
+      Q('A retailer wants product recommendations without building a model. Service?', 'Amazon Personalize', ['Amazon Forecast', 'Amazon Comprehend', 'Amazon Polly'], 'Personalize = recommendations.', 'f3'),
+      Q('Converting an audiobook script to spoken audio uses:', 'Amazon Polly', ['Amazon Transcribe', 'Amazon Translate', 'Amazon Lex'], 'Polly = text-to-speech.', 'f3'),
+      Q('Transcribing call-center audio to text uses:', 'Amazon Transcribe', ['Amazon Polly', 'Amazon Kendra', 'Amazon Textract'], 'Transcribe = speech-to-text.', 'f3'),
+      Q('The main benefit of RAG over fine-tuning for a knowledge chatbot is:', 'It uses current/private data at query time without retraining', ['It needs no prompt', 'It guarantees zero errors', 'It removes the need for a model'], 'Ground answers in live data.', 'f3'),
+      Q('Which is a sign of training data bias?', 'The model performs worse for an under-represented group', ['The model runs slowly', 'The bill is high', 'The context window is small'], 'Fairness issue.', 'f4'),
+      Q('A low temperature setting is appropriate when you want:', 'Consistent, focused, repeatable answers', ['Maximum creativity', 'Longer outputs', 'More randomness'], 'Low temp = deterministic.', 'f2'),
+      Q('Which best reduces hallucinations in a customer-facing assistant?', 'Ground it with RAG and add human review of sensitive outputs', ['Raise temperature', 'Remove guardrails', 'Hide the sources'], 'Grounding + oversight.', 'f4'),
+      Q('Predicting next quarter\'s demand from years of sales data is best served by:', 'Amazon Forecast (time-series)', ['Amazon Rekognition', 'Amazon Lex', 'Amazon Polly'], 'Forecast = time series.', 'f3'),
+      Q('Supervised learning requires:', 'Labeled training data', ['Only a reward signal', 'No data', 'Only unlabeled data'], 'Labels are the definition.', 'f1'),
+      Q('Which keeps your Bedrock data encrypted at rest with keys you control?', 'AWS KMS customer managed keys', ['Public S3 ACLs', 'Disabling TLS', 'An internet gateway'], 'KMS.', 'f5'),
+      Q('A multimodal foundation model can:', 'Work with more than one input type, e.g. text and images', ['Only output audio', 'Only classify numbers', 'Run without inference'], 'Multiple modalities.', 'f2'),
+      Q('Which task is NOT a good fit for generative AI?', 'Calculating an exact tax figure that must be auditable', ['Drafting an email', 'Summarizing a document', 'Brainstorming names'], 'Exact/auditable math → not GenAI.', 'f2'),
+      Q('Human-in-the-loop review is MOST important when:', 'Outputs affect high-stakes decisions (medical, legal, financial)', ['The model is cheap', 'The prompt is short', 'Latency is low'], 'Risk-based oversight.', 'f4'),
+      Q('Which service would you choose to build and deploy a fully custom fraud-detection model?', 'Amazon SageMaker', ['Amazon Bedrock', 'Amazon Textract', 'Amazon Translate'], 'Custom model → SageMaker.', 'f3'),
+      Q('What does an embedding enable in a search system?', 'Semantic (meaning-based) similarity search', ['Exact string matching only', 'Encryption of data', 'Faster disk I/O'], 'Vectors capture meaning.', 'f2')
     ],
     labs: []
   });
