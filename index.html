@@ -233,7 +233,7 @@ html,body{overflow-x:hidden}
 <body>
 <noscript>This study app needs JavaScript enabled.</noscript>
 <script>
-/* build 44efec8324 */
+/* build 09f9731d67 */
 /* CloudSim — a small AWS CLI + Azure CLI simulator over a working cloud model.
    AWS: VPC, subnets, IGW, route tables, NAT, EIP, security groups, EC2, S3, IAM, SNS, CloudWatch.
    Azure: resource groups, locks, VNets, subnets, NSGs (priority rules), VMs, public IPs,
@@ -982,7 +982,8 @@ window.COURSE = {
   tracks: [
     { id: 'aws', name: 'AWS', short: 'AWS', subtitle: 'Zero → Cloud Practitioner (CLF-C02) → Solutions Architect Associate (SAA-C03) → senior' },
     { id: 'awsai', name: 'AWS AI', short: 'AWS·AI', subtitle: 'AI Practitioner (AIF-C01) → Machine Learning Engineer → generative AI (independent path)' },
-    { id: 'az', name: 'Azure', short: 'AZ', subtitle: 'Zero → Azure Fundamentals (AZ-900) → Azure Administrator (AZ-104) → senior' }
+    { id: 'az', name: 'Azure', short: 'AZ', subtitle: 'Zero → Azure Fundamentals (AZ-900) → Azure Administrator (AZ-104) → senior' },
+    { id: 'azai', name: 'Azure AI', short: 'AZ·AI', subtitle: 'AI Fundamentals (AI-900/901) → AI Engineer (AI-102/103): vision, language, generative AI & agents' }
   ],
   tiers: [
     { id: 'a-f', track: 'aws', name: 'Cloud Practitioner (CLF-C02)', desc: 'Cloud basics, core services, security, billing.' },
@@ -998,7 +999,11 @@ window.COURSE = {
     { id: 'z-x1', track: 'az', name: 'AZ-900 Exam Ready', desc: '50 questions, 45 minutes, official domain weights.' },
     { id: 'z-c', track: 'az', name: 'Azure Administrator (AZ-104)', desc: 'Identity, storage, compute, networking, monitoring — hands-on.' },
     { id: 'z-x2', track: 'az', name: 'AZ-104 Exam Ready', desc: '60 questions, 100 minutes, official domain weights.' },
-    { id: 'z-pro', track: 'az', name: 'Pro Track', desc: 'Network engineer (AZ-700), security (AZ-500), architect (AZ-305), IaC.' }
+    { id: 'z-pro', track: 'az', name: 'Pro Track', desc: 'Network engineer (AZ-700), security (AZ-500), architect (AZ-305), IaC.' },
+    { id: 'z-aif', track: 'azai', name: 'AI Fundamentals (AI-900/901)', desc: 'AI workloads, ML principles, vision, NLP, generative AI, responsible AI.' },
+    { id: 'z-aifx', track: 'azai', name: 'AI-900 Exam Ready', desc: 'Weighted exam simulation at the official area percentages.' },
+    { id: 'z-aie', track: 'azai', name: 'AI Engineer (AI-102/103)', desc: 'Provision/secure Azure AI, build generative & agent solutions, and the vision/language/doc services.' },
+    { id: 'z-aiex', track: 'azai', name: 'AI-102 Exam Ready', desc: 'Weighted exam simulation at the official domain percentages.' }
   ],
   stages: [],
   labs: {},
@@ -2178,6 +2183,248 @@ window.COURSE = {
       Q('Global app needs 99.99%+ availability and data replicated in multiple regions with multi-region writes.', 'Azure Cosmos DB with multi-region writes', ['Single Azure SQL DB', 'LRS storage', 'One VM'], 'Cosmos DB.'),
       Q('Store Terraform state for a team in Azure.', 'Remote state in a storage account container with locking', ['Local file', 'Git repo', 'Key Vault secret'], 'azurerm backend.'),
       Q('Reduce cost of dev VMs that run only during business hours.', 'Auto-shutdown/schedules (plus dev/test pricing)', ['Premium SSD', 'Reservations for 3 years', 'GRS'], 'Turn them off.')
+    ],
+    labs: []
+  });
+})();
+
+;
+/* Azure AI track — AI Fundamentals (AI-900 / refreshed AI-901) + AI Engineer (AI-102 / AI-103). */
+(function () {
+  var S = COURSE.stages, Q = window.Q, T = window.TYPE;
+  var AIF9 = { g1: '1. AI workloads & considerations', g2: '2. Machine learning principles', g3: '3. Computer vision', g4: '4. Natural language processing', g5: '5. Generative AI' };
+  var AIE = { e1: '1. Plan, manage & secure Azure AI', e2: '2. Generative AI & agents', e3: '3. Computer vision', e4: '4. Language & speech', e5: '5. Knowledge mining & document intelligence' };
+
+  // ---------------- AI Fundamentals (AI-900 / AI-901) ----------------
+  S.push({
+    id: 'zai1', track: 'azai', tier: 'z-aif', title: 'AI workloads, ML principles & responsible AI', code: 'AZAI01-RESPONSIBLE-SIX',
+    goal: 'What counts as an AI workload, the core ML ideas, and Microsoft\'s six Responsible AI principles — the backbone of AI-900.',
+    lesson: [
+      { h: 'Types of AI workload', html: '<ul><li><b>Machine learning</b> — predictions from data. <b>Computer vision</b> — understanding images/video. <b>Natural language processing</b> — understanding/ generating text and speech. <b>Document intelligence</b> — extracting fields from forms. <b>Knowledge mining</b> — searching large content. <b>Generative AI</b> — creating new content.</li></ul>' },
+      { h: 'Machine learning principles', html: '<ul><li><b>Supervised</b> (labeled): <b>regression</b> predicts a number, <b>classification</b> predicts a category. <b>Unsupervised</b> (unlabeled): <b>clustering</b> groups similar items.</li><li>Split into <b>training</b> and <b>validation</b> data; <b>features</b> are inputs, the <b>label</b> is the answer. Watch <b>overfitting</b> (great on training, poor on new data).</li><li>Azure tools: <b>Azure Machine Learning</b> (studio, designer, <b>Automated ML</b> that tries many models for you).</li></ul>' },
+      { h: 'Microsoft\'s six Responsible AI principles (memorize)', html: '<ol><li><b>Fairness</b> — treat all groups equitably.</li><li><b>Reliability & safety</b> — perform consistently, fail safely.</li><li><b>Privacy & security</b> — protect data.</li><li><b>Inclusiveness</b> — work for people of all abilities.</li><li><b>Transparency</b> — be understandable; disclose limits.</li><li><b>Accountability</b> — people are answerable for the system.</li></ol><div class="callout"><b class="k">Two umbrella ideas</b>These six map to the first letters people remember as the Microsoft RAI set. <b>Azure AI Content Safety</b> enforces safety by detecting harmful content.</div>' },
+      { h: 'Terms the exam loves', html: '<ul><li><b>Prediction/inference</b> vs <b>training</b>. <b>Confidence score</b> — how sure a prediction is.</li><li>Vision metrics in object detection: a <b>bounding box</b> + class + confidence. NLP: <b>entities</b>, <b>key phrases</b>, <b>sentiment</b>.</li><li><b>Azure AI services</b> (formerly Cognitive Services) = prebuilt APIs for vision, language, speech, decision — no model training needed.</li></ul>' }
+    ],
+    cards: [
+      ['AI workload types', 'ML, computer vision, NLP, document intelligence, knowledge mining, generative AI.'],
+      ['Regression vs classification', 'Predict a number vs predict a category (both supervised).'],
+      ['Clustering', 'Unsupervised grouping of similar items.'],
+      ['Feature vs label', 'Input columns vs the answer the model learns.'],
+      ['Overfitting', 'Great on training data, poor on new data.'],
+      ['Automated ML', 'Azure ML tries many models/params to find the best automatically.'],
+      ['Fairness', 'RAI principle: treat all groups equitably.'],
+      ['Reliability & safety', 'RAI: consistent performance, safe failure.'],
+      ['Privacy & security', 'RAI: protect data and the system.'],
+      ['Inclusiveness', 'RAI: usable by people of all abilities.'],
+      ['Transparency', 'RAI: understandable; disclose limitations.'],
+      ['Accountability', 'RAI: humans are answerable for the system.'],
+      ['Azure AI services', 'Prebuilt vision/language/speech/decision APIs (ex-Cognitive Services).'],
+      ['Confidence score', 'How certain a prediction is (0–1).'],
+      ['Azure AI Content Safety', 'Detects harmful/unsafe content.']
+    ],
+    qs: [
+      Q('Predicting tomorrow\'s temperature (a number) is which ML task?', 'Regression', ['Classification', 'Clustering', 'Translation'], 'A numeric prediction.', 'g2'),
+      Q('Grouping customers into segments with no labels is:', 'Clustering (unsupervised)', ['Regression', 'Classification', 'Object detection'], 'Unlabeled grouping.', 'g2'),
+      Q('Deciding whether an email is spam or not is:', 'Classification', ['Regression', 'Clustering', 'Summarization'], 'Category prediction.', 'g2'),
+      Q('Which Azure tool automatically tries many models to find the best for your data?', 'Automated ML (Azure Machine Learning)', ['Azure Content Safety', 'Azure Translator', 'Power BI'], 'AutoML.', 'g2'),
+      Q('A model is 98% accurate on training data but 62% on new data. This is:', 'Overfitting', ['Underfitting', 'Good generalization', 'Clustering'], 'Memorized training set.', 'g2'),
+      Q('Which Responsible AI principle addresses treating all groups equitably?', 'Fairness', ['Transparency', 'Accountability', 'Inclusiveness'], 'Fairness.', 'g1'),
+      Q('"The system must perform consistently and fail safely" maps to which principle?', 'Reliability & safety', ['Privacy & security', 'Fairness', 'Inclusiveness'], 'Reliability & safety.', 'g1'),
+      Q('Designing AI usable by people with disabilities reflects:', 'Inclusiveness', ['Accountability', 'Transparency', 'Fairness'], 'Inclusiveness.', 'g1'),
+      Q('Disclosing how a model works and its limitations reflects:', 'Transparency', ['Privacy & security', 'Reliability & safety', 'Fairness'], 'Transparency.', 'g1'),
+      Q('Which service detects hateful or unsafe content in text/images?', 'Azure AI Content Safety', ['Azure Translator', 'Azure Monitor', 'Azure DevOps'], 'Content Safety.', 'g1'),
+      Q('Prebuilt APIs for vision, language, speech and decisions that need no training are:', 'Azure AI services (formerly Cognitive Services)', ['Azure Functions', 'Azure Arc', 'Azure Policy'], 'Azure AI services.', 'g1'),
+      Q('In supervised learning, the "label" is:', 'The known answer the model learns to predict', ['An input feature', 'A hyperparameter', 'The confidence score'], 'Label = target answer.', 'g2'),
+      Q('A confidence score of 0.42 on a prediction means:', 'The model is relatively unsure of that prediction', ['The prediction took 0.42 seconds', 'There are 42 classes', 'Accuracy is 42%'], 'Low certainty.', 'g2'),
+      Q('Which principle says a person — not "the AI" — is answerable for outcomes?', 'Accountability', ['Transparency', 'Reliability & safety', 'Inclusiveness'], 'Accountability.', 'g1'),
+      Q('Extracting the amount and date from a scanned invoice is which AI workload?', 'Document intelligence', ['Clustering', 'Regression', 'Speech synthesis'], 'Form field extraction.', 'g1')
+    ],
+    labs: []
+  });
+
+  S.push({
+    id: 'zai2', track: 'azai', tier: 'z-aif', title: 'Vision, language, speech & generative AI on Azure', code: 'AZAI02-OPENAI-ONAZURE',
+    goal: 'The Azure AI service for each task, and generative-AI fundamentals (Azure OpenAI, prompts, RAG) — the rest of AI-900.',
+    lesson: [
+      { h: 'Computer vision services', html: '<ul><li><b>Azure AI Vision</b> — image analysis, tagging, OCR (read text), captioning. <b>Face</b> — detect/recognize faces. <b>Azure AI Video Indexer</b> — insights from video.</li><li>Tasks: <b>image classification</b> (what is this image?), <b>object detection</b> (what + where, bounding boxes), <b>OCR</b> (text in images).</li><li>Train your own image classifier/detector with <b>Custom Vision</b>.</li></ul>' },
+      { h: 'Language & speech services', html: '<ul><li><b>Azure AI Language</b> — sentiment, key-phrase extraction, named-entity recognition, language detection, summarization, question answering, conversational language understanding (intents/entities).</li><li><b>Azure AI Translator</b> — text translation. <b>Azure AI Speech</b> — speech-to-text, text-to-speech, speech translation.</li></ul>' },
+      { h: 'Generative AI on Azure', html: '<ul><li><b>Azure OpenAI Service</b> — GPT (text/chat), embeddings, and image models, with Azure security/compliance. <b>Azure AI Foundry</b> is the portal to build/deploy generative apps and agents.</li><li>A <b>prompt</b> instructs the model; a <b>completion</b> is its output. <b>Tokens</b> are text chunks (billing/limits). <b>Temperature</b> controls randomness.</li><li><b>Grounding / RAG</b>: combine the model with your own data via <b>Azure AI Search</b> so answers use current, private content. <b>Content filters</b> enforce safety.</li></ul>' },
+      { h: 'Match the service (exam pattern)', html: '<table><tr><th>Need</th><th>Service</th></tr><tr><td>Read text from a photo</td><td>Azure AI Vision (OCR)</td></tr><tr><td>Detect sentiment in reviews</td><td>Azure AI Language</td></tr><tr><td>Translate text</td><td>Azure AI Translator</td></tr><tr><td>Transcribe a call</td><td>Azure AI Speech</td></tr><tr><td>Chatbot that generates answers from your docs</td><td>Azure OpenAI + Azure AI Search (RAG)</td></tr></table>' }
+    ],
+    cards: [
+      ['Azure AI Vision', 'Image analysis, tagging, OCR, captioning.'],
+      ['Custom Vision', 'Train your own image classifier/detector.'],
+      ['Image classification vs object detection', 'What is it vs what + where (bounding boxes).'],
+      ['Azure AI Language', 'Sentiment, entities, key phrases, language detection, Q&A, CLU.'],
+      ['Azure AI Translator', 'Text translation across languages.'],
+      ['Azure AI Speech', 'Speech-to-text, text-to-speech, speech translation.'],
+      ['Azure OpenAI Service', 'GPT/embeddings/image models with Azure security.'],
+      ['Azure AI Foundry', 'Portal to build and deploy generative apps/agents.'],
+      ['Prompt / completion', 'Your instruction / the model\'s output.'],
+      ['Tokens', 'Text chunks that drive billing and context limits.'],
+      ['Grounding / RAG', 'Combine the model with your data (Azure AI Search) for current answers.'],
+      ['Content filters', 'Safety controls on generative output.'],
+      ['Azure AI Search', 'Index/retrieve your content for knowledge mining and RAG.']
+    ],
+    qs: [
+      Q('You need to read printed text out of scanned photos. Which service?', 'Azure AI Vision (OCR)', ['Azure AI Language', 'Azure AI Translator', 'Azure OpenAI'], 'OCR = Vision.', 'g3'),
+      Q('Removing the background from a product photo is an operation of:', 'Azure AI Vision', ['Azure AI Language', 'Azure AI Translator', 'Azure OpenAI text'], 'Vision image operations.', 'g3'),
+      Q('Detecting objects AND their locations (bounding boxes) is:', 'Object detection', ['Image classification', 'OCR', 'Sentiment analysis'], 'What + where.', 'g3'),
+      Q('To train a model to recognize your company\'s specific products in images:', 'Custom Vision', ['Prebuilt Azure AI Vision only', 'Azure AI Language', 'Translator'], 'Custom Vision = your own classifier.', 'g3'),
+      Q('Analyzing customer reviews for positive/negative tone uses:', 'Azure AI Language (sentiment)', ['Azure AI Speech', 'Azure AI Vision', 'Azure OpenAI image'], 'Language service.', 'g4'),
+      Q('Transcribing recorded support calls to text uses:', 'Azure AI Speech (speech-to-text)', ['Azure AI Translator', 'Azure AI Vision', 'Custom Vision'], 'Speech.', 'g4'),
+      Q('Pulling people, places and organizations out of documents is:', 'Named-entity recognition (Azure AI Language)', ['OCR', 'Clustering', 'Object detection'], 'NER.', 'g4'),
+      Q('Which service provides GPT models with Azure security and compliance?', 'Azure OpenAI Service', ['Azure AI Vision', 'Azure Functions', 'Azure Monitor'], 'Azure OpenAI.', 'g5'),
+      Q('To make a generative chatbot answer from your own current documents, combine Azure OpenAI with:', 'Azure AI Search (grounding / RAG)', ['Azure Translator', 'Custom Vision', 'Azure Policy'], 'RAG via AI Search.', 'g5'),
+      Q('In generative AI, "tokens" are:', 'Chunks of text that drive context limits and billing', ['Security credentials', 'GPU cores', 'Network packets'], 'Tokens.', 'g5'),
+      Q('Lowering the temperature on an Azure OpenAI model makes output:', 'More focused and deterministic', ['More random', 'Longer', 'Cheaper per token'], 'Low temp = deterministic.', 'g5'),
+      Q('A "completion" in Azure OpenAI is:', 'The model\'s generated response to a prompt', ['The input you send', 'A billing report', 'A fine-tuning job'], 'Output = completion.', 'g5'),
+      Q('The portal for building and deploying generative AI apps and agents on Azure is:', 'Azure AI Foundry', ['Azure DevOps', 'Azure Arc', 'Power Automate'], 'AI Foundry.', 'g5'),
+      Q('Which enforces safety by filtering harmful generated content?', 'Content filters / Azure AI Content Safety', ['Azure Monitor', 'Azure Policy', 'Azure Backup'], 'Content safety/filters.', 'g5'),
+      Q('Translating a website into 12 languages programmatically uses:', 'Azure AI Translator', ['Azure AI Speech', 'Custom Vision', 'Azure OpenAI image'], 'Translator.', 'g4'),
+      Q('Classifying a whole image as "cat" or "dog" (no location) is:', 'Image classification', ['Object detection', 'OCR', 'Segmentation'], 'Whole-image label.', 'g3'),
+      Q('Grounding a model with RAG primarily reduces:', 'Hallucinations / out-of-date answers by using your real data', ['Token cost to zero', 'The need for any prompt', 'Latency to zero'], 'RAG grounds answers.', 'g5')
+    ],
+    labs: []
+  });
+
+  S.push({
+    id: 'zai3', track: 'azai', tier: 'z-aifx', title: 'Capstone: AI-900 exam simulation', code: 'AZAI-FUNDAMENTALS',
+    goal: 'A weighted exam simulation matched to Azure AI Fundamentals. Pass this and book AI-900 (or the refreshed AI-901).',
+    capstone: { n: 40, minutes: 50, pool: ['zai1', 'zai2', 'zai3'], weights: { g1: 17, g2: 17, g3: 18, g4: 18, g5: 30 }, domains: AIF9 },
+    lesson: [{ h: 'The real exam', html: '<ul><li><b>AI-900</b> Azure AI Fundamentals: ~40–60 questions, 45 minutes, pass <b>700</b>/1000. No coding. (<b>AI-900 retires mid-2026; AI-901</b> is the refreshed replacement — same fundamentals, more generative AI.)</li><li>Areas: AI workloads, ML principles, computer vision, NLP, and <b>generative AI (largest slice)</b>.</li></ul><p>This simulation draws <b>40 questions</b> weighted to those areas. You need over 90%.</p>' }],
+    cards: [['AI-900 format', '~40–60 questions, 45 minutes, pass 700/1000. AI-901 refresh mid-2026.'], ['Biggest area', 'Generative AI carries the most weight now.']],
+    qs: [
+      Q('A retailer wants a chatbot that answers from its own product manuals. Best Azure approach?', 'Azure OpenAI grounded with Azure AI Search (RAG)', ['Custom Vision', 'Azure Translator', 'Automated ML regression'], 'RAG for private docs.', 'g5'),
+      Q('Which pairing is correct?', 'Regression = predict a number; Classification = predict a category', ['Regression = category; Classification = number', 'Both predict numbers', 'Both are unsupervised'], 'Core ML distinction.', 'g2'),
+      Q('Reading totals from thousands of scanned receipts is best handled by:', 'Document intelligence', ['Clustering', 'Speech-to-text', 'Translation'], 'Form extraction.', 'g1'),
+      Q('Which Responsible AI principle is about protecting user data?', 'Privacy & security', ['Fairness', 'Inclusiveness', 'Transparency'], 'Privacy & security.', 'g1'),
+      Q('Detecting whether a product defect appears in a photo, after training on your images, uses:', 'Custom Vision', ['Azure AI Language', 'Translator', 'Azure OpenAI text'], 'Custom image model.', 'g3'),
+      Q('Summarizing long support tickets into a sentence uses:', 'Azure AI Language (summarization)', ['Azure AI Vision', 'Custom Vision', 'Speech'], 'Language summarization.', 'g4'),
+      Q('Converting typed text into natural-sounding audio uses:', 'Azure AI Speech (text-to-speech)', ['Translator', 'Vision OCR', 'Azure OpenAI embeddings'], 'TTS.', 'g4'),
+      Q('In generative AI, raising temperature increases:', 'Randomness/creativity of the output', ['Determinism', 'Token limit', 'Accuracy guarantee'], 'Temperature = randomness.', 'g5'),
+      Q('Automated ML is used to:', 'Try many algorithms/hyperparameters to find the best model automatically', ['Filter harmful content', 'Translate languages', 'Detect faces'], 'AutoML.', 'g2'),
+      Q('A model that works for users of all abilities reflects which principle?', 'Inclusiveness', ['Accountability', 'Reliability & safety', 'Privacy & security'], 'Inclusiveness.', 'g1'),
+      Q('Object detection returns, for each object:', 'A class, a bounding box, and a confidence score', ['Only a class', 'Only text', 'Only a translation'], 'What + where + certainty.', 'g3'),
+      Q('Which service filters hateful or unsafe generated content?', 'Azure AI Content Safety', ['Azure Monitor', 'Azure Backup', 'Azure Arc'], 'Content Safety.', 'g5'),
+      Q('Detecting the language a sentence is written in uses:', 'Azure AI Language (language detection)', ['Azure AI Vision', 'Custom Vision', 'Speech synthesis'], 'Language detection.', 'g4'),
+      Q('Generative AI is best described as AI that:', 'Creates new content (text, images, code) from prompts', ['Only classifies images', 'Only clusters data', 'Only reads forms'], 'Content generation.', 'g5')
+    ],
+    labs: []
+  });
+
+  // ---------------- AI Engineer (AI-102 / AI-103) ----------------
+  S.push({
+    id: 'zai4', track: 'azai', tier: 'z-aie', title: 'Plan & secure Azure AI + build generative/agent solutions', code: 'AZAI03-KEYS-AND-RAG',
+    goal: 'Provision and secure Azure AI resources, then build generative-AI and agentic solutions with Azure OpenAI — the planning/genAI core of AI-102/AI-103.',
+    lesson: [
+      { h: 'Plan, provision & secure', html: '<ul><li>Create a single <b>Azure AI services</b> multi-service resource or individual resources; manage <b>keys</b> and <b>endpoints</b>.</li><li>Secure with <b>Microsoft Entra ID</b> (managed identities, no keys in code), <b>Key Vault</b> for secrets, <b>private endpoints/VNet</b>, and <b>RBAC</b>. Monitor cost/usage with <b>Azure Monitor</b>.</li><li>Pick region by data residency, model availability and quota.</li></ul>' },
+      { h: 'Build with Azure OpenAI', html: '<ul><li>Deploy a model (e.g. GPT) in <b>Azure AI Foundry</b>, call it via the SDK/REST with a <b>deployment name</b>.</li><li>Shape output with <b>system message</b> (role/behavior), <b>few-shot examples</b>, and parameters (<b>temperature</b>, <b>max tokens</b>, <b>top_p</b>).</li><li>Add <b>content filters</b> and your own <b>guardrails</b>; log prompts/responses for review.</li></ul>' },
+      { h: 'Grounding, RAG & agents', html: '<ul><li><b>RAG</b>: index your data in <b>Azure AI Search</b> (often as <b>embeddings</b> in a vector index), retrieve the top chunks, and pass them to the model — the standard way to answer from private/current data.</li><li><b>Prompt flow</b> orchestrates and evaluates LLM apps. <b>Agents</b> (Azure AI Foundry Agent Service) add <b>tools/function calling</b> so the model can take actions and chain steps.</li><li>Evaluate quality with groundedness/relevance metrics; iterate.</li></ul>' },
+      { h: 'Responsible generative AI', html: '<p>Apply Microsoft\'s RAI principles: filter harmful content (<b>Azure AI Content Safety</b>), ground answers to reduce hallucination, disclose AI use, keep a human in the loop for high-stakes outputs, and protect data (your data isn\'t used to train the base models).</p>' }
+    ],
+    cards: [
+      ['AI services resource', 'Multi-service or single resource; has keys + endpoint.'],
+      ['Managed identity (Entra ID)', 'Auth without storing keys in code.'],
+      ['Key Vault', 'Securely store secrets/keys.'],
+      ['Private endpoint / VNet', 'Keep AI traffic on a private network.'],
+      ['Deployment name', 'How you reference a deployed Azure OpenAI model.'],
+      ['System message', 'Sets the model\'s role/behavior.'],
+      ['Temperature / max tokens / top_p', 'Generation parameters you tune.'],
+      ['RAG on Azure', 'Azure AI Search (vector/embeddings) + model for grounded answers.'],
+      ['Prompt flow', 'Orchestrate and evaluate LLM app steps.'],
+      ['Agents / function calling', 'Let the model call tools and take actions.'],
+      ['Groundedness', 'How well an answer is supported by the retrieved source.'],
+      ['Content Safety', 'Filters harmful generative content.'],
+      ['Data privacy', 'Your data isn\'t used to train the base models.']
+    ],
+    qs: [
+      Q('Best way to authenticate an app to Azure AI services WITHOUT keys in code?', 'Microsoft Entra ID managed identity', ['Hard-code the key', 'Embed the key in the URL', 'Disable auth'], 'Managed identity.', 'e1'),
+      Q('Where should API keys and secrets be stored?', 'Azure Key Vault', ['In the source code', 'In a public blob', 'In the prompt'], 'Key Vault.', 'e1'),
+      Q('To keep Azure OpenAI traffic off the public internet, use:', 'Private endpoints / VNet integration', ['A public IP', 'An open NSG', 'Anonymous access'], 'Private networking.', 'e1'),
+      Q('You call a deployed GPT model in Azure OpenAI by its:', 'Deployment name', ['Resource group', 'Subscription ID', 'Region code'], 'Deployment name.', 'e2'),
+      Q('To set an assistant\'s persona and rules, you use the:', 'System message', ['Temperature only', 'max_tokens', 'Top_p only'], 'System message sets behavior.', 'e2'),
+      Q('To answer from a company\'s private, frequently-updated docs, implement:', 'RAG with Azure AI Search (retrieve then generate)', ['Fine-tune hourly', 'Raise temperature', 'Only a longer prompt'], 'RAG.', 'e2'),
+      Q('What lets an Azure OpenAI model call external tools and take actions?', 'Agents / function calling', ['OCR', 'Clustering', 'Content Safety'], 'Agents/function calling.', 'e2'),
+      Q('Which tool orchestrates and evaluates multi-step LLM applications on Azure?', 'Prompt flow', ['Azure Monitor', 'Azure Policy', 'Azure Backup'], 'Prompt flow.', 'e2'),
+      Q('To reduce hallucinations in a production assistant you should:', 'Ground it with retrieval and evaluate groundedness, plus human review', ['Remove content filters', 'Maximize temperature', 'Hide sources'], 'Grounding + eval + oversight.', 'e2'),
+      Q('Which enforces harmful-content filtering on generative output?', 'Azure AI Content Safety / content filters', ['Azure Arc', 'Azure DevOps', 'Azure Advisor'], 'Content Safety.', 'e1'),
+      Q('RBAC on an Azure AI resource is used to:', 'Grant least-privilege access to specific identities', ['Translate text', 'Train a vision model', 'Index documents'], 'Access control.', 'e1'),
+      Q('An embedding stored in Azure AI Search enables:', 'Vector (semantic) retrieval for RAG', ['Faster billing', 'Speech synthesis', 'Image OCR'], 'Vector search.', 'e2'),
+      Q('Which parameter most directly limits the length of a completion?', 'max tokens', ['temperature', 'top_p', 'system message'], 'max_tokens.', 'e2'),
+      Q('Choosing an Azure region for an AI workload should consider:', 'Data residency, model availability, and quota', ['Only alphabetical order', 'Only cost', 'Only latency'], 'Residency + availability + quota.', 'e1')
+    ],
+    labs: []
+  });
+
+  S.push({
+    id: 'zai5', track: 'azai', tier: 'z-aie', title: 'Vision, language, speech & document intelligence APIs', code: 'AZAI04-FORM-TO-FIELDS',
+    goal: 'Implement the task-specific Azure AI services an engineer wires into apps — vision, language/speech, and knowledge mining / document intelligence.',
+    lesson: [
+      { h: 'Computer vision', html: '<ul><li><b>Azure AI Vision</b>: analysis, OCR/Read, captioning, background removal. <b>Face</b>: detection, verification, identification (gated for responsible use).</li><li><b>Custom Vision</b>: train/publish your own classification or object-detection model and call it by project/endpoint.</li></ul>' },
+      { h: 'Language & speech', html: '<ul><li><b>Azure AI Language</b>: sentiment, entities (incl. <b>PII detection</b>), key phrases, summarization, <b>custom question answering</b>, and <b>conversational language understanding (CLU)</b> for intents/entities in chatbots.</li><li><b>Azure AI Speech</b>: speech-to-text (incl. <b>custom speech</b>), text-to-speech (incl. <b>custom neural voice</b>, gated), speech translation, speaker recognition.</li></ul>' },
+      { h: 'Knowledge mining & document intelligence', html: '<ul><li><b>Azure AI Search</b>: ingest, enrich (skillsets), index and query large content; the backbone of knowledge mining and RAG.</li><li><b>Azure AI Document Intelligence</b> (formerly Form Recognizer): extract text, key-value pairs and tables from documents with <b>prebuilt</b> models (invoices, receipts, IDs) or a <b>custom</b> model you train.</li></ul>' },
+      { h: 'Operationalize', html: '<p>Handle throttling with retries/backoff, monitor with <b>Azure Monitor</b>, manage cost with the right pricing tier, and containerize some Azure AI services with <b>Docker containers</b> for on-prem/edge or data-residency needs.</p>' }
+    ],
+    cards: [
+      ['Azure AI Vision (Read/OCR)', 'Extract printed/handwritten text from images and docs.'],
+      ['Face service', 'Detection/verification/identification (gated).'],
+      ['Custom Vision', 'Your own image classification/object detection.'],
+      ['CLU', 'Conversational Language Understanding: intents + entities.'],
+      ['PII detection', 'Azure AI Language can find/redact personal data.'],
+      ['Custom question answering', 'Build a Q&A bot from your knowledge base.'],
+      ['Custom neural voice', 'Train a custom TTS voice (gated).'],
+      ['Azure AI Search', 'Ingest/enrich/index/query content; powers RAG.'],
+      ['Skillset', 'Enrichment pipeline in Azure AI Search (OCR, entities, etc.).'],
+      ['Document Intelligence', 'Extract fields/tables from docs (prebuilt + custom).'],
+      ['Prebuilt models', 'Invoices, receipts, IDs — no training needed.'],
+      ['Containers', 'Run some Azure AI services on-prem/edge for residency.'],
+      ['Throttling/backoff', 'Handle rate limits with retries and backoff.']
+    ],
+    qs: [
+      Q('Extracting key-value pairs and tables from invoices is best done with:', 'Azure AI Document Intelligence', ['Azure AI Translator', 'Custom Vision', 'Azure OpenAI image'], 'Document Intelligence.', 'e5'),
+      Q('Building a chatbot that recognizes user intents and entities uses:', 'Conversational Language Understanding (CLU)', ['OCR', 'Object detection', 'Speech translation'], 'CLU.', 'e4'),
+      Q('Finding and redacting personal data in documents uses:', 'Azure AI Language PII detection', ['Face service', 'Custom Vision', 'Translator'], 'PII detection.', 'e4'),
+      Q('The backbone service for knowledge mining and RAG over large content is:', 'Azure AI Search', ['Azure Monitor', 'Azure Policy', 'Azure Backup'], 'Azure AI Search.', 'e5'),
+      Q('To train a model that recognizes your custom document layout, use:', 'A custom Document Intelligence model', ['A prebuilt invoice model only', 'Translator', 'Face'], 'Custom document model.', 'e5'),
+      Q('Transcribing domain-specific jargon accurately may require:', 'Custom speech (Azure AI Speech)', ['Custom Vision', 'Translator', 'Content Safety'], 'Custom speech model.', 'e4'),
+      Q('Reading handwritten notes from scanned pages uses:', 'Azure AI Vision Read/OCR', ['Azure AI Language', 'Custom neural voice', 'Azure AI Search'], 'OCR/Read.', 'e3'),
+      Q('Generating a descriptive caption for an uploaded image uses:', 'Azure AI Vision (captioning)', ['Azure AI Language', 'Document Intelligence', 'CLU'], 'Vision captioning.', 'e3'),
+      Q('Moderating uploaded images for adult/racy content before display uses:', 'Azure AI Content Safety / Vision moderation', ['Translator', 'CLU', 'Custom neural voice'], 'Image moderation.', 'e3'),
+      Q('Translating spoken audio from English to Spanish in near real time uses:', 'Azure AI Speech (speech translation)', ['Azure AI Translator text only', 'OCR', 'Face'], 'Speech translation.', 'e4'),
+      Q('Controlling pronunciation, pauses and emphasis in text-to-speech output uses:', 'SSML (Speech Synthesis Markup Language)', ['A system message', 'A skillset', 'An embedding'], 'SSML shapes TTS.', 'e4'),
+      Q('Verifying that a selfie matches an ID photo uses:', 'Azure AI Face (verification)', ['Custom Vision', 'Document Intelligence', 'CLU'], 'Face verification.', 'e3'),
+      Q('An enrichment pipeline (OCR, entity extraction) during indexing in Azure AI Search is a:', 'Skillset', ['Deployment', 'System message', 'Managed identity'], 'Skillset.', 'e5'),
+      Q('You hit HTTP 429 (too many requests). The right handling is:', 'Retry with exponential backoff', ['Ignore and resend immediately in a loop', 'Delete the resource', 'Lower the model quality'], 'Backoff on throttling.', 'e1'),
+      Q('To run an Azure AI service on-prem for data-residency, you can use:', 'A Docker container version of the service', ['Only the public cloud API', 'Azure Arc only', 'Power BI'], 'Containers.', 'e1'),
+      Q('Classifying your own product images after training uses:', 'Custom Vision', ['Prebuilt Vision only', 'Translator', 'Document Intelligence'], 'Custom Vision.', 'e3'),
+      Q('Building a Q&A bot from an existing FAQ/knowledge base uses:', 'Custom question answering (Azure AI Language)', ['Object detection', 'Speech translation', 'Face'], 'Custom Q&A.', 'e4'),
+      Q('Prebuilt Document Intelligence models can read, out of the box:', 'Invoices, receipts and IDs', ['Any custom form with no training', 'Only handwriting', 'Only tables'], 'Common prebuilt doc types.', 'e5')
+    ],
+    labs: []
+  });
+
+  S.push({
+    id: 'zai6', track: 'azai', tier: 'z-aiex', title: 'Capstone: AI-102 exam simulation', code: 'AZAI-ENGINEER',
+    goal: 'A weighted exam simulation matched to the Azure AI Engineer domains. Pass this and book AI-102 (or the AI-103 refresh).',
+    capstone: { n: 40, minutes: 60, pool: ['zai4', 'zai5', 'zai6'], weights: { e1: 20, e2: 24, e3: 18, e4: 20, e5: 18 }, domains: AIE },
+    lesson: [{ h: 'The real exam', html: '<ul><li><b>AI-102</b> Azure AI Engineer Associate: ~40–60 questions, ~100 minutes, pass <b>700</b>/1000; includes code (C#/Python) and lots of "which service / how to secure." (<b>AI-102 retires mid-2026; AI-103</b> "AI App & Agent Developer" is the generative-AI/agent-focused replacement.)</li><li>Areas: plan & manage/secure, generative AI & agents, computer vision, language & speech, knowledge mining & document intelligence.</li></ul><p>This simulation draws <b>40 questions</b> weighted across those areas. You need over 90%.</p>' }],
+    cards: [['AI-102 format', '~40–60 questions, ~100 min, pass 700/1000; code-heavy. AI-103 refresh mid-2026.'], ['Focus shift', 'Generative AI and agents now carry more weight.']],
+    qs: [
+      Q('Secure, codeless authentication from an Azure app to Azure OpenAI is best via:', 'Managed identity (Entra ID)', ['A key in the query string', 'A shared password', 'Anonymous access'], 'Managed identity.', 'e1'),
+      Q('To build an assistant that answers from internal wikis with citations, implement:', 'RAG with Azure AI Search + Azure OpenAI', ['Custom neural voice', 'Object detection', 'Translator only'], 'RAG.', 'e2'),
+      Q('To let the model trigger a booking action, use:', 'Function calling / an agent', ['OCR', 'A skillset', 'A prebuilt invoice model'], 'Function calling/agents.', 'e2'),
+      Q('Extracting totals and line items from scanned receipts:', 'Azure AI Document Intelligence (prebuilt receipt model)', ['Custom Vision', 'CLU', 'Translator'], 'Document Intelligence.', 'e5'),
+      Q('Detecting intents and entities from user utterances in a bot:', 'Conversational Language Understanding (CLU)', ['OCR', 'Face', 'Custom neural voice'], 'CLU.', 'e4'),
+      Q('Reading printed text from product photos in an app:', 'Azure AI Vision Read/OCR', ['Azure AI Language', 'Document Intelligence custom', 'Translator'], 'OCR.', 'e3'),
+      Q('Handling 429 Too Many Requests correctly:', 'Exponential backoff with retries', ['Tight retry loop with no delay', 'Crash the app', 'Switch to anonymous auth'], 'Backoff.', 'e1'),
+      Q('Keeping prompts/responses private on a corporate network requires:', 'Private endpoints / VNet + Key Vault for secrets', ['A public endpoint and a long key', 'Disabling logging', 'Anonymous access'], 'Private networking + secrets mgmt.', 'e1'),
+      Q('To evaluate whether answers are supported by sources, measure:', 'Groundedness/relevance (e.g., in prompt flow)', ['Token price', 'GPU temperature', 'Region name'], 'Groundedness evaluation.', 'e2'),
+      Q('Indexing and enriching a large document set for search uses:', 'Azure AI Search with a skillset', ['Custom neural voice', 'Face', 'Translator'], 'AI Search + skillset.', 'e5'),
+      Q('Verifying a user\'s identity from a face image (gated feature):', 'Azure AI Face verification', ['Custom Vision', 'OCR', 'CLU'], 'Face.', 'e3'),
+      Q('Transcribing calls that use heavy industry jargon accurately:', 'Custom speech model (Azure AI Speech)', ['Prebuilt TTS', 'Translator', 'Document Intelligence'], 'Custom speech.', 'e4'),
+      Q('The AI-103 refresh of AI-102 is centered on:', 'Generative AI apps and agents', ['Only computer vision', 'Only networking', 'On-prem Active Directory'], 'GenAI/agents focus.', 'e2'),
+      Q('A system message in a chat completion is used to:', 'Set the assistant\'s role, rules and tone', ['Store the API key', 'Index documents', 'Translate text'], 'System message.', 'e2')
     ],
     labs: []
   });
