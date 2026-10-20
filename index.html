@@ -250,7 +250,7 @@ html,body{overflow-x:hidden}
 <body>
 <noscript>This study app needs JavaScript enabled.</noscript>
 <script>
-/* build a8905cab6a */
+/* build 9a03ac12ad */
 /* CloudSim — a small AWS CLI + Azure CLI simulator over a working cloud model.
    AWS: VPC, subnets, IGW, route tables, NAT, EIP, security groups, EC2, S3, IAM, SNS, CloudWatch.
    Azure: resource groups, locks, VNets, subnets, NSGs (priority rules), VMs, public IPs,
@@ -4643,6 +4643,353 @@ window.X = {
       { t: 'Deploy to production with StackSets / canary and alarms for automatic rollback', why: 'Guarded rollout.' },
       { t: 'Run drift detection on a schedule to catch manual changes', why: 'Keep reality equal to code.' }
     ], debrief: 'Review → test → preview → stage → approve → guarded deploy → detect drift.' };
+})();
+
+;
+/* Azure depth pack: AZ-900, AZ-104, Pro (AZ-700/AZ-500/AZ-305) */
+(function () {
+  var Q = window.Q, X = window.X, L = COURSE.labs;
+
+  // ======================= AZ-900 =======================
+  X.add('z01', { gateN: 20,
+    lesson: [{ h: 'Deep dive: the benefits Microsoft names, with exam wording', html: '<table><tr><th>Benefit</th><th>Means</th></tr><tr><td>High availability</td><td>Stays up; measured by SLAs (e.g. 99.95%)</td></tr><tr><td>Scalability</td><td>Add resources: <b>vertical</b> (bigger VM) or <b>horizontal</b> (more VMs)</td></tr><tr><td>Elasticity</td><td>Scale automatically with demand</td></tr><tr><td>Reliability</td><td>Recovers from failures; decentralized design across regions</td></tr><tr><td>Predictability</td><td><b>Performance</b> predictability (autoscale, load balancing) and <b>cost</b> predictability (forecasting, calculators)</td></tr><tr><td>Security & governance</td><td>Policies, templates, compliance; patching handled for PaaS/SaaS</td></tr><tr><td>Manageability</td><td><b>Of</b> the cloud (autoscale, templates, monitoring) and <b>in</b> the cloud (portal, CLI, APIs)</td></tr></table><p><b>Consumption-based model</b>: no upfront cost, pay for what you use, stop paying when you stop using it. <b>Serverless</b> = event-driven, you don\'t manage servers (Azure Functions, Logic Apps).</p>' }],
+    qs: [
+      Q('Adding more VMs to handle load is:', 'Horizontal scaling (scale out)', ['Vertical scaling', 'Fault tolerance', 'Data residency'], 'More instances = horizontal.', 'z1'),
+      Q('Increasing a VM from 4 to 16 vCPUs is:', 'Vertical scaling (scale up)', ['Horizontal scaling', 'Elasticity only', 'Geo-redundancy'], 'Bigger instance = vertical.', 'z1'),
+      Q('Resources grow and shrink automatically as traffic changes. This benefit is:', 'Elasticity', ['Predictability', 'Governance', 'Manageability in the cloud'], 'Automatic scaling.', 'z1'),
+      Q('Using cost forecasting tools to know next month\'s bill describes:', 'Cost predictability', ['Performance predictability', 'High availability', 'Scalability'], 'Know what you will spend.', 'z1'),
+      Q('Using the Azure portal, CLI and APIs to manage resources is manageability:', 'In the cloud', ['Of the cloud', 'Under the cloud', 'Outside the cloud'], 'How you manage resources.', 'z1'),
+      Q('Autoscaling and monitoring that manage resources for you is manageability:', 'Of the cloud', ['In the cloud', 'On-premises', 'Through SLAs'], 'Management of the environment.', 'z1'),
+      Q('In the consumption-based model, when you stop using a resource you:', 'Stop paying for it', ['Keep paying a fixed fee', 'Pay a penalty', 'Pay upfront again'], 'Pay for what you use.', 'z1'),
+      Q('A company keeps sensitive workloads in its datacenter but bursts into Azure during peaks. Model?', 'Hybrid cloud', ['Public cloud only', 'Private cloud only', 'Multi-tenant SaaS'], 'Combination of private and public.', 'z1'),
+      Q('Under shared responsibility, which is ALWAYS the customer\'s responsibility in every service type?', 'Information and data, devices, accounts and identities', ['Physical hosts', 'Physical network', 'Datacenter power'], 'Customer always owns data and identities.', 'z1'),
+      Q('In SaaS, who manages the application itself?', 'The cloud provider', ['The customer', 'Both equally', 'Nobody'], 'Provider manages most of the stack.', 'z1'),
+      Q('An app runs code only when a file is uploaded and you never manage servers. This is:', 'Serverless computing', ['IaaS', 'A private cloud', 'Vertical scaling'], 'Event-driven, no server management.', 'z1'),
+      Q('Which statement describes CapEx?', 'Up-front spending on physical infrastructure', ['Paying monthly for usage', 'A pay-as-you-go subscription', 'Consumption-based pricing'], 'Capital expenditure.', 'z1'),
+      Q('A service level agreement (SLA) of 99.99% describes:', 'The provider\'s commitment to uptime and connectivity', ['The price per hour', 'The number of regions', 'Storage capacity'], 'Availability commitment.', 'z1')
+    ], labs: ['azx-benefits'] });
+
+  X.add('z02', { gateN: 20,
+    lesson: [{ h: 'Deep dive: storage tiers, redundancy and migration tools', html: '<table><tr><th>Redundancy</th><th>Copies</th><th>Protects against</th></tr><tr><td>LRS</td><td>3 in one datacenter</td><td>Disk/server failure</td></tr><tr><td>ZRS</td><td>3 across availability zones</td><td>Datacenter (zone) failure</td></tr><tr><td>GRS</td><td>LRS + async copy to paired region</td><td>Region failure</td></tr><tr><td>GZRS</td><td>ZRS + copy to paired region</td><td>Zone and region failure</td></tr><tr><td>RA-GRS / RA-GZRS</td><td>As above + read access in the secondary</td><td>Read during regional outage</td></tr></table><p>Blob access tiers: <b>Hot</b> (frequent), <b>Cool</b> (30-day minimum), <b>Cold</b> (90-day minimum), <b>Archive</b> (180-day minimum, offline — must be <b>rehydrated</b> before reading, can take hours). Tools: <b>AzCopy</b> (CLI copy), <b>Azure Storage Explorer</b> (GUI), <b>Azure File Sync</b> (cache Azure Files on Windows servers), <b>Azure Migrate</b> (assess and migrate), <b>Azure Data Box</b> (offline bulk transfer).</p><p>Compute availability: <b>availability sets</b> spread VMs across <b>fault domains</b> (racks) and <b>update domains</b> (maintenance batches); <b>availability zones</b> spread across datacenters; <b>region pairs</b> for DR; <b>sovereign regions</b> (US Gov, China) for compliance.</p>' }],
+    qs: [
+      Q('Data must survive the loss of an entire datacenter within a region, at lowest cost. Choose:', 'ZRS', ['LRS', 'GRS', 'RA-GZRS'], 'Copies across zones.', 'z2'),
+      Q('Data must survive a full regional outage and be readable from the secondary region during it. Choose:', 'RA-GRS or RA-GZRS', ['LRS', 'ZRS', 'GRS without read access'], 'Read access to the secondary.', 'z2'),
+      Q('The cheapest redundancy option keeps three copies in one datacenter. That is:', 'LRS', ['ZRS', 'GRS', 'GZRS'], 'Locally redundant.', 'z2'),
+      Q('Blobs in the Archive tier must be ___ before they can be read.', 'Rehydrated to an online tier', ['Deleted', 'Encrypted again', 'Moved to another subscription'], 'Archive is offline.', 'z2'),
+      Q('Backups are accessed about every two months and kept at least 90 days. Cheapest online tier?', 'Cold', ['Hot', 'Archive', 'Premium'], 'Cold has a 90-day minimum and is online.', 'z2'),
+      Q('Copy files to Blob storage from a script on the command line. Use:', 'AzCopy', ['Azure Data Box', 'Azure Advisor', 'Azure Policy'], 'Command-line copy tool.', 'z2'),
+      Q('A branch office wants fast local access to an Azure file share from its Windows file server. Use:', 'Azure File Sync', ['Azure Data Box', 'Archive tier', 'AzCopy only'], 'Caches Azure Files on-prem.', 'z2'),
+      Q('Assess on-premises servers and plan their move to Azure. Use:', 'Azure Migrate', ['Azure Policy', 'Azure Bastion', 'Microsoft Purview'], 'Discovery, assessment, migration.', 'z2'),
+      Q('Move 80 TB to Azure when the network is too slow. Use:', 'Azure Data Box', ['AzCopy over a slow link', 'Storage Explorer', 'Azure Arc'], 'Physical transfer appliance.', 'z2'),
+      Q('VMs in an availability set are spread across fault domains to protect against:', 'Rack-level hardware failures (power, network)', ['Region outages', 'User errors', 'Billing issues'], 'Fault domains = racks.', 'z2'),
+      Q('Update domains in an availability set protect against:', 'Planned maintenance rebooting all VMs at once', ['Earthquakes', 'Accidental deletion', 'DDoS'], 'Maintenance batches.', 'z2'),
+      Q('Azure Government regions are an example of:', 'Sovereign regions', ['Region pairs', 'Availability zones', 'Edge zones'], 'Isolated for compliance.', 'z2'),
+      Q('Users need a full Windows desktop delivered from Azure to any device. Use:', 'Azure Virtual Desktop', ['Azure Functions', 'Azure Container Instances', 'Azure DNS'], 'Desktop virtualization.', 'z2'),
+      Q('Run a single container quickly with no orchestration or VM management. Use:', 'Azure Container Instances', ['AKS', 'Virtual Machine Scale Sets', 'Azure Virtual Desktop'], 'Simplest container hosting.', 'z2'),
+      Q('Connect on-premises to Azure with a private, dedicated connection that does not use the public internet. Use:', 'ExpressRoute', ['VPN Gateway over the internet', 'Public endpoints', 'Azure DNS'], 'Private connectivity.', 'z2'),
+      Q('External partner users should sign in to your apps with their own organization\'s accounts. Use:', 'Microsoft Entra External ID (B2B collaboration)', ['Local accounts on each VM', 'Azure Policy', 'Resource locks'], 'Guest/partner identities.', 'z2'),
+      Q('Require MFA only when users sign in from outside the corporate network. Use:', 'Conditional Access', ['Resource locks', 'Azure Advisor', 'Tags'], 'Signal-based access policies.', 'z2')
+    ], labs: ['azx-redundancy'] });
+
+  X.add('z03', { gateN: 20,
+    lesson: [{ h: 'Deep dive: governance and cost tools side by side', html: '<table><tr><th>Tool</th><th>Purpose</th></tr><tr><td>Azure Policy</td><td>Enforce or audit rules on resources (allowed regions, required tags)</td></tr><tr><td>Resource locks</td><td><b>CanNotDelete</b> or <b>ReadOnly</b> — protect against accidental changes, even by owners</td></tr><tr><td>Tags</td><td>Name/value metadata for cost reporting and organization</td></tr><tr><td>Microsoft Purview</td><td>Data governance, catalog, classification, risk and compliance</td></tr><tr><td>Service Trust Portal</td><td>Microsoft\'s audit reports and compliance documents</td></tr><tr><td>Microsoft Defender for Cloud</td><td>Security posture management and workload protection (incl. hybrid/multicloud)</td></tr><tr><td>Azure Advisor</td><td>Recommendations: reliability, security, performance, cost, operational excellence</td></tr><tr><td>Azure Service Health</td><td>Outages and planned maintenance affecting <i>your</i> resources</td></tr><tr><td>Azure Monitor</td><td>Metrics, logs (Log Analytics), alerts, Application Insights</td></tr><tr><td>Azure Arc</td><td>Manage servers, Kubernetes and data services outside Azure with Azure tools</td></tr><tr><td>ARM templates / Bicep</td><td>Declarative infrastructure as code</td></tr><tr><td>Pricing calculator vs TCO calculator</td><td>Estimate Azure costs / compare on-prem total cost of ownership with Azure</td></tr><tr><td>Cost Management + Billing</td><td>Analyze spend, budgets and alerts</td></tr></table><p>Factors that affect cost: resource type, consumption, maintenance, geography (region), network traffic (bandwidth out), subscription type, Azure Marketplace purchases. <b>Reservations</b> (1/3 years) and <b>Azure Hybrid Benefit</b> (reuse Windows Server/SQL licenses) reduce cost.</p>' }],
+    qs: [
+      Q('Prevent anyone from deleting a production resource group, even owners, without first removing a setting. Use:', 'A CanNotDelete resource lock', ['A tag', 'Azure Advisor', 'Service Health'], 'Locks override RBAC permissions.', 'z3'),
+      Q('Ensure every new resource has a CostCenter tag or is rejected. Use:', 'Azure Policy', ['Resource locks', 'Azure Arc', 'Service Trust Portal'], 'Policy enforces rules.', 'z3'),
+      Q('Compare the cost of running servers on-premises versus in Azure over several years. Use:', 'The TCO calculator', ['The pricing calculator only', 'Azure Advisor', 'Azure Monitor'], 'Total cost of ownership.', 'z3'),
+      Q('Estimate the monthly cost of a new Azure solution. Use:', 'The pricing calculator', ['The TCO calculator', 'Service Health', 'Defender for Cloud'], 'Estimate Azure costs.', 'z3'),
+      Q('Get personalized recommendations to reduce cost and improve reliability. Use:', 'Azure Advisor', ['Azure Policy', 'Resource locks', 'Azure DNS'], 'Best-practice recommendations.', 'z3'),
+      Q('Find out whether a current Azure outage affects your own resources. Use:', 'Azure Service Health', ['The Azure status page only', 'Azure Advisor', 'Azure Policy'], 'Personalized health.', 'z3'),
+      Q('Manage on-premises Linux servers and Kubernetes clusters with Azure Policy and the Azure portal. Use:', 'Azure Arc', ['Azure Virtual Desktop', 'Azure Migrate', 'Data Box'], 'Extends Azure management.', 'z3'),
+      Q('Discover, classify and govern data across on-prem, multicloud and SaaS. Use:', 'Microsoft Purview', ['Azure Advisor', 'Azure Bastion', 'Application Insights'], 'Data governance.', 'z3'),
+      Q('Download Microsoft\'s ISO and SOC audit reports. Use:', 'Service Trust Portal', ['Azure Monitor', 'Cost Management', 'Azure Arc'], 'Compliance documentation.', 'z3'),
+      Q('Reuse existing Windows Server licenses with Software Assurance on Azure VMs to save money. Use:', 'Azure Hybrid Benefit', ['Spot VMs', 'Resource locks', 'Tags'], 'License reuse.', 'z3'),
+      Q('Which factor can change the price of the same VM size?', 'The region it runs in', ['The resource group name', 'The tag values', 'The VM\'s display name'], 'Geography affects price.', 'z3'),
+      Q('Monitor application performance and detect exceptions in a web app. Use:', 'Application Insights (Azure Monitor)', ['Azure Policy', 'Purview', 'Resource locks'], 'APM.', 'z3'),
+      Q('Deploy identical environments repeatedly with declarative templates. Use:', 'ARM templates or Bicep', ['Azure Advisor', 'Service Health', 'Tags only'], 'Infrastructure as code.', 'z3'),
+      Q('Security posture recommendations across Azure, AWS and on-prem in one place come from:', 'Microsoft Defender for Cloud', ['Azure Advisor only', 'Cost Management', 'Azure DNS'], 'Cloud security posture management.', 'z3'),
+      Q('A ReadOnly lock on a storage account means:', 'Authorized users can read but cannot modify or delete the resource', ['Nobody can read it', 'It can be deleted but not read', 'Only tags can change'], 'ReadOnly blocks changes.', 'z3')
+    ], labs: ['azx-gov'] });
+
+  // ======================= AZ-104 =======================
+  X.add('z05', { gateN: 20,
+    lesson: [{ h: 'Deep dive: RBAC, Policy and Entra details', html: '<ul><li><b>Built-in roles</b>: <b>Owner</b> (everything incl. access), <b>Contributor</b> (everything except granting access), <b>Reader</b> (view), <b>User Access Administrator</b> (manage access only). Service roles like Virtual Machine Contributor, Storage Blob Data Reader (data plane).</li><li><b>Scopes</b>: management group → subscription → resource group → resource; assignments inherit down. <b>Deny assignments</b> block actions regardless of role assignments.</li><li><b>Control plane vs data plane</b>: Contributor on a storage account can manage it but needs a data role (Storage Blob Data Contributor) to read blobs with Entra auth.</li><li><b>Azure Policy effects</b>: <b>Deny</b>, <b>Audit</b>, <b>Append</b>, <b>Modify</b> (e.g. add tags), <b>DeployIfNotExists</b> (deploy a missing setting, needs a managed identity), <b>AuditIfNotExists</b>, <b>Disabled</b>. Group policies in <b>initiatives</b>; fix existing resources with <b>remediation tasks</b>.</li><li>Entra ID: <b>dynamic groups</b> (membership by attributes — requires Entra ID P1), <b>self-service password reset</b>, <b>administrative units</b> (scope admin rights to a subset), guest users, bulk operations, licenses assigned to groups.</li></ul>' }],
+    qs: [
+      Q('A user must manage all resources in a resource group but must NOT be able to grant access to others. Assign:', 'Contributor', ['Owner', 'User Access Administrator', 'Reader'], 'Contributor excludes access management.', 'y1'),
+      Q('A security admin must manage role assignments but not modify resources. Assign:', 'User Access Administrator', ['Contributor', 'Reader', 'Virtual Machine Contributor'], 'Access management only.', 'y1'),
+      Q('A user is Contributor on a storage account but gets "permission denied" reading blobs with Entra auth. Why?', 'Contributor is control-plane only; a data role like Storage Blob Data Reader is needed', ['Contributor cannot see storage at all', 'Blobs require Owner', 'Storage needs a resource lock'], 'Data-plane roles are separate.', 'y1'),
+      Q('A role assigned at the subscription scope applies to:', 'All resource groups and resources in that subscription', ['Only the subscription object', 'Only new resources', 'Other subscriptions too'], 'Inheritance flows down.', 'y1'),
+      Q('Automatically add a missing Environment tag to new resources. Which Policy effect?', 'Modify', ['Audit', 'Deny', 'Disabled'], 'Modify adds/changes properties.', 'y1'),
+      Q('Deploy the Log Analytics agent automatically when a VM lacks it. Which Policy effect?', 'DeployIfNotExists', ['Deny', 'Append', 'Audit'], 'Deploys related resources; needs a managed identity.', 'y1'),
+      Q('Existing non-compliant resources must be fixed after assigning a Modify policy. Use:', 'A remediation task', ['A resource lock', 'An initiative only', 'A management group'], 'Remediation applies to existing resources.', 'y1'),
+      Q('Group 15 related policies so they can be assigned together. Create:', 'A policy initiative', ['A resource group', 'An action group', 'A dynamic group'], 'Initiatives are policy sets.', 'y1'),
+      Q('Users in the Sales department should join a group automatically based on their department attribute. Use:', 'A dynamic group (requires Entra ID P1)', ['An assigned group with manual adds', 'A resource lock', 'Azure Policy'], 'Attribute-based membership.', 'y1'),
+      Q('Help-desk staff in the Paris office should reset passwords only for Paris users. Use:', 'An administrative unit with a scoped role', ['Global Administrator for all', 'A resource lock', 'A management group'], 'Scope admin rights.', 'y1'),
+      Q('Users must be able to reset their own forgotten passwords. Enable:', 'Self-service password reset (SSPR)', ['Conditional Access only', 'Azure Policy', 'PIM'], 'SSPR.', 'y1'),
+      Q('Apply the same policies to 12 subscriptions at once. Assign them at the:', 'Management group that contains the subscriptions', ['Each resource individually', 'Tenant root only via tags', 'Resource group level in one subscription'], 'Management groups organize subscriptions.', 'y1'),
+      Q('Admins should get Global Administrator only when needed, with approval and time limits. Use:', 'Privileged Identity Management (PIM)', ['Dynamic groups', 'Resource locks', 'Azure Advisor'], 'Just-in-time privileged access.', 'y1'),
+      Q('Which Policy effect blocks creation of a non-compliant resource?', 'Deny', ['Audit', 'AuditIfNotExists', 'Modify'], 'Deny prevents the request.', 'y1')
+    ], labs: ['azx-rbac'] });
+
+  X.add('z06', { gateN: 20,
+    lesson: [{ h: 'Deep dive: storage access and data protection', html: '<ul><li>Access options: <b>Microsoft Entra ID + RBAC</b> (preferred), <b>shared access signatures</b> (SAS), <b>account keys</b> (full access — rotate them; two keys allow rotation).</li><li>SAS types: <b>user delegation SAS</b> (signed with Entra credentials — most secure, blob only), <b>service SAS</b>, <b>account SAS</b>. Tie service SAS to a <b>stored access policy</b> so you can revoke it centrally.</li><li>Network: storage firewall (selected networks), <b>service endpoints</b> (subnet-level route to the service\'s public endpoint), <b>private endpoints</b> (private IP in your VNet).</li><li>Data protection: <b>soft delete</b> (blobs, containers, file shares), <b>versioning</b>, <b>point-in-time restore</b>, <b>immutable storage</b> (time-based retention or legal hold, WORM), <b>object replication</b> (async copy between accounts).</li><li><b>Lifecycle management</b> rules move blobs Hot → Cool → Cold → Archive or delete by age.</li><li>Account types: <b>Standard general-purpose v2</b> (most scenarios), <b>Premium</b> block blobs / file shares / page blobs (low latency). Redundancy changes may require migration.</li></ul>' }],
+    qs: [
+      Q('Give a partner time-limited access to one container using the most secure SAS type. Use:', 'A user delegation SAS', ['An account SAS signed with the account key', 'Sharing the account key', 'Making the container public'], 'Signed with Entra credentials.', 'y2'),
+      Q('You must be able to revoke many issued service SAS tokens at once. Create them with:', 'A stored access policy', ['An account key rotation every minute', 'A resource lock', 'A management group'], 'Revoke via the policy.', 'y2'),
+      Q('An account key may have leaked. What should you do?', 'Regenerate (rotate) the key and update apps to the other key', ['Delete the storage account immediately', 'Add a tag', 'Nothing'], 'Rotate keys.', 'y2'),
+      Q('VMs must reach a storage account over a private IP in their VNet. Use:', 'A private endpoint', ['A service endpoint', 'A public SAS URL', 'A CDN'], 'Private IP in the VNet.', 'y2'),
+      Q('Recover a blob deleted 5 days ago. Which feature must have been enabled?', 'Blob soft delete', ['Lifecycle management', 'Object replication', 'Static website'], 'Retains deleted data for a period.', 'y2'),
+      Q('Records must be kept unchangeable for 7 years for regulators. Use:', 'Immutable storage with a time-based retention policy', ['Soft delete', 'Hot tier', 'Versioning only'], 'WORM storage.', 'y2'),
+      Q('Move blobs to Cool after 30 days and delete them after 365 days automatically. Use:', 'Lifecycle management rules', ['Object replication', 'Azure File Sync', 'AzCopy jobs'], 'Policy-based tiering.', 'y2'),
+      Q('Blobs should be copied asynchronously to a storage account in another region. Use:', 'Object replication', ['Soft delete', 'Stored access policy', 'Static website'], 'Async replication between accounts.', 'y2'),
+      Q('The most common storage account type for blobs, files, queues and tables is:', 'Standard general-purpose v2', ['Premium page blobs', 'Blob storage legacy only', 'Premium file shares'], 'GPv2 is the default.', 'y2'),
+      Q('A file share needs consistently low latency for a high-IOPS application. Choose:', 'A Premium file shares (FileStorage) account', ['Standard GPv2 with Archive tier', 'Cool tier', 'Table storage'], 'Premium for performance.', 'y2'),
+      Q('Allow access to a storage account only from one VNet subnet without private IPs. Configure:', 'A service endpoint on the subnet and storage firewall rule', ['A private endpoint', 'A public SAS', 'Azure DNS'], 'Service endpoints secure to the public endpoint.', 'y2'),
+      Q('Revert a container to how it was 3 days ago. Use:', 'Point-in-time restore for block blobs', ['Soft delete only', 'Lifecycle rules', 'AzCopy'], 'Restore a set of blobs to a prior time.', 'y2'),
+      Q('Which tool copies large data sets to Azure Files or Blob from the command line with resume support?', 'AzCopy', ['Azure Advisor', 'Network Watcher', 'Azure Policy'], 'Command-line transfer.', 'y2'),
+      Q('Users\' Windows servers keep a local cache of frequently used files from an Azure file share. Use:', 'Azure File Sync', ['Object replication', 'Data Box', 'Blob versioning'], 'Cloud tiering cache.', 'y2')
+    ], labs: ['azx-storage'] });
+
+  X.add('z07', { gateN: 20,
+    lesson: [{ h: 'Deep dive: availability, scale and App Service', html: '<ul><li>VM SLAs: single VM with Premium SSD (99.9%), <b>availability set</b> (99.95% — separate fault/update domains), <b>availability zones</b> (99.99% — separate datacenters).</li><li><b>VM Scale Sets</b>: identical VMs, autoscale on metrics or schedule, orchestration modes (Flexible / Uniform), automatic OS image upgrades.</li><li>Disks: Standard HDD, Standard SSD, Premium SSD, Premium SSD v2, Ultra Disk. <b>Azure Disk Encryption</b> / encryption at host; snapshots and images.</li><li><b>App Service plans</b> decide features: <b>deployment slots</b> and autoscale need <b>Standard</b> or higher; slot <b>swap</b> gives near-zero-downtime releases; custom domains and TLS; VNet integration.</li><li>Containers: <b>ACI</b> (single containers), <b>Azure Container Apps</b> (serverless microservices with scale to zero), <b>AKS</b> (full Kubernetes), <b>Azure Container Registry</b> (images).</li><li>IaC: ARM template sections (parameters, variables, resources, outputs); Bicep compiles to ARM; deployment modes <b>incremental</b> (default) vs <b>complete</b> (deletes resources not in the template).</li></ul>' }],
+    qs: [
+      Q('Two VMs must achieve the highest VM SLA by surviving a datacenter failure. Deploy them:', 'Across availability zones', ['In one availability set', 'As a single VM', 'In the same rack'], 'Zones give 99.99%.', 'y3'),
+      Q('VMs must be protected from rack failures and planned maintenance but zones are not available. Use:', 'An availability set', ['A single VM', 'A resource lock', 'A tag'], 'Fault and update domains.', 'y3'),
+      Q('A web tier must add VMs automatically when CPU exceeds 70%. Use:', 'A VM Scale Set with autoscale rules', ['An availability set', 'A larger single VM', 'Azure Bastion'], 'Scale sets autoscale.', 'y3'),
+      Q('Deployment slots for staging and swap require which App Service plan tier at minimum?', 'Standard', ['Free', 'Shared', 'Basic'], 'Slots start at Standard.', 'y3'),
+      Q('Release a new web app version with near-zero downtime and easy rollback. Use:', 'Deployment slot swap', ['Stopping the app and redeploying', 'Deleting the plan', 'A resource lock'], 'Swap staging into production.', 'y3'),
+      Q('Microservices should scale to zero when idle without managing Kubernetes. Use:', 'Azure Container Apps', ['AKS Standard', 'Azure Virtual Desktop', 'Availability sets'], 'Serverless containers.', 'y3'),
+      Q('Store private container images for AKS and Container Apps. Use:', 'Azure Container Registry', ['Azure Files', 'Azure DNS', 'Key Vault'], 'Private image registry.', 'y3'),
+      Q('An ARM deployment in Complete mode will:', 'Delete resources in the resource group that are not in the template', ['Only add resources', 'Ignore existing resources', 'Deploy to every subscription'], 'Complete mode removes extras — be careful.', 'y3'),
+      Q('Which language compiles to ARM JSON with simpler syntax?', 'Bicep', ['KQL', 'YAML pipelines', 'PowerShell DSC only'], 'Bicep → ARM.', 'y3'),
+      Q('A database VM needs the highest disk IOPS and sub-millisecond latency. Choose:', 'Ultra Disk (or Premium SSD v2)', ['Standard HDD', 'Standard SSD', 'Archive storage'], 'Top disk performance.', 'y3'),
+      Q('Resize a VM to a bigger size that isn\'t available on its current hardware cluster. What happens?', 'The VM must be deallocated (stopped) first, then resized', ['It resizes live without restart', 'It is deleted', 'It moves regions'], 'Some resizes need deallocation.', 'y3'),
+      Q('Move a VM to another resource group. Is this possible?', 'Yes — resources can be moved between resource groups (and subscriptions) with supported move operations', ['No, never', 'Only by deleting it', 'Only with a support ticket'], 'Resource move is supported for most types.', 'y3'),
+      Q('Run a one-off containerized job quickly with per-second billing. Use:', 'Azure Container Instances', ['AKS cluster', 'VM Scale Set', 'App Service Free tier'], 'Simple container execution.', 'y3'),
+      Q('App Service must reach a database inside a VNet privately. Configure:', 'VNet integration (and a private endpoint on the database)', ['A public IP on the database', 'A resource lock', 'Azure CDN'], 'Outbound into the VNet.', 'y3')
+    ], labs: ['azx-compute'] });
+
+  X.add('z08', { gateN: 20,
+    lesson: [{ h: 'Deep dive: NSG rules, routing and load balancing', html: '<ul><li><b>NSG rules</b>: priority 100–4096, <b>lower number evaluated first</b>, first match wins. Default rules (65000+) allow VNet-to-VNet traffic and Azure Load Balancer probes, deny all other inbound; allow outbound to internet. NSGs can attach to subnets and NICs — inbound traffic must pass the subnet NSG <b>and</b> the NIC NSG.</li><li><b>Application security groups (ASGs)</b> let rules target "WebServers" instead of IPs. <b>Service tags</b> (Internet, VirtualNetwork, AzureLoadBalancer, Storage) replace IP lists.</li><li><b>User-defined routes</b> send traffic to a next hop (e.g. a firewall appliance — "virtual appliance"). Peering is <b>non-transitive</b>; <b>gateway transit</b> lets spokes use the hub\'s VPN gateway.</li><li>Load balancing: <b>Azure Load Balancer</b> (L4, regional), <b>Application Gateway</b> (L7, path routing, WAF, regional), <b>Front Door</b> (global L7 with CDN and WAF), <b>Traffic Manager</b> (DNS-based global routing).</li><li><b>Azure Bastion</b>: RDP/SSH from the portal over TLS with no public IPs on VMs. <b>Azure DNS private zones</b> for name resolution inside VNets.</li></ul>' }],
+    qs: [
+      Q('An NSG has "Allow 443 priority 200" and "Deny all priority 100" for the same traffic. Result?', 'Denied — priority 100 is evaluated first', ['Allowed — allow beats deny', 'Both apply', 'Depends on the source port'], 'Lowest number wins.', 'y4'),
+      Q('Traffic is allowed by the subnet NSG but denied by the NIC NSG. Result?', 'Denied — inbound must be allowed by both', ['Allowed — subnet wins', 'Allowed — NIC is ignored', 'Random'], 'Both layers must allow.', 'y4'),
+      Q('NSG rules should target "all web VMs" without maintaining IP lists. Use:', 'Application security groups', ['Route tables', 'Resource locks', 'DNS zones'], 'ASGs group NICs by role.', 'y4'),
+      Q('Allow inbound only from Azure Load Balancer health probes using a built-in label. Use the service tag:', 'AzureLoadBalancer', ['Internet', 'Storage', 'AzureCloud'], 'Service tags name Azure IP ranges.', 'y4'),
+      Q('All traffic from a spoke subnet to the internet must go through a firewall appliance. Configure:', 'A user-defined route with next hop type virtual appliance', ['An NSG allow rule', 'VNet peering only', 'A public IP on each VM'], 'UDR to the NVA.', 'y4'),
+      Q('Spokes peered to a hub must use the hub\'s VPN gateway to reach on-prem. Enable:', 'Gateway transit on the hub peering and use remote gateways on spokes', ['Transitive peering (not supported)', 'A second VPN gateway per spoke only', 'Azure Bastion'], 'Gateway transit.', 'y4'),
+      Q('Route web requests by URL path with a web application firewall in one region. Use:', 'Application Gateway with WAF', ['Azure Load Balancer', 'Traffic Manager', 'Azure DNS'], 'Regional L7.', 'y4'),
+      Q('A global web app needs edge acceleration, caching and WAF in front of multiple regions. Use:', 'Azure Front Door', ['Azure Load Balancer', 'Application Gateway only', 'NSGs'], 'Global L7 edge.', 'y4'),
+      Q('Distribute TCP traffic across VMs in one region at layer 4. Use:', 'Azure Load Balancer', ['Front Door', 'Traffic Manager', 'Application Gateway'], 'L4 regional.', 'y4'),
+      Q('Route users to the closest regional endpoint using DNS. Use:', 'Traffic Manager (performance routing)', ['Azure Load Balancer', 'NSG', 'VPN Gateway'], 'DNS-based routing.', 'y4'),
+      Q('Admins need RDP to VMs without exposing public IPs. Use:', 'Azure Bastion', ['Open 3389 to the internet', 'Traffic Manager', 'Azure DNS'], 'Browser-based secure access.', 'y4'),
+      Q('VMs in several VNets should resolve each other\'s names like db01.corp.internal. Use:', 'An Azure DNS private zone linked to the VNets', ['Public DNS zone', 'Hosts files only', 'Traffic Manager'], 'Private name resolution.', 'y4'),
+      Q('VNet A peers with B and B peers with C. Can A reach C by default?', 'No — peering is not transitive', ['Yes', 'Only for DNS', 'Only on port 443'], 'Use a hub with an NVA/firewall or direct peering.', 'y4'),
+      Q('Which is the default inbound behavior for traffic from the internet with only default NSG rules?', 'Denied (DenyAllInBound)', ['Allowed', 'Allowed on 80/443', 'Allowed for RDP'], 'Default inbound deny.', 'y4')
+    ], labs: ['azx-nsg'] });
+
+  X.add('z09', { gateN: 20,
+    lesson: [{ h: 'Deep dive: monitoring, troubleshooting and recovery tools', html: '<ul><li><b>Azure Monitor</b>: <b>metrics</b> (numeric, near real-time) vs <b>logs</b> (Log Analytics workspace, queried with <b>KQL</b>). <b>Diagnostic settings</b> send platform logs to a workspace, storage or Event Hubs. <b>VM insights</b> and the <b>Azure Monitor Agent</b> with data collection rules collect guest data.</li><li><b>Alerts</b>: metric, log (scheduled query), activity log alerts; <b>action groups</b> define who/what gets notified (email, SMS, webhook, Logic App, runbook). <b>Alert processing rules</b> suppress alerts during maintenance.</li><li><b>Network Watcher</b>: <b>IP flow verify</b> (is a packet allowed/denied and by which NSG rule?), <b>next hop</b> (where will traffic route?), <b>connection troubleshoot</b>, <b>NSG/VNet flow logs</b>, <b>packet capture</b>, topology.</li><li><b>Azure Backup</b> with a <b>Recovery Services vault</b>: backup policies (frequency, retention), soft delete for backups, file-level restore, cross-region restore. <b>Azure Site Recovery</b>: replicate VMs to another region and fail over (DR), with test failovers that don\'t affect production.</li></ul>' }],
+    qs: [
+      Q('A VM cannot be reached on port 443. Quickly find which NSG rule is blocking the packet. Use:', 'Network Watcher IP flow verify', ['Azure Advisor', 'Activity log only', 'Cost Management'], 'Shows allow/deny and the rule.', 'y5'),
+      Q('Traffic from a VM is going somewhere unexpected. Find the route being used. Use:', 'Network Watcher next hop', ['IP flow verify', 'Service Health', 'Azure Policy'], 'Shows next hop and route table.', 'y5'),
+      Q('Analyze which IPs connected to subnets over the last week. Enable:', 'NSG or VNet flow logs', ['Resource locks', 'Boot diagnostics only', 'Tags'], 'Flow logs record traffic.', 'y5'),
+      Q('Query VM performance logs across 200 machines with a query language. Use:', 'Log Analytics with KQL', ['Azure Advisor', 'AzCopy', 'Resource Graph Explorer only for costs'], 'KQL queries logs.', 'y5'),
+      Q('Platform logs from a Key Vault must be sent to a Log Analytics workspace. Configure:', 'A diagnostic setting on the Key Vault', ['A resource lock', 'An NSG', 'An action group'], 'Diagnostic settings route logs.', 'y5'),
+      Q('An alert should email the on-call team and call a webhook. Configure:', 'An action group', ['A management group', 'An ASG', 'A route table'], 'Action groups define notifications.', 'y5'),
+      Q('Suppress alert notifications during a planned weekend maintenance window. Use:', 'An alert processing rule', ['Delete the alerts', 'A resource lock', 'A new subscription'], 'Suppression rules.', 'y5'),
+      Q('Back up Azure VMs daily and keep backups 30 days. Use:', 'A Recovery Services vault with a backup policy', ['A storage account lifecycle rule', 'Azure Site Recovery only', 'Snapshots by hand'], 'Azure Backup policies.', 'y5'),
+      Q('Replicate VMs to another region and fail over during a regional disaster. Use:', 'Azure Site Recovery', ['Azure Backup only', 'Network Watcher', 'Azure Advisor'], 'DR replication.', 'y5'),
+      Q('Verify your DR plan without affecting production. Run:', 'A test failover in Azure Site Recovery', ['A real failover every week', 'Delete the primary VM', 'Nothing'], 'Test failovers use an isolated network.', 'y5'),
+      Q('Restore a single deleted file from a VM backup without restoring the whole VM. Use:', 'File-level (item-level) recovery', ['Full VM restore only', 'Site Recovery failover', 'Soft delete of storage'], 'Mount recovery points to copy files.', 'y5'),
+      Q('Who deleted a resource group yesterday? Check:', 'The Activity log', ['Metrics explorer', 'Boot diagnostics', 'NSG flow logs'], 'Control-plane operations are in the Activity log.', 'y5'),
+      Q('Collect guest OS logs and performance counters with the modern agent and rules. Use:', 'Azure Monitor Agent with data collection rules', ['Legacy agents only', 'Resource locks', 'Azure Bastion'], 'AMA + DCRs.', 'y5'),
+      Q('Malicious deletion of backups should still be recoverable for 14 days. Ensure:', 'Soft delete for backups is enabled in the vault', ['Backups are in the Archive tier', 'A tag is set', 'The vault is public'], 'Protects against ransomware deleting backups.', 'y5')
+    ], labs: ['azx-ops'] });
+
+  // ======================= Pro =======================
+  X.add('z11', {
+    lesson: [{ h: 'Deep dive: hub-and-spoke security engineering', html: '<ul><li><b>Hub</b> VNet holds shared services: <b>Azure Firewall</b> (stateful L3–L7 with threat intelligence, FQDN rules), VPN/ExpressRoute gateways, Bastion, DNS resolver. <b>Spokes</b> hold workloads, routed through the firewall with UDRs. <b>Azure Virtual WAN</b> automates this at scale.</li><li><b>Private Link</b> everywhere: private endpoints for PaaS plus private DNS zones; disable public network access.</li><li><b>DDoS Network Protection</b> for public IPs at the VNet level; <b>WAF</b> on Front Door/Application Gateway.</li><li>AZ-500 identity: <b>Conditional Access</b>, <b>PIM</b>, <b>Identity Protection</b> (risky sign-ins/users), managed identities, <b>Key Vault</b> (RBAC, soft delete, purge protection).</li><li>Detection: <b>Microsoft Defender for Cloud</b> (secure score, regulatory compliance, workload protection plans) and <b>Microsoft Sentinel</b> (SIEM/SOAR with analytics rules and playbooks).</li></ul>' }],
+    qs: [
+      Q('Filter outbound traffic from all spokes by FQDN with threat intelligence. Use:', 'Azure Firewall in the hub with UDRs from spokes', ['NSGs only', 'Azure DNS', 'Traffic Manager'], 'Central L7 filtering.'),
+      Q('Many branches and VNets need automated hub-and-spoke connectivity at global scale. Use:', 'Azure Virtual WAN', ['VNet peering mesh by hand', 'Bastion', 'Azure Advisor'], 'Managed hub networking.'),
+      Q('PaaS databases must only be reachable privately, with public access off. Use:', 'Private endpoints plus private DNS zones', ['Service tags', 'Public firewall rules', 'CDN'], 'Private Link.'),
+      Q('A Key Vault must not be permanently deleted even by an admin for the retention period. Enable:', 'Soft delete with purge protection', ['A tag', 'A ReadOnly lock only', 'Diagnostic settings'], 'Purge protection blocks permanent deletion.'),
+      Q('Detect sign-ins from leaked credentials and require password change automatically. Use:', 'Microsoft Entra ID Protection risk policies', ['Azure Advisor', 'Azure Policy', 'NSGs'], 'Risk-based policies.'),
+      Q('Correlate security events across Azure, Microsoft 365 and on-prem, then automate response. Use:', 'Microsoft Sentinel', ['Azure Monitor metrics only', 'Cost Management', 'Bastion'], 'Cloud-native SIEM/SOAR.'),
+      Q('Measure and improve security posture with a secure score. Use:', 'Microsoft Defender for Cloud', ['Azure Arc', 'Azure DNS', 'Storage Explorer'], 'CSPM.')
+    ], labs: ['azx-pro'] });
+
+  X.add('z12', {
+    lesson: [{ h: 'Deep dive: architecture decisions (AZ-305 style)', html: '<ul><li><b>Well-Architected</b> pillars: reliability, security, cost optimization, operational excellence, performance efficiency.</li><li><b>Landing zones</b> (Cloud Adoption Framework): management group hierarchy (Platform: identity, management, connectivity; Landing zones: corp, online; Sandbox; Decommissioned), policy-driven guardrails, subscription vending.</li><li>Data platform choices: <b>Azure SQL Database</b> (PaaS, single/elastic pools, Hyperscale), <b>SQL Managed Instance</b> (near-100% SQL Server compatibility for lift-and-shift), <b>Cosmos DB</b> (global multi-model NoSQL with tunable consistency), <b>Azure Database for PostgreSQL/MySQL</b>.</li><li>Integration: <b>Service Bus</b> (enterprise messaging, ordering, transactions), <b>Event Grid</b> (event routing), <b>Event Hubs</b> (high-throughput streaming), <b>Logic Apps</b> (workflows).</li><li>IaC & pipelines: Bicep modules, template specs, deployment stacks; GitHub Actions or Azure Pipelines with environments and approvals.</li><li>FinOps: reservations and savings plans, Azure Hybrid Benefit, right-sizing via Advisor, budgets, tagging and chargeback.</li></ul>' }],
+    qs: [
+      Q('Lift-and-shift a SQL Server with SQL Agent jobs and cross-database queries to PaaS. Choose:', 'Azure SQL Managed Instance', ['Azure SQL Database single', 'Cosmos DB', 'Table storage'], 'Near-full SQL Server compatibility.'),
+      Q('A globally distributed app needs single-digit ms reads/writes in multiple regions with tunable consistency. Choose:', 'Azure Cosmos DB', ['Azure SQL Database single region', 'Azure Files', 'Blob storage'], 'Global NoSQL.'),
+      Q('Ordered, transactional enterprise messages between services. Choose:', 'Azure Service Bus', ['Event Grid', 'Event Hubs', 'Blob storage'], 'Sessions, ordering, dead-lettering.'),
+      Q('React to blob-created events by triggering functions. Choose:', 'Azure Event Grid', ['Service Bus queues', 'Event Hubs Capture only', 'Azure Files'], 'Event routing.'),
+      Q('Ingest millions of telemetry events per second for streaming analytics. Choose:', 'Azure Event Hubs', ['Service Bus', 'Logic Apps', 'Azure DNS'], 'Big-data streaming.'),
+      Q('In a CAF landing zone, where should shared networking (hub, gateways) live?', 'A Connectivity subscription under the Platform management group', ['Every workload subscription', 'The Sandbox management group', 'A personal subscription'], 'Platform landing zone.'),
+      Q('Many SQL databases with unpredictable, varying usage should share resources cost-effectively. Use:', 'An Azure SQL elastic pool', ['One huge single database', 'Cosmos DB', 'Archive storage'], 'Pool resources across databases.'),
+      Q('Version and share approved Bicep/ARM templates across teams. Use:', 'Template specs (or a Bicep module registry)', ['Email attachments', 'Resource locks', 'Activity logs'], 'Reusable governed templates.')
+    ], labs: ['azx-arch'] });
+
+  // ======================= labs =======================
+  L['azx-benefits'] = { kind: 'match', title: 'Cloud concepts in AZ-900 words', sum: '10 scenarios → benefit or model',
+    brief: 'Name the cloud benefit, model or service type each scenario describes.',
+    options: ['High availability', 'Scalability (horizontal)', 'Scalability (vertical)', 'Elasticity', 'Cost predictability', 'Manageability of the cloud', 'Hybrid cloud', 'Private cloud', 'IaaS', 'PaaS', 'SaaS'],
+    items: [
+      { t: 'The app stays online during a hardware failure, backed by a 99.95% SLA.', a: 'High availability', why: 'Uptime.' },
+      { t: 'Add three more web servers during the sale.', a: 'Scalability (horizontal)', why: 'More instances.' },
+      { t: 'Give the database VM twice the memory.', a: 'Scalability (vertical)', why: 'Bigger instance.' },
+      { t: 'Capacity rises and falls automatically with traffic.', a: 'Elasticity', why: 'Automatic.' },
+      { t: 'Finance forecasts next quarter\'s cloud bill with confidence.', a: 'Cost predictability', why: 'Know the spend.' },
+      { t: 'Autoscale and templates manage resources for you.', a: 'Manageability of the cloud', why: 'Management of the environment.' },
+      { t: 'Keep the mainframe on-prem while web apps run in Azure, connected.', a: 'Hybrid cloud', why: 'Both together.' },
+      { t: 'Cloud infrastructure used exclusively by one organization.', a: 'Private cloud', why: 'Single tenant.' },
+      { t: 'You manage the OS on VMs; Microsoft manages hardware.', a: 'IaaS', why: 'Infrastructure.' },
+      { t: 'Developers deploy code; Azure manages OS and runtime.', a: 'PaaS', why: 'Platform.' },
+      { t: 'Staff use Microsoft 365 email.', a: 'SaaS', why: 'Software.' }
+    ], debrief: 'Most AZ-900 concept questions are about choosing the right word for a described scenario.' };
+  L['azx-redundancy'] = { kind: 'match', title: 'Storage redundancy and tiers', sum: 'Pick redundancy, tier or transfer tool',
+    brief: 'Choose the best option for each storage requirement.',
+    options: ['LRS', 'ZRS', 'GRS', 'GZRS', 'RA-GRS', 'Hot tier', 'Cool tier', 'Cold tier', 'Archive tier', 'AzCopy', 'Azure Data Box', 'Azure File Sync'],
+    items: [
+      { t: 'Cheapest redundancy for easily re-creatable test data.', a: 'LRS', why: 'One datacenter.' },
+      { t: 'Survive a zone outage; data must stay in one region.', a: 'ZRS', why: 'Zones, single region.' },
+      { t: 'Survive a regional disaster; no need to read from the secondary.', a: 'GRS', why: 'Paired region copy.' },
+      { t: 'Survive both zone and region failures.', a: 'GZRS', why: 'Zones + region.' },
+      { t: 'Users must still read data during a primary-region outage.', a: 'RA-GRS', why: 'Read-access secondary.' },
+      { t: 'Product images served constantly to a website.', a: 'Hot tier', why: 'Frequent access.' },
+      { t: 'Monthly reports read occasionally, kept at least 30 days.', a: 'Cool tier', why: 'Infrequent.' },
+      { t: 'Quarterly compliance exports kept at least 90 days, still online.', a: 'Cold tier', why: 'Rare, online.' },
+      { t: 'Seven-year legal archive; hours to retrieve is fine.', a: 'Archive tier', why: 'Offline, cheapest.' },
+      { t: 'Script a nightly copy of 2 TB to blob storage.', a: 'AzCopy', why: 'CLI transfer.' },
+      { t: 'Ship 120 TB from a site with a slow link.', a: 'Azure Data Box', why: 'Offline transfer.' },
+      { t: 'Cache an Azure file share on branch-office Windows servers.', a: 'Azure File Sync', why: 'Hybrid file caching.' }
+    ], debrief: 'Redundancy protects against what fails (disk, zone, region); tiers trade storage cost against access cost and latency.' };
+  L['azx-gov'] = { kind: 'match', title: 'Governance, monitoring and cost tools', sum: '12 needs → Azure tools',
+    brief: 'Pick the Azure tool for each need.',
+    options: ['Azure Policy', 'Resource lock', 'Tags', 'Management groups', 'Microsoft Purview', 'Service Trust Portal', 'Microsoft Defender for Cloud', 'Azure Advisor', 'Azure Service Health', 'Azure Monitor', 'Pricing calculator', 'TCO calculator'],
+    items: [
+      { t: 'Only allow resources in East US and West Europe.', a: 'Azure Policy', why: 'Enforce rules.' },
+      { t: 'Stop accidental deletion of the production network.', a: 'Resource lock', why: 'CanNotDelete.' },
+      { t: 'Report spending by department.', a: 'Tags', why: 'Metadata for cost.' },
+      { t: 'Apply governance to 20 subscriptions at once.', a: 'Management groups', why: 'Above subscriptions.' },
+      { t: 'Classify sensitive data across SQL, storage and on-prem file shares.', a: 'Microsoft Purview', why: 'Data governance.' },
+      { t: 'Download Microsoft\'s SOC 2 Type 2 report.', a: 'Service Trust Portal', why: 'Compliance docs.' },
+      { t: 'Improve the secure score and protect workloads in Azure and AWS.', a: 'Microsoft Defender for Cloud', why: 'CSPM + CWP.' },
+      { t: 'Get recommendations to shut down underused VMs.', a: 'Azure Advisor', why: 'Cost recommendations.' },
+      { t: 'Learn about planned maintenance affecting your VMs.', a: 'Azure Service Health', why: 'Personalized health.' },
+      { t: 'Alert when CPU exceeds 90% for 10 minutes.', a: 'Azure Monitor', why: 'Metrics and alerts.' },
+      { t: 'Estimate the monthly cost of five VMs and a database.', a: 'Pricing calculator', why: 'Azure estimate.' },
+      { t: 'Show leadership on-prem vs Azure cost over 5 years.', a: 'TCO calculator', why: 'Total cost of ownership.' }
+    ], debrief: 'Policy enforces, locks protect, tags label, management groups scope, Purview governs data, Advisor recommends, Service Health informs, Monitor watches.' };
+  L['azx-rbac'] = { kind: 'match', title: 'RBAC roles and Policy effects', sum: 'Pick the role or effect',
+    brief: 'Choose the least-privilege built-in role or the right Azure Policy effect.',
+    options: ['Owner', 'Contributor', 'Reader', 'User Access Administrator', 'Virtual Machine Contributor', 'Storage Blob Data Reader', 'Deny', 'Audit', 'Modify', 'DeployIfNotExists'],
+    items: [
+      { t: 'An auditor must view all resources but change nothing.', a: 'Reader', why: 'View only.' },
+      { t: 'A developer manages everything in the RG but cannot grant access.', a: 'Contributor', why: 'No access management.' },
+      { t: 'The team lead must manage resources AND grant others access in the RG.', a: 'Owner', why: 'Full control including access.' },
+      { t: 'An identity admin manages role assignments only.', a: 'User Access Administrator', why: 'Access only.' },
+      { t: 'Operators manage VMs but not the VNet or storage they use.', a: 'Virtual Machine Contributor', why: 'VM-scoped role.' },
+      { t: 'An app reads blobs using its managed identity.', a: 'Storage Blob Data Reader', why: 'Data-plane role.' },
+      { t: 'Block creation of VMs larger than approved sizes.', a: 'Deny', why: 'Prevent.' },
+      { t: 'Report storage accounts that allow public blob access, without blocking.', a: 'Audit', why: 'Report only.' },
+      { t: 'Add an Owner tag inherited from the resource group.', a: 'Modify', why: 'Change properties.' },
+      { t: 'Turn on diagnostic settings wherever they are missing.', a: 'DeployIfNotExists', why: 'Deploy missing config.' }
+    ], debrief: 'Owner > Contributor > Reader; UAA manages access only; data roles for data; Policy effects deny, audit, modify or deploy.' };
+  L['azx-storage'] = { kind: 'match', title: 'Secure and protect storage', sum: 'SAS, network and data protection choices',
+    brief: 'Choose the storage feature that meets each requirement.',
+    options: ['User delegation SAS', 'Stored access policy', 'Rotate account keys', 'Private endpoint', 'Service endpoint', 'Soft delete', 'Versioning', 'Immutable storage', 'Lifecycle management', 'Object replication'],
+    items: [
+      { t: 'A partner needs 24 hours of read access to one container, signed with Entra credentials.', a: 'User delegation SAS', why: 'Most secure SAS.' },
+      { t: 'Be able to revoke all SAS tokens handed to a vendor in one step.', a: 'Stored access policy', why: 'Central revocation.' },
+      { t: 'A key was accidentally committed to a public repo.', a: 'Rotate account keys', why: 'Invalidate the key.' },
+      { t: 'Storage reachable only on a private IP from the VNet.', a: 'Private endpoint', why: 'Private Link.' },
+      { t: 'Only one subnet may reach the storage account\'s public endpoint.', a: 'Service endpoint', why: 'Subnet-based access.' },
+      { t: 'Recover blobs deleted by mistake within 14 days.', a: 'Soft delete', why: 'Retain deletions.' },
+      { t: 'Restore the previous version of an overwritten file.', a: 'Versioning', why: 'Keeps prior versions.' },
+      { t: 'Legal hold: documents must not be modified or deleted.', a: 'Immutable storage', why: 'WORM.' },
+      { t: 'Move logs to Archive after 90 days, delete after 2 years.', a: 'Lifecycle management', why: 'Automated tiering.' },
+      { t: 'Asynchronously copy blobs to another region\'s account.', a: 'Object replication', why: 'Cross-account copy.' }
+    ], debrief: 'Prefer Entra + RBAC, use SAS carefully, go private for networking, and layer soft delete, versioning and immutability for protection.' };
+  L['azx-compute'] = { kind: 'match', title: 'Compute and availability decisions', sum: '10 AZ-104 compute choices',
+    brief: 'Choose the best option for each requirement.',
+    options: ['Availability zones', 'Availability set', 'VM Scale Set with autoscale', 'Deployment slots (Standard plan)', 'Azure Container Apps', 'Azure Container Instances', 'AKS', 'Azure Container Registry', 'Bicep', 'Complete deployment mode', 'Ultra Disk'],
+    items: [
+      { t: 'Highest VM SLA: survive a datacenter failure.', a: 'Availability zones', why: '99.99%.' },
+      { t: 'Protect VMs from rack failures in a region without zones.', a: 'Availability set', why: '99.95%.' },
+      { t: 'Add VMs automatically under load and remove them at night.', a: 'VM Scale Set with autoscale', why: 'Scale out/in.' },
+      { t: 'Test a release in staging, then swap into production instantly.', a: 'Deployment slots (Standard plan)', why: 'Swap.' },
+      { t: 'Event-driven microservices that scale to zero, no cluster management.', a: 'Azure Container Apps', why: 'Serverless containers.' },
+      { t: 'Run one container for a 10-minute data job.', a: 'Azure Container Instances', why: 'Simple, per-second.' },
+      { t: 'Full Kubernetes control with custom operators.', a: 'AKS', why: 'Managed Kubernetes.' },
+      { t: 'Private repository for container images.', a: 'Azure Container Registry', why: 'Image registry.' },
+      { t: 'Readable IaC that compiles to ARM templates.', a: 'Bicep', why: 'ARM DSL.' },
+      { t: 'Make the resource group match the template exactly, removing extras.', a: 'Complete deployment mode', why: 'Deletes resources not in template.' },
+      { t: 'SAP HANA needs the highest disk IOPS and lowest latency.', a: 'Ultra Disk', why: 'Top performance.' }
+    ], debrief: 'Availability scope decides SLA, workload shape decides compute, and IaC mode decides what happens to resources not in the template.' };
+  L['azx-nsg'] = { kind: 'acl', title: 'NSG rules by priority', sum: 'Build an NSG that passes 7 tests', rows: 4, maxRules: 4,
+    brief: 'Write inbound rules for the web subnet\'s NSG. Rows are evaluated in order like NSG priorities (top row = lowest priority number = evaluated first). After your rules, the default <b>DenyAllInBound</b> applies. Requirements:<ol><li>Anyone may reach the <b>web VM</b> on HTTPS 443.</li><li>Only the <b>Bastion subnet</b> may reach the web VM on RDP 3389.</li><li>The <b>app subnet</b> may reach the web VM on TCP 8080.</li><li>Everything else is denied.</li></ol>',
+    nets: [['0.0.0.0/0', 'Internet'], ['10.0.1.4', 'Web VM'], ['10.0.2.0/24', 'App subnet'], ['10.0.250.0/26', 'AzureBastionSubnet']],
+    tests: [
+      { name: 'Internet → web 443', src: '198.51.100.20', dst: '10.0.1.4', proto: 'TCP', port: 443, expect: 'ALLOW' },
+      { name: 'Internet → web RDP', src: '198.51.100.20', dst: '10.0.1.4', proto: 'TCP', port: 3389, expect: 'DENY' },
+      { name: 'Bastion → web RDP', src: '10.0.250.5', dst: '10.0.1.4', proto: 'TCP', port: 3389, expect: 'ALLOW' },
+      { name: 'App subnet → web 8080', src: '10.0.2.17', dst: '10.0.1.4', proto: 'TCP', port: 8080, expect: 'ALLOW' },
+      { name: 'Internet → web 8080', src: '198.51.100.20', dst: '10.0.1.4', proto: 'TCP', port: 8080, expect: 'DENY' },
+      { name: 'App subnet → web RDP', src: '10.0.2.17', dst: '10.0.1.4', proto: 'TCP', port: 3389, expect: 'DENY' },
+      { name: 'Internet → web HTTP 80', src: '198.51.100.20', dst: '10.0.1.4', proto: 'TCP', port: 80, expect: 'DENY' }
+    ],
+    solution: [{ src: '0.0.0.0/0', dst: '10.0.1.4', proto: 'TCP', port: '443', act: 'ALLOW' }, { src: '10.0.250.0/26', dst: '10.0.1.4', proto: 'TCP', port: '3389', act: 'ALLOW' }, { src: '10.0.2.0/24', dst: '10.0.1.4', proto: 'TCP', port: '8080', act: 'ALLOW' }],
+    hints: ['Three allow rules are enough: DenyAllInBound handles everything else.', 'RDP rule source = the Bastion subnet range, never the internet.', 'In real Azure you would use the Internet service tag and an ASG for the web VMs.'],
+    debrief: 'Lowest priority number first, first match wins, default deny last. In production, prefer service tags and ASGs over raw IP addresses.' };
+  L['azx-ops'] = { kind: 'match', title: 'Monitor, troubleshoot and recover', sum: '12 operations tasks → tools',
+    brief: 'Pick the Azure tool or feature for each operations task.',
+    options: ['IP flow verify', 'Next hop', 'Connection troubleshoot', 'Flow logs', 'Log Analytics (KQL)', 'Diagnostic settings', 'Action group', 'Alert processing rule', 'Activity log', 'Recovery Services vault backup', 'Azure Site Recovery', 'File-level recovery'],
+    items: [
+      { t: 'Which NSG rule is dropping inbound 443 to vm1?', a: 'IP flow verify', why: 'Allow/deny + rule.' },
+      { t: 'Why does traffic to 10.5.0.0/16 go to the firewall?', a: 'Next hop', why: 'Route lookup.' },
+      { t: 'Test end-to-end connectivity from vm1 to a SQL server on 1433.', a: 'Connection troubleshoot', why: 'Path and latency test.' },
+      { t: 'Record all traffic accepted and denied in a subnet for a month.', a: 'Flow logs', why: 'Traffic records.' },
+      { t: 'Query error events across all VMs from the last 24 hours.', a: 'Log Analytics (KQL)', why: 'Log queries.' },
+      { t: 'Send App Service logs to the workspace.', a: 'Diagnostic settings', why: 'Route platform logs.' },
+      { t: 'Text the on-call engineer when the alert fires.', a: 'Action group', why: 'Notification targets.' },
+      { t: 'Silence alerts during Saturday\'s patch window.', a: 'Alert processing rule', why: 'Suppression.' },
+      { t: 'Find who stopped the production VM at 2 AM.', a: 'Activity log', why: 'Control-plane audit.' },
+      { t: 'Daily VM backups kept for 90 days.', a: 'Recovery Services vault backup', why: 'Backup policy.' },
+      { t: 'Fail VMs over to another region during a disaster.', a: 'Azure Site Recovery', why: 'DR replication.' },
+      { t: 'Restore one deleted spreadsheet from last night\'s VM backup.', a: 'File-level recovery', why: 'Item-level restore.' }
+    ], debrief: 'Network Watcher answers "is it allowed, where does it go, can it connect"; Monitor watches and alerts; Backup and Site Recovery restore.' };
+  L['azx-pro'] = { kind: 'match', title: 'Azure network & security engineering', sum: 'AZ-700 / AZ-500 decisions',
+    brief: 'Pick the service for each professional-level requirement.',
+    options: ['Azure Firewall', 'Azure Virtual WAN', 'Private endpoints + private DNS zones', 'DDoS Network Protection', 'Key Vault purge protection', 'Privileged Identity Management', 'Entra ID Protection', 'Microsoft Sentinel', 'Defender for Cloud'],
+    items: [
+      { t: 'Centrally filter spoke egress by FQDN and threat intelligence.', a: 'Azure Firewall', why: 'Stateful L3–L7 firewall.' },
+      { t: 'Connect 300 branches and 40 VNets globally with managed hubs.', a: 'Azure Virtual WAN', why: 'Managed hub networking.' },
+      { t: 'Reach Azure SQL and Storage only over private IPs with correct name resolution.', a: 'Private endpoints + private DNS zones', why: 'Private Link + DNS.' },
+      { t: 'Protect public IPs from volumetric attacks with cost protection and rapid response.', a: 'DDoS Network Protection', why: 'Enhanced DDoS mitigation.' },
+      { t: 'Deleted secrets must stay recoverable — nobody may purge them before the retention period ends.', a: 'Key Vault purge protection', why: 'Blocks permanent deletion.' },
+      { t: 'Admin roles activated just in time with approval and MFA.', a: 'Privileged Identity Management', why: 'PIM.' },
+      { t: 'Block sign-ins flagged as high risk.', a: 'Entra ID Protection', why: 'Risk-based policy.' },
+      { t: 'SIEM correlation and automated playbooks across clouds.', a: 'Microsoft Sentinel', why: 'SIEM/SOAR.' },
+      { t: 'Secure score and regulatory compliance dashboards.', a: 'Defender for Cloud', why: 'CSPM.' }
+    ], debrief: 'Hub firewall + Private Link for the network, PIM + Identity Protection for identities, Defender + Sentinel for detection.' };
+  L['azx-arch'] = { kind: 'match', title: 'Azure architecture choices', sum: 'Data and integration services (AZ-305)',
+    brief: 'Choose the best Azure service for each design requirement.',
+    options: ['Azure SQL Database', 'Azure SQL Managed Instance', 'Azure SQL elastic pool', 'Azure Cosmos DB', 'Azure Database for PostgreSQL', 'Service Bus', 'Event Grid', 'Event Hubs', 'Logic Apps'],
+    items: [
+      { t: 'A new cloud-native relational app with minimal administration.', a: 'Azure SQL Database', why: 'PaaS SQL.' },
+      { t: 'Lift-and-shift a SQL Server using SQL Agent and linked servers.', a: 'Azure SQL Managed Instance', why: 'Compatibility.' },
+      { t: '200 tenant databases with spiky, uneven usage.', a: 'Azure SQL elastic pool', why: 'Shared resources.' },
+      { t: 'Global multi-region writes with tunable consistency.', a: 'Azure Cosmos DB', why: 'Globally distributed NoSQL.' },
+      { t: 'An open-source app that requires PostgreSQL extensions.', a: 'Azure Database for PostgreSQL', why: 'Managed PostgreSQL.' },
+      { t: 'Ordered, transactional order messages with dead-lettering.', a: 'Service Bus', why: 'Enterprise messaging.' },
+      { t: 'Trigger processing whenever a blob is uploaded.', a: 'Event Grid', why: 'Event routing.' },
+      { t: 'Ingest 2 million IoT events per second.', a: 'Event Hubs', why: 'Streaming ingest.' },
+      { t: 'Low-code workflow that emails approvers and updates SharePoint.', a: 'Logic Apps', why: 'Integration workflows.' }
+    ], debrief: 'Compatibility vs cloud-native vs global for data; queue vs events vs streams vs workflows for integration.' };
 })();
 
 ;
