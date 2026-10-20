@@ -225,6 +225,23 @@ html,body{overflow-x:hidden}
 .rb{display:inline-block;font:600 10.5px var(--mono);padding:1px 7px;border-radius:999px;border:1px solid}
 .rb.ok{color:var(--ok);border-color:rgba(61,220,132,.45);background:rgba(61,220,132,.08)}
 .rb.no{color:var(--bad);border-color:rgba(242,85,90,.45);background:rgba(242,85,90,.08)}
+/* ---- PBQ labs ---- */
+.pbq-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg2);margin:6px 0}
+.pbq-row .it{flex:1 1 220px;font-size:.92rem}
+.pbq-row select,.pbq input.num,.acl select,.acl input{background:var(--panel);color:var(--text);border:1px solid var(--line2);border-radius:8px;padding:8px;font-size:16px;max-width:100%}
+.pbq-row.ok{border-color:rgba(61,220,132,.55)}
+.pbq-row.bad{border-color:rgba(255,92,108,.6)}
+.ord{display:flex;gap:8px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg2);margin:6px 0}
+.ord .n{font:700 13px var(--mono);color:var(--acc);flex:0 0 22px}
+.ord .t{flex:1}
+.ord button{min-width:40px}
+.acl{width:100%;border-collapse:collapse;font-size:.85rem}
+.acl td,.acl th{border-bottom:1px solid var(--line);padding:6px 4px;text-align:left;vertical-align:middle}
+.acl select,.acl input{width:100%;font-size:15px;padding:6px}
+.flow{font:12px var(--mono);padding:6px 8px;border-radius:8px;margin:4px 0;background:var(--bg2);border:1px solid var(--line)}
+.flow.ok{border-color:rgba(61,220,132,.55)}.flow.bad{border-color:rgba(255,92,108,.6)}
+.reftable{width:100%;border-collapse:collapse;font-size:.85rem}.reftable td,.reftable th{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-align:top}
+.reftable th{color:var(--acc);font-weight:600}
 
 :root{--acc:#60a5fa;--acc2:#3b82f6;--accInk:#04122b}
 
@@ -233,7 +250,7 @@ html,body{overflow-x:hidden}
 <body>
 <noscript>This study app needs JavaScript enabled.</noscript>
 <script>
-/* build ba98686c39 */
+/* build 497b5364b9 */
 /* CloudSim — a small AWS CLI + Azure CLI simulator over a working cloud model.
    AWS: VPC, subnets, IGW, route tables, NAT, EIP, security groups, EC2, S3, IAM, SNS, CloudWatch.
    Azure: resource groups, locks, VNets, subnets, NSGs (priority rules), VMs, public IPs,
@@ -3360,6 +3377,378 @@ window.COURSE = {
 })();
 
 ;
+/* Depth packs: add lesson sections, questions, cards and labs to existing stages (runs before the engine). */
+window.X = {
+  add: function (id, o) {
+    var s = COURSE.stages.filter(function (x) { return x.id === id; })[0];
+    if (!s) throw new Error('X.add: no stage ' + id);
+    if (o.lesson) s.lesson = (s.lesson || []).concat(o.lesson);
+    if (o.qs) s.qs = (s.qs || []).concat(o.qs);
+    if (o.cards) s.cards = (s.cards || []).concat(o.cards);
+    if (o.labs) s.labs = (s.labs || []).concat(o.labs);
+    if (o.gateN) s.gateN = o.gateN;
+  }
+};
+
+;
+/* Google Cloud depth pack: Cloud Digital Leader, Generative AI Leader, Associate Cloud Engineer, Professional ML Engineer */
+(function () {
+  var Q = window.Q, X = window.X, L = COURSE.labs;
+
+  // ======================= Cloud Digital Leader =======================
+  X.add('gc1', { gateN: 20,
+    lesson: [
+      { h: 'Deep dive: the resource hierarchy and why it matters', html: '<p>Everything in Google Cloud sits in a tree: <b>Organization</b> (your company, tied to a Cloud Identity or Workspace domain) → <b>Folders</b> (departments, environments) → <b>Projects</b> (the unit of billing, quotas and API enablement) → <b>resources</b> (VMs, buckets, datasets).</p><ul><li><b>Policies inherit downward.</b> An IAM role granted on a folder applies to every project under it. An organization policy (for example "resources may only be created in EU regions") set at the top constrains everything below.</li><li><b>Projects are isolation boundaries</b>: separate projects for prod and dev keep permissions, budgets and quotas separate.</li><li><b>Billing accounts</b> pay for projects; one billing account can pay for many projects.</li><li><b>Labels</b> (key:value tags) on resources let finance break costs down by team or app.</li></ul><div class="callout trap"><b class="k">Exam trap</b>"Least effort way to apply a policy to 40 projects" → set it once on the parent folder or organization, not 40 times.</div>' },
+      { h: 'Deep dive: choosing compute by how much you want to manage', html: '<table><tr><th>You manage…</th><th>Service</th><th>Good fit</th></tr><tr><td>OS, runtime, app</td><td><b>Compute Engine</b></td><td>Lift-and-shift, custom OS, licensed software, GPUs</td></tr><tr><td>Containers + cluster config</td><td><b>GKE Standard</b></td><td>Many microservices, portability, fine control</td></tr><tr><td>Just containers (Google runs nodes)</td><td><b>GKE Autopilot</b></td><td>Kubernetes without node management</td></tr><tr><td>One container image</td><td><b>Cloud Run</b></td><td>Stateless HTTP APIs, jobs, scale to zero, pay per use</td></tr><tr><td>Just code</td><td><b>App Engine</b> / <b>Cloud Run functions</b></td><td>Web apps / event-driven snippets</td></tr></table><p>The further right/down you go, the less operational work, the faster you ship — and the less control you have. Digital Leader questions are almost always "which option reduces operational overhead while meeting the need?"</p>' },
+      { h: 'Deep dive: storage and database decision guide', html: '<ul><li><b>Cloud Storage</b> (objects): images, backups, data lakes. Classes by access frequency with <b>minimum storage durations</b>: Standard (none), <b>Nearline 30 days</b>, <b>Coldline 90 days</b>, <b>Archive 365 days</b>. Colder = cheaper to store, pricier to read.</li><li><b>Relational, regional</b>: <b>Cloud SQL</b> (MySQL, PostgreSQL, SQL Server). High-performance PostgreSQL-compatible: <b>AlloyDB</b>.</li><li><b>Relational, global scale, strong consistency</b>: <b>Spanner</b> (up to 99.999% availability multi-region).</li><li><b>NoSQL</b>: <b>Firestore</b> (documents, mobile/web apps), <b>Bigtable</b> (wide-column, massive throughput: IoT, time series, ad tech).</li><li><b>Analytics</b>: <b>BigQuery</b> — a serverless warehouse, not a transactional database.</li><li><b>Cache</b>: <b>Memorystore</b> (Redis/Memcached).</li></ul><p>Migration language: <b>rehost</b> (lift and shift), <b>replatform</b> (lift and optimize, e.g. move the DB to Cloud SQL), <b>refactor</b> (re-architect to containers/serverless), <b>retire</b>, <b>retain</b>.</p>' }
+    ],
+    qs: [
+      Q('A company wants one IAM policy to apply automatically to all 30 projects in its Finance department. Where should it be set?', 'On the Finance folder', ['On each project individually', 'On every VM', 'In the billing account'], 'Policies inherit down the hierarchy; a folder covers every project beneath it.', 'd1'),
+      Q('What is the main unit for billing, quotas and enabling APIs in Google Cloud?', 'The project', ['The organization', 'The zone', 'The VPC'], 'Projects hold resources and are linked to a billing account.', 'd1'),
+      Q('Finance wants cloud costs broken down by application team. The simplest built-in mechanism is:', 'Labels on resources', ['Separate organizations per team', 'Firewall rules', 'Service accounts'], 'Labels appear in billing exports and reports.', 'd5'),
+      Q('A retailer must move 200 VMs quickly with minimal changes. Which migration approach fits?', 'Rehost (lift and shift) to Compute Engine', ['Refactor everything into microservices first', 'Rebuild on App Engine', 'Retire the workloads'], 'Rehosting is the fastest, least-change path.', 'd2'),
+      Q('A team wants Kubernetes but does not want to manage nodes at all. Which option?', 'GKE Autopilot', ['GKE Standard', 'Compute Engine', 'Bare Metal Solution'], 'Autopilot runs and scales nodes for you.', 'd2'),
+      Q('Which option gives the most control over the operating system?', 'Compute Engine', ['Cloud Run', 'App Engine', 'Cloud Run functions'], 'IaaS VMs: you manage the OS.', 'd2'),
+      Q('Data must be kept for 7 years for compliance and is almost never read. Cheapest Cloud Storage class?', 'Archive', ['Standard', 'Nearline', 'Coldline'], 'Archive is cheapest to store, with a 365-day minimum.', 'd2'),
+      Q('Backups read about once a month. Which storage class is designed for that pattern?', 'Nearline', ['Archive', 'Standard', 'Coldline'], 'Nearline targets roughly monthly access (30-day minimum).', 'd2'),
+      Q('A mobile app needs a flexible, document-based database that syncs to clients. Choose:', 'Firestore', ['Bigtable', 'Cloud SQL', 'BigQuery'], 'Firestore is a document NoSQL database built for app development.', 'd2'),
+      Q('An application needs a PostgreSQL-compatible database with very high transactional and analytical performance. Choose:', 'AlloyDB for PostgreSQL', ['Bigtable', 'Firestore', 'Cloud Storage'], 'AlloyDB is Google\'s high-performance PostgreSQL-compatible service.', 'd2'),
+      Q('Which service is a data warehouse, not a transactional database?', 'BigQuery', ['Cloud SQL', 'Spanner', 'Firestore'], 'BigQuery is for analytics.', 'd3'),
+      Q('Moving from on-premises CapEx to cloud mostly shifts spending to:', 'OpEx — pay for what you use', ['Larger up-front hardware purchases', 'Fixed 10-year contracts', 'No cost at all'], 'Cloud converts capital expense into operating expense.', 'd1'),
+      Q('Why might a company choose a multicloud strategy?', 'To avoid lock-in and use the best services from each provider', ['Because one cloud cannot run Linux', 'To remove the need for security', 'Because it is always cheaper'], 'Flexibility and avoiding dependence on one vendor.', 'd1'),
+      Q('Which service caches frequently read data in memory to speed up applications?', 'Memorystore', ['Archive storage', 'Cloud DNS', 'Dataproc'], 'Managed Redis/Memcached.', 'd2'),
+      Q('Which service runs VMware workloads natively in Google Cloud for a fast data-center exit?', 'Google Cloud VMware Engine', ['Cloud Run', 'App Engine', 'Firestore'], 'VMware Engine runs existing VMware environments unchanged.', 'd2'),
+      Q('Refactoring an application usually means:', 'Re-architecting it, e.g. into containers or serverless, to use cloud-native features', ['Copying VMs unchanged', 'Turning it off', 'Keeping it on-premises'], 'Refactor = change the architecture.', 'd2'),
+      Q('A company wants an API gateway to secure, publish and monetize its APIs. Choose:', 'Apigee', ['Cloud NAT', 'Cloud Storage', 'Bigtable'], 'Apigee is Google\'s API management platform.', 'd2'),
+      Q('Which statement about Cloud Run is true?', 'It runs stateless containers and can scale to zero when there are no requests', ['It requires managing Kubernetes nodes', 'It only runs Windows VMs', 'It is a data warehouse'], 'Serverless containers, pay per use.', 'd2')
+    ],
+    labs: ['gx-cdl-pick'] });
+
+  X.add('gc2', { gateN: 20,
+    lesson: [
+      { h: 'Deep dive: the data-to-AI pipeline', html: '<p>Most Digital Leader data questions follow one flow:</p><ol><li><b>Ingest</b> — <b>Pub/Sub</b> for streaming events; <b>Storage Transfer Service</b> / <b>Transfer Appliance</b> for bulk data; <b>Datastream</b> for change data capture from databases.</li><li><b>Process</b> — <b>Dataflow</b> (serverless Apache Beam, batch + streaming), <b>Dataproc</b> (managed Spark/Hadoop for existing jobs).</li><li><b>Store & analyze</b> — <b>BigQuery</b> (serverless SQL warehouse; BigQuery ML trains models with SQL).</li><li><b>Visualize</b> — <b>Looker</b> (governed BI, semantic model) or <b>Looker Studio</b> (free dashboards).</li><li><b>AI</b> — pre-trained APIs → BigQuery ML / AutoML → custom models on <b>Vertex AI</b>; Gemini for generative use cases.</li></ol><p><b>Structured</b> data has a fixed schema (tables); <b>unstructured</b> data (images, audio, documents) feeds AI APIs and Cloud Storage data lakes.</p>' },
+      { h: 'Deep dive: trust, security and shared fate', html: '<ul><li><b>Shared responsibility</b>: Google secures the infrastructure; you secure your data, identities, configurations. Google adds <b>"shared fate"</b> — secure-by-default blueprints and tools to help you do your part.</li><li><b>Defense in depth</b>: IAM (who), <b>VPC firewall rules</b> and <b>VPC Service Controls</b> (perimeters that stop data leaving managed services), <b>Cloud Armor</b> (WAF + DDoS at the edge), <b>Identity-Aware Proxy (IAP)</b> (zero-trust access to apps without a VPN — the BeyondCorp model).</li><li><b>Encryption</b> at rest and in transit by default; key options: Google-managed, <b>customer-managed keys (CMEK)</b> in Cloud KMS, or customer-supplied keys.</li><li><b>Security Command Center</b> — posture and threat findings across the org. <b>Assured Workloads</b> and data residency controls help with regulated workloads. <b>Cloud Audit Logs</b> record who did what.</li></ul>' },
+      { h: 'Deep dive: operations, reliability and cost', html: '<ul><li><b>SRE</b> ideas Google cares about: <b>SLI</b> (what you measure, e.g. latency), <b>SLO</b> (your target, e.g. 99.9% of requests under 300 ms), <b>SLA</b> (the contract with consequences), and the <b>error budget</b> (how much unreliability the SLO allows — spend it on shipping features).</li><li><b>Observability</b>: Cloud Monitoring, Cloud Logging, Cloud Trace, Error Reporting.</li><li><b>Cost</b>: on-demand, <b>sustained use discounts</b> (automatic on eligible VMs), <b>committed use discounts</b> (1 or 3 years), <b>Spot VMs</b> (deep discount, can be reclaimed), budgets and alerts, the <b>Pricing Calculator</b>, and billing export to BigQuery for analysis. <b>Quotas</b> cap usage to prevent runaway spend or abuse.</li><li><b>Sustainability</b>: Google publishes carbon data per region (Carbon Footprint) — choosing low-carbon regions is a valid answer to "reduce environmental impact".</li></ul>' }
+    ],
+    qs: [
+      Q('A company wants to analyze its cloud spending with SQL and build custom cost dashboards. Best approach?', 'Export billing data to BigQuery', ['Read invoices manually', 'Use Cloud NAT', 'Enable Spot VMs'], 'Billing export to BigQuery enables custom analysis.', 'd5'),
+      Q('An existing set of Apache Spark jobs must move to Google Cloud with minimal rewriting. Choose:', 'Dataproc', ['Dataflow', 'Firestore', 'Looker'], 'Dataproc runs Spark/Hadoop as a managed service.', 'd3'),
+      Q('Analysts want governed, consistent business metrics in dashboards across the company. Choose:', 'Looker', ['Pub/Sub', 'Cloud Storage', 'Memorystore'], 'Looker\'s semantic model defines metrics once for everyone.', 'd3'),
+      Q('A team wants to train a simple forecasting model using SQL where the data already lives. Choose:', 'BigQuery ML', ['Custom training on GPUs', 'Cloud Armor', 'Dataproc'], 'BigQuery ML trains models with SQL statements.', 'd3'),
+      Q('Which describes unstructured data?', 'Images, audio, PDFs and free text', ['A relational table with a fixed schema', 'A spreadsheet of numbers only', 'A CSV with typed columns'], 'Unstructured data has no fixed schema.', 'd3'),
+      Q('Employees need secure access to an internal web app from anywhere without a VPN, based on identity and device. Choose:', 'Identity-Aware Proxy (IAP)', ['Cloud NAT', 'Archive storage', 'Cloud CDN'], 'IAP implements BeyondCorp-style zero-trust access.', 'd4'),
+      Q('A regulated company must control and rotate its own encryption keys for data in Google Cloud. Use:', 'Customer-managed encryption keys (CMEK) in Cloud KMS', ['Default encryption only', 'Firewall rules', 'Labels'], 'CMEK puts key control with the customer.', 'd4'),
+      Q('To prevent data from being copied out of BigQuery and Cloud Storage to unauthorized projects, use:', 'VPC Service Controls', ['Cloud CDN', 'Sustained use discounts', 'Cloud Trace'], 'Service perimeters reduce data-exfiltration risk.', 'd4'),
+      Q('Google\'s "shared fate" model means Google:', 'Provides secure defaults, blueprints and tools to help customers secure their part', ['Takes legal responsibility for every customer misconfiguration', 'Removes the need for customer IAM', 'Only secures data centers'], 'Shared fate = active help beyond shared responsibility.', 'd4'),
+      Q('In SRE terms, a target such as "99.9% of requests succeed each month" is an:', 'SLO', ['SLI', 'SLA', 'Error budget'], 'The objective is the target; the SLI is the measurement.', 'd5'),
+      Q('If the SLO is 99.9% availability, the allowed 0.1% of failure is the:', 'Error budget', ['SLA penalty', 'Quota', 'SLI'], 'The error budget can be spent on change and risk.', 'd5'),
+      Q('A contract that promises refunds if availability falls below a level is an:', 'SLA', ['SLO', 'SLI', 'Error budget'], 'SLAs carry consequences.', 'd5'),
+      Q('Which pricing option gives a deep discount on VMs that can be stopped by Google at any time — good for fault-tolerant batch jobs?', 'Spot VMs', ['Committed use discounts', 'Sustained use discounts', 'Sole-tenant nodes'], 'Spot capacity is cheap but reclaimable.', 'd5'),
+      Q('A company wants to lower its carbon footprint in Google Cloud. A valid action is:', 'Choose regions with lower carbon intensity and review the Carbon Footprint report', ['Disable encryption', 'Use more VMs than needed', 'Avoid managed services'], 'Google publishes region carbon data for this purpose.', 'd5'),
+      Q('Which service ingests change data from an operational database into BigQuery continuously?', 'Datastream', ['Cloud Armor', 'Apigee', 'Memorystore'], 'Datastream provides serverless change data capture.', 'd3'),
+      Q('A team must move 500 TB from a site with slow internet. Best option?', 'Transfer Appliance', ['Email the files', 'Cloud DNS', 'Pub/Sub'], 'A physical appliance ships data when networks are too slow.', 'd3'),
+      Q('Which record of "who did what, where and when" helps auditors in Google Cloud?', 'Cloud Audit Logs', ['Cloud CDN logs only', 'Labels', 'Quotas'], 'Audit logs capture administrative and data access activity.', 'd4'),
+      Q('Quotas in Google Cloud primarily help to:', 'Prevent unexpected overuse and runaway costs', ['Encrypt data', 'Increase VM speed', 'Replace IAM'], 'Quotas cap resource consumption.', 'd5')
+    ],
+    labs: ['gx-cdl-ops'] });
+
+  // ======================= Generative AI Leader =======================
+  X.add('gl1', { gateN: 20,
+    lesson: [
+      { h: 'Deep dive: how a model generates text', html: '<ol><li>Your prompt is split into <b>tokens</b> (word pieces). Models have a <b>context window</b> — the maximum tokens of prompt + response they can consider at once.</li><li>The model predicts a probability for every possible next token and <b>samples</b> one, repeating until done.</li><li><b>Sampling settings</b> shape that choice: <b>temperature</b> (low = focused and repeatable, high = varied and creative), <b>top-k</b> (only consider the k most likely tokens), <b>top-p</b> (consider the smallest set whose probabilities add to p), and <b>max output tokens</b> (length cap).</li></ol><p><b>Embeddings</b> are numeric vectors capturing meaning; similar meanings land close together, which powers semantic search and RAG. <b>Multimodal</b> models accept and/or produce several types: text, images, audio, video, code.</p>' },
+      { h: 'Deep dive: the Google Cloud gen AI landscape', html: '<table><tr><th>Layer</th><th>What it is</th></tr><tr><td>Infrastructure</td><td>TPUs and GPUs that train and serve models</td></tr><tr><td>Models</td><td><b>Gemini</b> (multimodal), <b>Imagen</b> (images), <b>Veo</b> (video), <b>Gemma</b> (open models) — plus third-party and open models in <b>Model Garden</b></td></tr><tr><td>Platform</td><td><b>Vertex AI</b>: Vertex AI Studio (try prompts), tuning, evaluation, grounding, deployment, <b>Vertex AI Agent Builder</b> / Vertex AI Search for agents and enterprise search</td></tr><tr><td>Applications</td><td><b>Gemini for Google Workspace</b>, <b>Gemini Code Assist</b>, <b>Gemini Cloud Assist</b>, and enterprise agent/search products (Google Agentspace, now offered as part of Gemini Enterprise)</td></tr></table><p>Choose the layer by the business need: buy an application if it already does the job, build on the platform when you need customization with your data, and only go to custom models when nothing else fits.</p>' },
+      { h: 'Deep dive: machine learning vocabulary leaders must know', html: '<ul><li><b>AI</b> ⊃ <b>machine learning</b> (learns from data) ⊃ <b>deep learning</b> (neural networks) ⊃ generative AI / foundation models.</li><li><b>Supervised</b> learning uses labeled examples (spam/not spam); <b>unsupervised</b> finds structure in unlabeled data (clustering); <b>reinforcement learning</b> learns by reward.</li><li><b>Training</b> builds the model; <b>inference</b> uses it. <b>Fine-tuning</b> adapts a pretrained model with your examples.</li><li>Data quality decides model quality: accuracy, completeness, consistency, relevance, and freedom from harmful bias.</li></ul>' }
+    ],
+    qs: [
+      Q('A support bot must give consistent, factual answers. Which temperature setting fits best?', 'Low temperature', ['High temperature', 'Maximum temperature', 'Temperature does not matter'], 'Low temperature makes output focused and repeatable.', 'l1'),
+      Q('A marketing team wants many varied slogan ideas. Which setting helps?', 'A higher temperature', ['Temperature 0', 'Fewer output tokens', 'A smaller context window'], 'Higher temperature increases variety.', 'l1'),
+      Q('Top-p (nucleus) sampling limits choices to:', 'The smallest set of tokens whose probabilities add up to p', ['Exactly p tokens', 'Only the single most likely token', 'Tokens from the prompt only'], 'Top-p is a probability-mass cutoff.', 'l1'),
+      Q('The context window of a model is:', 'The maximum number of tokens it can consider at once (prompt plus response)', ['How long it was trained', 'The size of its user interface', 'The number of users it supports'], 'Exceeding it means content is dropped.', 'l1'),
+      Q('Which Google model family generates images from text?', 'Imagen', ['Gemma', 'BigQuery', 'Looker'], 'Imagen is Google\'s image generation model family.', 'l2'),
+      Q('Gemma is best described as:', 'Google\'s family of lightweight open models', ['A billing tool', 'A database', 'An image-only API'], 'Gemma models are open and can be self-hosted.', 'l2'),
+      Q('Where would a team quickly try prompts against Gemini models before building an app?', 'Vertex AI Studio', ['Cloud NAT', 'Cloud Storage Archive', 'Dataproc'], 'Vertex AI Studio is the prompt playground and design space.', 'l2'),
+      Q('Developers want an AI assistant in their IDE for code completion and explanation. Choose:', 'Gemini Code Assist', ['Gemini for Google Workspace', 'Imagen', 'Cloud Armor'], 'Code Assist targets developers.', 'l2'),
+      Q('A business needs AI help writing emails and summarizing documents for all staff, with no development. Best fit?', 'Gemini for Google Workspace', ['Custom model training on TPUs', 'Vertex AI Pipelines', 'Bigtable'], 'Buy the application when it already does the job.', 'l2'),
+      Q('Which hardware did Google design specifically to accelerate machine learning?', 'TPUs (Tensor Processing Units)', ['NICs', 'SSDs', 'HSMs'], 'TPUs are Google\'s ML accelerators.', 'l2'),
+      Q('Labeled examples like "email → spam / not spam" are used in:', 'Supervised learning', ['Unsupervised learning', 'Reinforcement learning', 'Inference only'], 'Supervised learning needs labels.', 'l1'),
+      Q('Grouping customers into segments without predefined labels is:', 'Unsupervised learning (clustering)', ['Supervised classification', 'Reinforcement learning', 'Prompt engineering'], 'No labels → unsupervised.', 'l1'),
+      Q('Semantic search that finds documents with similar meaning (not just matching words) relies on:', 'Embeddings', ['Temperature', 'Quotas', 'Labels'], 'Vectors close in space have similar meanings.', 'l1'),
+      Q('Which statement about data quality and AI is correct?', 'Inaccurate or biased data produces inaccurate or biased models', ['Models fix bad data automatically', 'More data always beats better data', 'Data quality only matters for images'], 'Garbage in, garbage out.', 'l1'),
+      Q('Model Garden in Vertex AI offers:', 'A catalog of Google, third-party and open models to choose from', ['A place to store backups', 'A firewall for models', 'A billing dashboard'], 'Choose the right model for the job.', 'l2'),
+      Q('Deep learning is a subset of:', 'Machine learning', ['Databases', 'Networking', 'Prompt engineering'], 'AI ⊃ ML ⊃ deep learning.', 'l1'),
+      Q('A leader asks why the bot gave a confident but wrong policy answer. The most accurate explanation is:', 'The model predicts likely text and can hallucinate when it lacks grounded facts', ['The model was hacked', 'Temperature was set to 0', 'Embeddings were disabled'], 'Generation is probabilistic; grounding reduces this.', 'l1'),
+      Q('Which product helps employees search across company apps and data and use agents, as an enterprise offering?', 'Google Agentspace / Gemini Enterprise', ['Cloud NAT', 'Cloud Spanner', 'Cloud Build'], 'Enterprise search and agents for employees.', 'l2')
+    ],
+    labs: ['gx-gail-terms'] });
+
+  X.add('gl2', { gateN: 20,
+    lesson: [
+      { h: 'Deep dive: the improvement ladder (cheapest first)', html: '<ol><li><b>Prompt engineering</b> — role, task, context, format, examples (few-shot), and asking for step-by-step reasoning. Minutes, almost free.</li><li><b>Grounding</b> — connect to trusted data at answer time: <b>grounding with Google Search</b> for public/fresh facts, or <b>your own data</b> through Vertex AI Search/RAG for private facts, with citations.</li><li><b>Tuning</b> — supervised tuning with your labeled examples to teach style, format or a specialized task; <b>distillation</b> transfers a big model\'s skill into a smaller, cheaper one.</li><li><b>Training from scratch</b> — rare, very expensive, only for unique needs.</li></ol><div class="callout trap"><b class="k">Exam trap</b>Need <b>current or private facts</b> → grounding/RAG, not tuning. Need a <b>consistent style or narrow skill</b> → tuning. Tuning does not reliably add fresh facts.</div>' },
+      { h: 'Deep dive: agents and how they act', html: '<p>An <b>agent</b> combines a model (reasoning) with <b>tools</b> (APIs, search, databases via function calling), <b>memory</b> and an orchestration loop: think → choose a tool → observe the result → repeat until the goal is met.</p><ul><li>Types you will see: conversational agents (customer service), workflow agents (multi-step business processes), and agents that coordinate other agents.</li><li>Guardrails: least-privilege tool access, human approval for consequential actions (refunds, payments, deletions), logging, and evaluation before launch.</li></ul>' },
+      { h: 'Deep dive: responsible, secure adoption', html: '<ul><li><b>Google\'s AI Principles</b> and the <b>Secure AI Framework (SAIF)</b> guide safe design: secure the data, models and pipelines; detect and respond to AI-specific threats (prompt injection, data poisoning, model theft).</li><li><b>Safety filters</b> in Vertex AI block harmful categories; <b>human review</b> covers high-impact outputs.</li><li><b>Privacy</b>: enterprise prompts and data on Vertex AI are not used to train Google\'s foundation models; apply data governance and access control.</li><li><b>Measure success</b> with business KPIs (time saved, resolution rate, revenue), not just model scores. Start with a high-value, low-risk use case, pilot, measure, then scale with change management and training.</li></ul>' }
+    ],
+    qs: [
+      Q('A chatbot must answer questions about yesterday\'s product price changes stored in internal documents. Best technique?', 'Grounding/RAG on the internal documents', ['Fine-tuning once a year', 'Raising the temperature', 'Training a model from scratch'], 'Current and private facts call for grounding.', 'l3'),
+      Q('A legal team needs every summary in an exact house format and tone; prompting gets close but not consistent. Next step?', 'Supervised tuning with examples of the desired output', ['Grounding with Google Search', 'Lowering the context window', 'Removing safety filters'], 'Tuning teaches style and format.', 'l3'),
+      Q('A model must answer questions about recent public news with citations. Use:', 'Grounding with Google Search', ['Distillation', 'Training from scratch', 'Top-k = 1'], 'Search grounding brings fresh public facts.', 'l3'),
+      Q('Distillation is used to:', 'Transfer a large model\'s capability into a smaller, cheaper, faster model', ['Encrypt prompts', 'Delete training data', 'Increase hallucination'], 'Smaller models cut cost and latency.', 'l3'),
+      Q('An agent decides to look up an order, then calls a refund API. Which capability lets it call the API?', 'Function calling / tool use', ['Embeddings', 'Temperature', 'Tokenization'], 'Tools let agents act.', 'l3'),
+      Q('Before an agent can issue refunds over $500, the best control is:', 'Require human approval for those actions', ['Raise the temperature', 'Give it admin access to everything', 'Disable logging'], 'Human in the loop for consequential actions.', 'l4'),
+      Q('Google\'s Secure AI Framework (SAIF) addresses:', 'Securing AI systems, data and models against AI-specific threats', ['Pricing discounts', 'Network cabling', 'Document formatting'], 'SAIF is Google\'s framework for secure AI.', 'l4'),
+      Q('A hidden instruction in a web page tries to make the model ignore its rules. This threat is:', 'Prompt injection', ['Data residency', 'Overfitting', 'Tokenization'], 'Untrusted content must be treated as data.', 'l4'),
+      Q('Attackers slip mislabeled examples into training data to skew a model. This is:', 'Data poisoning', ['Grounding', 'Distillation', 'Few-shot prompting'], 'Poisoning corrupts the training data.', 'l4'),
+      Q('The best measure of a gen AI pilot\'s success for leadership is:', 'Business KPIs such as time saved or resolution rate', ['The model\'s parameter count', 'How many tokens it used', 'How creative it sounded'], 'Tie AI to business value.', 'l4'),
+      Q('Which first use case is most sensible?', 'Drafting internal knowledge-base summaries reviewed by staff', ['Fully automated medical diagnoses with no review', 'Autonomous financial trading on day one', 'Replacing all customer contracts'], 'High value, low risk, human-reviewed.', 'l4'),
+      Q('Few-shot prompting means:', 'Including a few worked examples in the prompt', ['Training on a few GPUs', 'Using a few tokens only', 'Asking few questions'], 'Examples show the desired pattern.', 'l3'),
+      Q('Asking the model to "think through the steps before answering" mainly improves:', 'Multi-step reasoning tasks', ['Image resolution', 'Network latency', 'Billing accuracy'], 'Chain-of-thought helps reasoning.', 'l3'),
+      Q('Which is true of enterprise data used with Gemini on Vertex AI?', 'It is not used to train Google\'s foundation models', ['It becomes public', 'It trains every customer\'s model', 'It cannot be secured'], 'Enterprise data stays the customer\'s.', 'l4'),
+      Q('Why use the smallest model that meets quality requirements?', 'Lower cost and latency', ['Smaller models never hallucinate', 'It is required by law', 'Larger models cannot be grounded'], 'Right-size for cost and speed.', 'l4'),
+      Q('Safety filters in Vertex AI help by:', 'Blocking or flagging harmful content categories', ['Making answers longer', 'Removing the need for evaluation', 'Encrypting the model weights'], 'They are guardrails on content.', 'l4'),
+      Q('An agent that remembers a customer\'s earlier messages in the session is using:', 'Memory', ['Distillation', 'Quotas', 'Labels'], 'Memory carries context across steps.', 'l3'),
+      Q('To scale a successful gen AI pilot across the company, a leader should prioritize:', 'Change management, training and governance', ['Skipping evaluation', 'Removing human review everywhere', 'Building a new model from scratch'], 'People and process make adoption stick.', 'l4')
+    ],
+    labs: ['gx-gail-tech'] });
+
+  // ======================= Associate Cloud Engineer =======================
+  X.add('ge1', { gateN: 20,
+    lesson: [
+      { h: 'Deep dive: gcloud you should be able to type from memory', html: '<pre>gcloud init                                   # sign in, pick project/region\ngcloud config set project my-proj\ngcloud config set compute/zone us-central1-a\ngcloud config configurations create dev       # named configs for many projects\ngcloud services enable compute.googleapis.com # enable an API\n\ngcloud compute instances create web1 --zone=us-central1-a \\\n  --machine-type=e2-medium --image-family=debian-12 --image-project=debian-cloud \\\n  --tags=web --service-account=web-sa@my-proj.iam.gserviceaccount.com --scopes=cloud-platform\n\ngcloud storage buckets create gs://my-proj-logs --location=us-central1\ngcloud storage cp report.csv gs://my-proj-logs/\n\ngcloud projects add-iam-policy-binding my-proj \\\n  --member=user:dana@example.com --role=roles/storage.objectViewer\ngcloud iam service-accounts create web-sa --display-name="web app"</pre>' },
+      { h: 'Deep dive: IAM details the exam tests', html: '<ul><li><b>Principals</b>: Google accounts, groups (grant to groups, not people), service accounts, domains.</li><li><b>Predefined roles</b> to know: <code>roles/storage.objectViewer</code> (read objects), <code>roles/storage.objectAdmin</code>, <code>roles/compute.instanceAdmin.v1</code>, <code>roles/compute.networkAdmin</code>, <code>roles/iam.serviceAccountUser</code> (lets a user <i>run as</i> / attach a service account), <code>roles/bigquery.dataViewer</code> + <code>roles/bigquery.jobUser</code> (query data), <code>roles/logging.viewer</code>, <code>roles/run.invoker</code>.</li><li><b>Service account keys</b> are a risk; prefer attached service accounts, <b>Workload Identity</b> (GKE) or <b>Workload Identity Federation</b> (external workloads) — no long-lived keys.</li><li><b>Org policies</b> constrain <i>what</i> can be configured (allowed regions, no external IPs); IAM controls <i>who</i> can do it.</li><li><b>Cloud Audit Logs</b>: Admin Activity logs are always on; <b>Data Access</b> logs must be enabled for most services.</li></ul>' },
+      { h: 'Deep dive: compute and storage operations', html: '<ul><li><b>Instance templates</b> define a VM; <b>managed instance groups</b> use them for <b>autoscaling</b>, <b>autohealing</b> (health check recreates failed VMs) and rolling updates. <b>Regional MIGs</b> spread across zones for availability.</li><li>Disks: <b>Persistent Disk / Hyperdisk</b> (network block storage, survives VM deletion if configured), <b>Local SSD</b> (fastest, data lost when the VM stops). <b>Snapshots</b> are incremental backups; schedule them with snapshot schedules.</li><li><b>Cloud Storage</b>: Object Lifecycle Management (change class or delete by age), <b>object versioning</b> (recover overwritten files), <b>uniform bucket-level access</b> (IAM only, no ACLs), <b>signed URLs</b> (time-limited access without an account), retention policies and locks.</li><li><b>GKE</b>: <code>gcloud container clusters create-auto</code> (Autopilot) or <code>create</code> (Standard); then <code>gcloud container clusters get-credentials</code> and <code>kubectl</code>.</li></ul>' }
+    ],
+    qs: [
+      Q('A user must be able to attach the service account web-sa to new VMs they create. Which role do they need on that service account?', 'roles/iam.serviceAccountUser', ['roles/iam.serviceAccountKeyAdmin', 'roles/viewer', 'roles/storage.objectViewer'], 'Service Account User allows acting as / attaching the service account.', 'k5'),
+      Q('An analyst must run queries on a BigQuery dataset but not modify it. Grant:', 'roles/bigquery.dataViewer on the dataset and roles/bigquery.jobUser on the project', ['roles/owner', 'roles/bigquery.admin', 'roles/editor on the project'], 'Reading data plus permission to run jobs.', 'k5'),
+      Q('An app running outside Google Cloud (in another cloud) must call Google APIs without a long-lived key. Use:', 'Workload Identity Federation', ['A downloaded service account key', 'Basic Owner role', 'A signed URL'], 'Federation exchanges external identities for short-lived tokens.', 'k5'),
+      Q('You manage three projects and constantly switch settings. The cleanest approach is:', 'gcloud named configurations (gcloud config configurations create)', ['Reinstalling the SDK each time', 'Editing every command with --project only', 'Using separate laptops'], 'Named configurations hold project/region settings.', 'k1'),
+      Q('Company policy forbids creating resources outside the EU. Best enforcement?', 'An organization policy constraint on allowed resource locations', ['A firewall rule', 'An IAM Viewer role', 'A budget alert'], 'Org policies constrain configurations.', 'k1'),
+      Q('Auditors need logs of who read objects in a sensitive bucket. What must you do?', 'Enable Data Access audit logs for Cloud Storage', ['Nothing — Admin Activity logs include reads', 'Enable Cloud CDN', 'Create a snapshot'], 'Data Access logs are off by default for most services.', 'k4'),
+      Q('A VM in a managed instance group keeps failing its health check. What does autohealing do?', 'Recreates the unhealthy VM from the instance template', ['Deletes the whole group', 'Emails the user only', 'Moves it to another project'], 'Autohealing replaces failed instances.', 'k2'),
+      Q('You need a fleet that survives a single-zone outage. Use:', 'A regional managed instance group', ['A single zonal VM', 'Local SSDs', 'A preemptible VM'], 'Regional MIGs spread instances across zones.', 'k2'),
+      Q('Which disk gives the highest performance but loses data when the VM stops?', 'Local SSD', ['Persistent Disk', 'Snapshot', 'Cloud Storage'], 'Local SSD is ephemeral.', 'k2'),
+      Q('Users accidentally overwrite files in a bucket. Which feature lets you recover earlier versions?', 'Object versioning', ['Lifecycle deletion', 'Uniform bucket-level access', 'Signed URLs'], 'Versioning keeps noncurrent versions.', 'k2'),
+      Q('You want bucket access controlled only through IAM, with object ACLs disabled. Enable:', 'Uniform bucket-level access', ['Object versioning', 'Requester pays', 'Autoclass'], 'Uniform access disables ACLs.', 'k5'),
+      Q('Which command creates a GKE Autopilot cluster?', 'gcloud container clusters create-auto', ['gcloud compute instances create', 'kubectl create cluster', 'gcloud run deploy'], 'create-auto creates Autopilot clusters.', 'k3'),
+      Q('After creating a GKE cluster, which command configures kubectl to talk to it?', 'gcloud container clusters get-credentials', ['gcloud auth revoke', 'kubectl init', 'gcloud storage cp'], 'get-credentials writes kubeconfig.', 'k3'),
+      Q('Which command enables the Compute Engine API?', 'gcloud services enable compute.googleapis.com', ['gcloud compute enable', 'gcloud api start compute', 'gcloud config set compute on'], 'APIs are enabled per project.', 'k1'),
+      Q('Grant read-only access to objects in a project\'s buckets for user dana@example.com:', 'gcloud projects add-iam-policy-binding PROJECT --member=user:dana@example.com --role=roles/storage.objectViewer', ['gcloud storage cp --user dana', 'gcloud iam roles delete', 'gcloud compute firewall-rules create'], 'IAM bindings join a member to a role.', 'k5'),
+      Q('Why grant roles to Google Groups rather than individual users?', 'Easier management: add/remove people from the group instead of editing policies', ['Groups get extra permissions', 'Users cannot hold roles', 'It is required by quotas'], 'Manage membership, not bindings.', 'k5'),
+      Q('Nightly incremental backups of a VM disk should run automatically. Use:', 'A snapshot schedule', ['A lifecycle rule', 'A signed URL', 'An uptime check'], 'Snapshot schedules automate snapshots.', 'k4'),
+      Q('Which statement about Spot VMs is correct?', 'They are heavily discounted and can be preempted at any time', ['They can never be stopped', 'They cost more than standard VMs', 'They only run Windows'], 'Use them for fault-tolerant work.', 'k2')
+    ],
+    labs: ['gx-ace-roles', 'gx-ace-deploy'] });
+
+  X.add('ge2', { gateN: 20,
+    lesson: [
+      { h: 'Deep dive: VPC firewall rules', html: '<ul><li>VPC firewall rules are <b>stateful</b> (return traffic is allowed automatically) and apply to VMs by <b>network tags</b>, <b>service accounts</b>, or all instances.</li><li>Each rule has a <b>direction</b> (ingress/egress), <b>action</b> (allow/deny), <b>priority</b> 0–65535 (<b>lower number wins</b>; default 1000), targets, sources/destinations and protocols/ports.</li><li><b>Implied rules</b> at priority 65535: deny all ingress, allow all egress. The <code>default</code> network also ships with allow rules for internal traffic, SSH, RDP and ICMP — remove what you don\'t need.</li><li>Allow SSH only through <b>IAP TCP forwarding</b> by allowing source range <code>35.235.240.0/20</code> instead of 0.0.0.0/0.</li></ul><pre>gcloud compute firewall-rules create allow-web --network=prod \\\n  --direction=INGRESS --action=ALLOW --rules=tcp:80,tcp:443 \\\n  --source-ranges=0.0.0.0/0 --target-tags=web --priority=1000</pre>' },
+      { h: 'Deep dive: network design patterns', html: '<ul><li><b>Shared VPC</b>: a <b>host project</b> owns the network; <b>service projects</b> attach and deploy into its subnets — central network control, distributed app teams.</li><li><b>VPC Network Peering</b>: private connectivity between two VPCs (non-transitive).</li><li><b>Private Google Access</b>: VMs without external IPs reach Google APIs (Cloud Storage, BigQuery). <b>Cloud NAT</b>: outbound internet for private VMs.</li><li><b>Load balancers</b>: global external <b>Application Load Balancer</b> (HTTP/S, layer 7, one anycast IP, Cloud CDN + Cloud Armor), <b>passthrough Network Load Balancer</b> (layer 4, preserves client IP), internal load balancers for private services.</li><li>Hybrid: <b>Cloud VPN</b> (HA VPN, encrypted over the internet), <b>Dedicated/Partner Interconnect</b> (private, high bandwidth), <b>Cloud Router</b> exchanges routes with BGP.</li></ul>' },
+      { h: 'Deep dive: deploying and operating', html: '<pre>gcloud run deploy api --image=us-docker.pkg.dev/my-proj/repo/api:1.2 --region=us-central1 --allow-unauthenticated\ngcloud app deploy app.yaml\nkubectl apply -f deployment.yaml ; kubectl get pods ; kubectl rollout undo deployment/api\ngcloud builds submit --tag us-docker.pkg.dev/my-proj/repo/api:1.3   # Cloud Build → Artifact Registry</pre><ul><li><b>Cloud Run</b>: revisions, traffic splitting between revisions, min instances to avoid cold starts, concurrency per instance.</li><li><b>Monitoring</b>: alerting policies, uptime checks, dashboards; the <b>Ops Agent</b> collects VM logs and metrics. <b>Logging</b>: Logs Explorer, log-based metrics, <b>log sinks</b> to export logs to BigQuery, Cloud Storage or Pub/Sub; log buckets with retention.</li><li><b>Budgets and alerts</b> don\'t stop spending by themselves — they notify (you can trigger automation via Pub/Sub).</li></ul>' }
+    ],
+    qs: [
+      Q('Two firewall rules match the same traffic: allow at priority 1000 and deny at priority 900. What happens?', 'It is denied — the lower number (900) has higher priority', ['It is allowed — allow always wins', 'Both apply randomly', 'The newest rule wins'], 'Lower priority number takes precedence.', 'k2'),
+      Q('With no custom rules on a new custom VPC, inbound traffic from the internet is:', 'Denied by the implied deny-ingress rule', ['Allowed on all ports', 'Allowed only on port 80', 'Allowed for SSH only'], 'Implied rules: deny ingress, allow egress.', 'k2'),
+      Q('To allow SSH to private VMs only through Identity-Aware Proxy, the firewall source range should be:', '35.235.240.0/20', ['0.0.0.0/0', '10.0.0.0/8 only', '127.0.0.1/32'], 'That range is used by IAP TCP forwarding.', 'k5'),
+      Q('A firewall rule should apply only to web servers. The usual way to target them is:', 'Network tags (or a target service account)', ['Their machine type', 'Their disk size', 'The project number'], 'Targets select which VMs a rule covers.', 'k2'),
+      Q('A central network team must control subnets while app teams deploy in their own projects. Use:', 'Shared VPC (host and service projects)', ['A separate VPC per VM', 'VPC peering for every VM', 'Cloud NAT only'], 'Shared VPC centralizes network administration.', 'k1'),
+      Q('VPC A peers with B, and B peers with C. Can A reach C through B?', 'No — VPC peering is not transitive', ['Yes, always', 'Only with Cloud CDN', 'Only on port 443'], 'Each pair must peer directly.', 'k2'),
+      Q('Private VMs without external IPs need to read from Cloud Storage. Enable:', 'Private Google Access on the subnet', ['An external IP on every VM', 'Cloud CDN', 'A signed URL for each VM'], 'Private Google Access reaches Google APIs privately.', 'k2'),
+      Q('A layer-4 load balancer that preserves the client source IP for a TCP game server is a:', 'Passthrough Network Load Balancer', ['Global external Application Load Balancer', 'Cloud CDN', 'Cloud DNS'], 'Passthrough NLBs don\'t proxy connections.', 'k3'),
+      Q('You need a private, high-bandwidth connection from the data center, with traffic not traversing the public internet. Use:', 'Dedicated Interconnect', ['HA VPN', 'Cloud NAT', 'Public IPs'], 'Interconnect provides private physical links.', 'k3'),
+      Q('Which component exchanges routes dynamically with your on-prem router over BGP?', 'Cloud Router', ['Cloud NAT', 'Cloud Armor', 'Artifact Registry'], 'Cloud Router speaks BGP for VPN/Interconnect.', 'k3'),
+      Q('You want to send 10% of traffic to a new Cloud Run revision. Use:', 'Traffic splitting between revisions', ['A new project', 'A firewall rule', 'A snapshot'], 'Cloud Run supports gradual rollouts.', 'k3'),
+      Q('A Cloud Run service suffers cold-start latency at low traffic. Configure:', 'Minimum instances', ['Maximum instances = 0', 'A lifecycle rule', 'A lower CPU'], 'Min instances keep warm containers.', 'k4'),
+      Q('A bad Kubernetes deployment broke the app. Quick rollback command:', 'kubectl rollout undo deployment/api', ['kubectl delete cluster', 'gcloud config unset', 'gcloud storage rm'], 'Rollout undo reverts to the previous revision.', 'k3'),
+      Q('Logs must be kept in BigQuery for analysis long-term. Create a:', 'Log sink to a BigQuery dataset', ['Firewall rule', 'Budget alert', 'Snapshot schedule'], 'Sinks route logs to destinations.', 'k4'),
+      Q('To collect OS-level metrics and logs from Compute Engine VMs, install:', 'The Ops Agent', ['The gcloud CLI only', 'kubectl', 'Cloud NAT'], 'Ops Agent sends VM telemetry.', 'k4'),
+      Q('A budget alert at 90% of the monthly budget will:', 'Notify recipients (it does not automatically stop resources)', ['Shut down every resource', 'Delete the project', 'Lower prices'], 'Budgets alert; automation must be added separately.', 'k1'),
+      Q('Build a container image from source and store it in Artifact Registry with one command:', 'gcloud builds submit --tag REGION-docker.pkg.dev/PROJECT/REPO/IMAGE', ['gcloud compute images create', 'kubectl build', 'gcloud storage cp --build'], 'Cloud Build builds and pushes.', 'k3'),
+      Q('Firewall rules in a Google Cloud VPC are stateful, which means:', 'Return traffic for an allowed connection is automatically allowed', ['Every packet needs two rules', 'Rules expire every hour', 'Only egress is evaluated'], 'Stateful tracking handles responses.', 'k2')
+    ],
+    labs: ['gx-ace-fw'] });
+
+  // ======================= Professional ML Engineer =======================
+  X.add('gp1', { gateN: 20,
+    lesson: [
+      { h: 'Deep dive: metrics you must calculate', html: '<p>From a confusion matrix (TP, FP, FN, TN):</p><ul><li><b>Precision</b> = TP / (TP + FP) — of what we flagged, how much was right. Optimize when false positives are costly (spam filter hiding real mail).</li><li><b>Recall</b> = TP / (TP + FN) — of the real positives, how many we caught. Optimize when misses are costly (fraud, disease).</li><li><b>F1</b> = 2 × P × R / (P + R) — balance of both.</li><li><b>Accuracy</b> = (TP + TN) / total — misleading on imbalanced data (99% "not fraud" is 99% accurate and useless).</li><li><b>AUC-ROC</b> threshold-independent ranking quality; <b>AUC-PR</b> better for heavy imbalance.</li><li>Regression: <b>MAE</b> (average absolute error, robust to outliers), <b>RMSE</b> (penalizes big errors).</li></ul>' },
+      { h: 'Deep dive: data pitfalls that sink models', html: '<ul><li><b>Data leakage</b>: features that contain information unavailable at prediction time (e.g. "refund issued" when predicting fraud) → great offline scores, failure in production.</li><li><b>Training-serving skew</b>: preprocessing done differently in training and serving. Fix by sharing transformation code (TensorFlow Transform, the same Dataflow/BigQuery logic) and a <b>Feature Store</b>.</li><li><b>Class imbalance</b>: resample (up/down), class weights, choose PR-based metrics.</li><li><b>Splits</b>: random split for i.i.d. data, but <b>time-based split</b> for time series (never train on the future).</li><li><b>Feature engineering</b>: normalization/standardization, one-hot or embeddings for categories, bucketizing, feature crosses.</li></ul>' },
+      { h: 'Deep dive: picking the right level of tooling', html: '<table><tr><th>Need</th><th>Choose</th></tr><tr><td>Common task (OCR, translation, labels)</td><td>Pre-trained API (Vision, Translation, Document AI, Speech)</td></tr><tr><td>Tabular data in BigQuery, SQL skills</td><td>BigQuery ML</td></tr><tr><td>Custom labels, little ML expertise</td><td>AutoML on Vertex AI</td></tr><tr><td>Generative task</td><td>Gemini via Vertex AI (prompting → grounding → tuning)</td></tr><tr><td>Unique architecture/full control</td><td>Custom training on Vertex AI</td></tr></table>' }
+    ],
+    qs: [
+      Q('A fraud model flags 100 transactions; 80 are fraud. There were 200 fraud cases in total. Precision is:', '0.8', ['0.4', '0.2', '0.5'], 'Precision = 80 / 100.', 'p1'),
+      Q('Same model: 80 of 200 fraud cases caught. Recall is:', '0.4', ['0.8', '0.6', '0.2'], 'Recall = 80 / 200.', 'p1'),
+      Q('Only 0.5% of transactions are fraud. Why is accuracy a poor metric?', 'Predicting "not fraud" for everything scores 99.5% accuracy but catches nothing', ['Accuracy cannot be computed for fraud', 'Accuracy ignores true negatives', 'It always equals recall'], 'Use precision/recall or AUC-PR.', 'p1'),
+      Q('A medical screening model must miss as few sick patients as possible. Prioritize:', 'Recall', ['Precision', 'Accuracy', 'Training speed'], 'Misses (false negatives) are costliest.', 'p1'),
+      Q('A model that predicts house prices should be evaluated with:', 'RMSE or MAE', ['Precision', 'AUC-ROC', 'F1'], 'Regression metrics.', 'p1'),
+      Q('A churn model includes "account closed date" as a feature and scores 99% offline. The likely problem is:', 'Data leakage', ['Underfitting', 'Too few epochs', 'Low temperature'], 'The feature reveals the answer.', 'p2'),
+      Q('Online predictions are worse than offline evaluation because features are computed with different code in serving. This is:', 'Training-serving skew', ['Concept drift', 'Overfitting', 'Data residency'], 'Share preprocessing logic and use a feature store.', 'p2'),
+      Q('For a model predicting next month\'s demand, how should you split data?', 'By time — train on earlier periods, validate on later ones', ['Randomly across all dates', 'Alphabetically', 'By customer ID only'], 'Never train on the future.', 'p2'),
+      Q('Which helps apply identical preprocessing during training and serving in TensorFlow pipelines?', 'TensorFlow Transform', ['Cloud NAT', 'Looker Studio', 'Cloud DNS'], 'tf.Transform exports the transformation graph.', 'p2'),
+      Q('A hospital needs text extracted from scanned intake forms quickly with no ML team. Choose:', 'Document AI', ['Custom training on TPUs', 'BigQuery ML linear regression', 'Bigtable'], 'Pre-trained document processing.', 'p1'),
+      Q('A product team needs a custom image classifier for their own 12 product categories with minimal code. Choose:', 'AutoML image on Vertex AI', ['Vision API label detection only', 'Bigtable', 'Cloud Armor'], 'Custom labels without deep ML expertise.', 'p1'),
+      Q('High-cardinality categorical features (e.g. 50,000 product IDs) are often best represented with:', 'Embeddings', ['One-hot encoding with 50,000 columns always', 'Deleting the feature', 'Random numbers'], 'Embeddings compress categories into dense vectors.', 'p2'),
+      Q('A model learns training data too well and does poorly on new data. This is:', 'Overfitting', ['Underfitting', 'Leakage', 'Skew'], 'Use regularization, more data, early stopping.', 'p3'),
+      Q('F1 score is:', 'The harmonic mean of precision and recall', ['The average of accuracy and recall', 'TP / total', 'A regression metric'], 'Balances both.', 'p1'),
+      Q('Before choosing a model, the ML engineer should first define:', 'The business objective and a measurable success metric', ['The GPU type', 'The number of layers', 'The logging format'], 'Frame the problem first.', 'p1'),
+      Q('Which metric is better than ROC-AUC when positives are extremely rare?', 'PR-AUC (precision-recall AUC)', ['Accuracy', 'MAE', 'R-squared'], 'PR curves focus on the positive class.', 'p1')
+    ],
+    labs: ['gx-mle-metrics'] });
+
+  X.add('gp2', { gateN: 20,
+    lesson: [
+      { h: 'Deep dive: training at scale', html: '<ul><li><b>Vertex AI custom training</b> with prebuilt containers (TensorFlow, PyTorch, scikit-learn, XGBoost) or your own container.</li><li><b>Distributed training</b>: data parallelism (each worker gets a slice of data; e.g. MirroredStrategy on one machine, MultiWorkerMirroredStrategy across machines), and <b>TPUs</b> for large matrix workloads; GPUs for general deep learning.</li><li><b>Hyperparameter tuning</b> (Vertex AI Vizier) searches learning rate, depth, etc. against an objective metric.</li><li><b>Experiments</b> and <b>Vertex ML Metadata</b> track runs, parameters and lineage for reproducibility.</li><li>Save cost with <b>Spot VMs</b> for fault-tolerant training and checkpointing.</li></ul>' },
+      { h: 'Deep dive: serving decisions', html: '<table><tr><th>Need</th><th>Choose</th></tr><tr><td>Real-time, low latency</td><td>Online prediction on a Vertex AI <b>endpoint</b> (autoscaling min/max replicas)</td></tr><tr><td>Large offline scoring</td><td><b>Batch prediction</b> (BigQuery or Cloud Storage input)</td></tr><tr><td>Safe rollout</td><td>Deploy a new model to the same endpoint and <b>split traffic</b> (canary/A-B)</td></tr><tr><td>Versioning and approval</td><td><b>Vertex AI Model Registry</b></td></tr><tr><td>Explain predictions</td><td><b>Vertex Explainable AI</b> (feature attributions: sampled Shapley, integrated gradients)</td></tr></table>' },
+      { h: 'Deep dive: MLOps maturity and monitoring', html: '<ul><li><b>Level 0</b>: manual notebooks, manual deploys. <b>Level 1</b>: automated <b>training pipeline</b> with continuous training on new data. <b>Level 2</b>: CI/CD for the pipeline itself (tests, builds, deploys of pipeline code).</li><li><b>Vertex AI Pipelines</b> (Kubeflow Pipelines or TFX) run steps: ingest → validate → transform → train → evaluate → <b>conditional deploy</b> only if metrics beat the current model.</li><li><b>Model Monitoring</b>: <b>skew</b> (serving data vs training data) and <b>drift</b> (serving data changing over time); alerts trigger investigation or retraining. <b>Concept drift</b> = the relationship between features and label changes (fraud tactics evolve).</li><li>Security: least-privilege service accounts, <b>VPC Service Controls</b>, <b>CMEK</b>, private endpoints.</li></ul>' }
+    ],
+    qs: [
+      Q('Training a large model on one machine with 4 GPUs, synchronously copying the model to each GPU, uses:', 'Data parallelism (e.g. MirroredStrategy)', ['Batch prediction', 'Model Registry', 'Feature crosses'], 'Each GPU processes a slice of each batch.', 'p3'),
+      Q('Training jobs run on Spot VMs to save money. What makes this safe?', 'Regular checkpointing so a preempted job can resume', ['Disabling logging', 'Using a higher learning rate', 'Batch prediction'], 'Checkpoints survive preemption.', 'p3'),
+      Q('To compare dozens of training runs and their parameters reproducibly, use:', 'Vertex AI Experiments / ML Metadata', ['Cloud NAT', 'Cloud CDN', 'Firestore'], 'Track runs and lineage.', 'p3'),
+      Q('A pipeline should deploy a new model only if it beats the current model\'s AUC. This is a:', 'Conditional deployment step in the pipeline', ['Firewall rule', 'Lifecycle policy', 'Quota'], 'Gate deploys on evaluation.', 'p5'),
+      Q('MLOps level 1 is characterized by:', 'Automated continuous training pipelines', ['Manual notebook training', 'No monitoring', 'Only pre-trained APIs'], 'Level 2 adds CI/CD for pipelines.', 'p5'),
+      Q('Fraudsters change tactics so that the same features now mean different outcomes. This is:', 'Concept drift', ['Training-serving skew', 'Leakage', 'Underfitting'], 'The feature→label relationship changed.', 'p5'),
+      Q('Model Monitoring compares serving inputs to the training data distribution to detect:', 'Training-serving skew', ['Hyperparameters', 'Quota usage', 'IAM changes'], 'Skew detection uses the training baseline.', 'p5'),
+      Q('A bank must explain which features drove each loan decision. Use:', 'Vertex Explainable AI feature attributions', ['Higher temperature', 'Batch prediction only', 'Cloud Armor'], 'Attributions explain predictions.', 'p5'),
+      Q('Roll out a new model to 5% of live traffic first. Use:', 'Traffic splitting on a Vertex AI endpoint', ['Two separate projects', 'Batch prediction', 'A snapshot'], 'Canary deployment on one endpoint.', 'p4'),
+      Q('An endpoint must handle traffic spikes but stay cheap at night. Configure:', 'Autoscaling with min and max replicas', ['A fixed 50 replicas', 'Batch prediction', 'Manual restarts'], 'Autoscale replicas to demand.', 'p4'),
+      Q('Scoring 500 million rows in BigQuery overnight is best done with:', 'Batch prediction', ['Online prediction calls in a loop', 'Cloud Run cold starts', 'AutoML image'], 'Batch is cheaper and simpler for offline scoring.', 'p4'),
+      Q('Hyperparameter tuning on Vertex AI is powered by:', 'Vertex AI Vizier', ['Looker', 'Cloud Build', 'Pub/Sub'], 'Vizier runs black-box optimization.', 'p3'),
+      Q('To keep training data from being exfiltrated from Vertex AI and BigQuery, add:', 'VPC Service Controls perimeters', ['Cloud CDN', 'More GPUs', 'A public endpoint'], 'Perimeters restrict data movement.', 'p5'),
+      Q('Which accelerator is purpose-built by Google for large-scale matrix-heavy training?', 'TPU', ['NIC', 'HDD', 'Local SSD'], 'TPUs accelerate tensor operations.', 'p3'),
+      Q('A step that checks incoming data schema and statistics before training (e.g. TFX ExampleValidator) prevents:', 'Training on corrupted or unexpected data', ['Any need for evaluation', 'Model serving', 'Billing'], 'Validate data before training.', 'p5'),
+      Q('Which registry holds model versions, aliases and approval state?', 'Vertex AI Model Registry', ['Artifact Registry for container images only', 'Cloud DNS', 'Cloud Logging'], 'The Model Registry manages model lifecycle.', 'p4')
+    ],
+    labs: ['gx-mle-pipe'] });
+
+  // real exams run 50-60 questions; now that the pools are large enough, match that
+  [['gc3', 50, 90], ['gl3', 50, 90], ['ge3', 50, 120], ['gp3', 50, 120]].forEach(function (c) { var st = COURSE.stages.filter(function (x) { return x.id === c[0]; })[0]; st.capstone.n = c[1]; st.capstone.minutes = c[2]; });
+
+  // ======================= labs =======================
+  L['gx-cdl-pick'] = { kind: 'match', title: 'Pick the right Google Cloud service', sum: 'Compute, storage and database choices',
+    brief: 'You are advising a company moving to Google Cloud. Choose the best service for each need.',
+    options: ['Compute Engine', 'GKE Autopilot', 'Cloud Run', 'App Engine', 'Cloud Storage (Archive)', 'Cloud Storage (Nearline)', 'Cloud SQL', 'Spanner', 'Bigtable', 'Firestore', 'BigQuery', 'Memorystore'],
+    items: [
+      { t: 'A licensed legacy app needs a specific Windows Server build and full OS control.', a: 'Compute Engine', why: 'IaaS = full OS control.' },
+      { t: '40 microservices in containers; the team wants Kubernetes but no node management.', a: 'GKE Autopilot', why: 'Managed Kubernetes including nodes.' },
+      { t: 'A stateless REST API in one container should cost nothing when idle.', a: 'Cloud Run', why: 'Serverless containers that scale to zero.' },
+      { t: 'Seven years of compliance records almost never read.', a: 'Cloud Storage (Archive)', why: 'Cheapest storage, 365-day minimum.' },
+      { t: 'Monthly backup restores for testing.', a: 'Cloud Storage (Nearline)', why: 'Monthly access pattern.' },
+      { t: 'A regional PostgreSQL database for an existing web app.', a: 'Cloud SQL', why: 'Managed relational, regional.' },
+      { t: 'A global trading ledger needing strong consistency across continents.', a: 'Spanner', why: 'Global relational with strong consistency.' },
+      { t: 'Billions of IoT sensor readings per day, millisecond reads by device and time.', a: 'Bigtable', why: 'Wide-column NoSQL at huge scale.' },
+      { t: 'A mobile app storing user profiles as flexible documents with offline sync.', a: 'Firestore', why: 'Document database for apps.' },
+      { t: 'Analysts run SQL over 50 TB of sales history.', a: 'BigQuery', why: 'Serverless data warehouse.' },
+      { t: 'Session data must be read in under a millisecond to speed up the website.', a: 'Memorystore', why: 'In-memory cache.' }
+    ], debrief: 'Pick the option that meets the need with the least operational work — that is how most Digital Leader questions are scored.' };
+  L['gx-cdl-ops'] = { kind: 'match', title: 'Data, security and cost decisions', sum: 'Match 10 business needs to services',
+    brief: 'Choose the Google Cloud product or concept that best answers each business need.',
+    options: ['Pub/Sub', 'Dataflow', 'Dataproc', 'Looker', 'Identity-Aware Proxy', 'Cloud Armor', 'VPC Service Controls', 'Security Command Center', 'Committed use discount', 'Spot VMs', 'SLO', 'Error budget'],
+    items: [
+      { t: 'Ingest millions of click events per second from a website.', a: 'Pub/Sub', why: 'Global messaging and ingest.' },
+      { t: 'Transform the event stream and load it into BigQuery, serverlessly.', a: 'Dataflow', why: 'Managed Apache Beam.' },
+      { t: 'Run existing Spark jobs without rewriting them.', a: 'Dataproc', why: 'Managed Spark/Hadoop.' },
+      { t: 'Give the business consistent, governed dashboards.', a: 'Looker', why: 'Semantic model + BI.' },
+      { t: 'Let staff reach internal apps from anywhere without a VPN.', a: 'Identity-Aware Proxy', why: 'Zero-trust app access.' },
+      { t: 'Block DDoS and SQL injection at the edge for a public site.', a: 'Cloud Armor', why: 'WAF and DDoS protection.' },
+      { t: 'Prevent data copying out of BigQuery to unapproved projects.', a: 'VPC Service Controls', why: 'Service perimeters.' },
+      { t: 'See misconfigurations and threats across the whole organization.', a: 'Security Command Center', why: 'Central security posture.' },
+      { t: 'Steady workload for 3 years — reduce compute cost.', a: 'Committed use discount', why: 'Commit for a discount.' },
+      { t: 'Cheap capacity for a batch job that can restart if interrupted.', a: 'Spot VMs', why: 'Deep discount, preemptible.' },
+      { t: 'Target: 99.9% of checkout requests succeed each month.', a: 'SLO', why: 'An objective for an SLI.' },
+      { t: 'The 0.1% of allowed failures the team can "spend" on risky releases.', a: 'Error budget', why: '100% − SLO.' }
+    ], debrief: 'Ingest → process → analyze → visualize; zero trust and perimeters for security; commit or use Spot for cost; SLOs and error budgets for reliability.' };
+  L['gx-gail-terms'] = { kind: 'match', title: 'Gen AI concepts in practice', sum: 'Settings, terms and products',
+    brief: 'Match each situation to the concept or product it describes.',
+    options: ['Low temperature', 'High temperature', 'Top-p', 'Context window', 'Token', 'Embedding', 'Hallucination', 'Multimodal', 'Model Garden', 'Vertex AI Studio', 'Gemini for Google Workspace', 'TPU'],
+    items: [
+      { t: 'You want the same factual answer every time the HR bot is asked.', a: 'Low temperature', why: 'Focused, repeatable sampling.' },
+      { t: 'You want twenty different product-name ideas.', a: 'High temperature', why: 'More varied sampling.' },
+      { t: 'Sampling only from tokens whose combined probability reaches 0.9.', a: 'Top-p', why: 'Nucleus sampling.' },
+      { t: 'A 400-page contract no longer fits in the prompt at once.', a: 'Context window', why: 'The token limit.' },
+      { t: 'Billing is per unit of text, roughly a word piece.', a: 'Token', why: 'Models read and bill tokens.' },
+      { t: 'Finding support articles with similar meaning to a question.', a: 'Embedding', why: 'Vector similarity.' },
+      { t: 'The bot invents a return policy that does not exist.', a: 'Hallucination', why: 'Confident but false output.' },
+      { t: 'The model reads a photo of a receipt and answers questions about it.', a: 'Multimodal', why: 'Image + text input.' },
+      { t: 'Choosing between Gemini, Gemma and third-party models.', a: 'Model Garden', why: 'Model catalog in Vertex AI.' },
+      { t: 'Trying and refining prompts before writing any code.', a: 'Vertex AI Studio', why: 'Prompt design workspace.' },
+      { t: 'Drafting emails and summarizing docs for all employees, no development.', a: 'Gemini for Google Workspace', why: 'An off-the-shelf application.' },
+      { t: 'Google-designed chips that train and serve its models.', a: 'TPU', why: 'Tensor Processing Units.' }
+    ], debrief: 'Leaders don\'t need the math, but they must know which knob or product solves which business problem.' };
+  L['gx-gail-tech'] = { kind: 'match', title: 'Choose the improvement technique', sum: 'Prompting vs grounding vs tuning vs agents',
+    brief: 'For each problem, choose the technique a Google Cloud gen AI leader should recommend <b>first</b>.',
+    options: ['Better prompt (role, format, examples)', 'Grounding with Google Search', 'Grounding/RAG on company data', 'Supervised tuning', 'Distillation to a smaller model', 'Agent with tools', 'Human-in-the-loop review', 'Safety filters'],
+    items: [
+      { t: 'Answers are fine but come back in random formats; nobody gave the model an output template.', a: 'Better prompt (role, format, examples)', why: 'Cheapest fix first.' },
+      { t: 'The assistant must answer from the employee handbook updated last week, with citations.', a: 'Grounding/RAG on company data', why: 'Private, current facts.' },
+      { t: 'Analysts want answers that include today\'s public market news.', a: 'Grounding with Google Search', why: 'Fresh public facts.' },
+      { t: 'After good prompting, the model still won\'t reliably write in the bank\'s strict compliance style.', a: 'Supervised tuning', why: 'Teach style with examples.' },
+      { t: 'A large model works well but is too slow and costly for millions of daily calls.', a: 'Distillation to a smaller model', why: 'Smaller, cheaper, faster.' },
+      { t: 'The bot must check order status in the ERP system and then file a ticket.', a: 'Agent with tools', why: 'Needs to act, not just talk.' },
+      { t: 'Generated loan-denial letters go directly to customers.', a: 'Human-in-the-loop review', why: 'High-impact output.' },
+      { t: 'A public chatbot must never produce hateful or dangerous content.', a: 'Safety filters', why: 'Content guardrails.' }
+    ], debrief: 'Prompt → ground → tune → (rarely) train. Agents when the AI must act. Humans and filters for risk.' };
+  L['gx-ace-roles'] = { kind: 'match', title: 'Least-privilege IAM roles', sum: 'Pick the predefined role for 9 tasks',
+    brief: 'Grant the <b>least-privilege predefined role</b> for each task.',
+    options: ['roles/storage.objectViewer', 'roles/storage.objectAdmin', 'roles/compute.instanceAdmin.v1', 'roles/compute.networkAdmin', 'roles/iam.serviceAccountUser', 'roles/bigquery.dataViewer', 'roles/bigquery.jobUser', 'roles/logging.viewer', 'roles/run.invoker', 'roles/owner'],
+    items: [
+      { t: 'A partner app must download report files from a bucket.', a: 'roles/storage.objectViewer', why: 'Read objects only.' },
+      { t: 'A backup job must upload, overwrite and delete objects in one bucket.', a: 'roles/storage.objectAdmin', why: 'Full object control, not bucket admin.' },
+      { t: 'An operator must create, start and stop VMs.', a: 'roles/compute.instanceAdmin.v1', why: 'Manage instances.' },
+      { t: 'The network team manages VPCs, subnets and routes (not firewall rules for security policy).', a: 'roles/compute.networkAdmin', why: 'Network resources.' },
+      { t: 'A developer must attach the app\'s service account when creating VMs.', a: 'roles/iam.serviceAccountUser', why: 'Act as the service account.' },
+      { t: 'A dashboard service account reads tables in one dataset.', a: 'roles/bigquery.dataViewer', why: 'Read data.' },
+      { t: 'The same service account must also be allowed to run query jobs in the project.', a: 'roles/bigquery.jobUser', why: 'Run jobs.' },
+      { t: 'An auditor reads logs but changes nothing.', a: 'roles/logging.viewer', why: 'View logs.' },
+      { t: 'A Pub/Sub push subscription must call a private Cloud Run service.', a: 'roles/run.invoker', why: 'Invoke the service.' }
+    ], debrief: 'Predefined, narrowly scoped roles granted on the smallest resource that works — never Owner/Editor in production.' };
+  L['gx-ace-deploy'] = { kind: 'order', title: 'Stand up a VM web server with gcloud', sum: 'Order the gcloud steps',
+    brief: 'From a new, empty project, put the steps in the order you would run them to get a web server on Compute Engine reachable on port 80.',
+    items: [
+      { t: '<code>gcloud config set project web-demo-123</code>', why: 'Target the right project first.' },
+      { t: '<code>gcloud services enable compute.googleapis.com</code>', why: 'The API must be enabled before creating resources.' },
+      { t: '<code>gcloud iam service-accounts create web-sa</code>', why: 'Create a dedicated, least-privilege identity for the VM.' },
+      { t: '<code>gcloud compute firewall-rules create allow-http --network=default --allow=tcp:80 --target-tags=web --source-ranges=0.0.0.0/0</code>', why: 'Open port 80 only for VMs tagged web.' },
+      { t: '<code>gcloud compute instances create web1 --zone=us-central1-a --tags=web --service-account=web-sa@web-demo-123.iam.gserviceaccount.com --metadata-from-file=startup-script=install-nginx.sh</code>', why: 'Create the VM with the tag, identity and startup script.' },
+      { t: '<code>gcloud compute instances describe web1 --zone=us-central1-a --format="value(networkInterfaces[0].accessConfigs[0].natIP)"</code>', why: 'Get the external IP to test.' }
+    ], debrief: 'Project → API → identity → firewall → instance → verify. The tag ties the firewall rule to the VM.' };
+  L['gx-ace-fw'] = { kind: 'acl', title: 'VPC firewall rules', sum: 'Write rules that pass 7 traffic tests', rows: 4, maxRules: 4,
+    brief: 'Configure ingress rules for a VPC. Google Cloud evaluates by <b>priority (lowest number first)</b> — here, rows are already in priority order, top = lowest number. Requirements:<ol><li>Anyone may reach the <b>web server</b> on HTTPS (443).</li><li><b>SSH</b> to the web server is allowed <b>only from the IAP range</b> 35.235.240.0/20.</li><li>The <b>web server</b> may reach the <b>database</b> on TCP 5432.</li><li>Everything else inbound is denied (the implied deny-ingress rule).</li></ol>',
+    nets: [['0.0.0.0/0', 'Internet'], ['10.1.0.10', 'Web server'], ['10.2.0.20', 'Database'], ['35.235.240.0/20', 'IAP TCP forwarding']],
+    tests: [
+      { name: 'Customer → web HTTPS', src: '198.51.100.7', dst: '10.1.0.10', proto: 'TCP', port: 443, expect: 'ALLOW' },
+      { name: 'Customer → web SSH', src: '198.51.100.7', dst: '10.1.0.10', proto: 'TCP', port: 22, expect: 'DENY' },
+      { name: 'IAP → web SSH', src: '35.235.241.9', dst: '10.1.0.10', proto: 'TCP', port: 22, expect: 'ALLOW' },
+      { name: 'Web → database Postgres', src: '10.1.0.10', dst: '10.2.0.20', proto: 'TCP', port: 5432, expect: 'ALLOW' },
+      { name: 'Internet → database Postgres', src: '198.51.100.7', dst: '10.2.0.20', proto: 'TCP', port: 5432, expect: 'DENY' },
+      { name: 'IAP → database Postgres', src: '35.235.241.9', dst: '10.2.0.20', proto: 'TCP', port: 5432, expect: 'DENY' },
+      { name: 'Customer → web HTTP (80)', src: '198.51.100.7', dst: '10.1.0.10', proto: 'TCP', port: 80, expect: 'DENY' }
+    ],
+    hints: ['Three ALLOW rules are enough; the implied rule denies everything else.', 'SSH rule: source = IAP range 35.235.240.0/20, destination = web server, TCP 22.', 'Database rule: source = the web server\'s address (in real GCP you would use its service account or tag), destination = database, TCP 5432.'],
+    solution: [{ src: '0.0.0.0/0', dst: '10.1.0.10', proto: 'TCP', port: '443', act: 'ALLOW' }, { src: '35.235.240.0/20', dst: '10.1.0.10', proto: 'TCP', port: '22', act: 'ALLOW' }, { src: '10.1.0.10', dst: '10.2.0.20', proto: 'TCP', port: '5432', act: 'ALLOW' }],
+    debrief: 'Narrow sources, narrow targets, specific ports — and SSH only through IAP. In real Google Cloud you would target by network tag or service account instead of IPs.' };
+  L['gx-mle-metrics'] = { kind: 'calc', title: 'Compute the model metrics', sum: 'Precision, recall, F1, accuracy', tolPct: 1,
+    brief: 'A fraud model was tested on <b>10,000</b> transactions. Results: <b>TP = 90</b> (fraud caught), <b>FP = 60</b> (good transactions flagged), <b>FN = 30</b> (fraud missed), <b>TN = 9,820</b>.',
+    fields: [
+      { label: 'Precision = TP / (TP + FP)', a: 0.6, why: '90 / 150 = 0.60.' },
+      { label: 'Recall = TP / (TP + FN)', a: 0.75, why: '90 / 120 = 0.75.' },
+      { label: 'F1 = 2PR / (P + R) (two decimals)', a: 0.67, show: '0.67', why: '2 × 0.6 × 0.75 / 1.35 = 0.667.' },
+      { label: 'Accuracy = (TP + TN) / total (as a decimal, four places)', a: 0.991, show: '0.9910', why: '9,910 / 10,000 = 0.991 — high, yet the model still misses a quarter of fraud.' },
+      { label: 'A "model" that predicts "not fraud" for everything would have what accuracy?', a: 0.988, show: '0.988', why: 'Real fraud = TP + FN = 120, so 9,880 / 10,000 = 0.988. Accuracy alone is misleading.' }
+    ], debrief: 'On imbalanced data, report precision, recall and PR-AUC; choose the threshold by the business cost of false positives versus false negatives.' };
+  L['gx-mle-pipe'] = { kind: 'order', title: 'Design the Vertex AI pipeline', sum: 'Order an MLOps pipeline',
+    brief: 'Put the steps of an automated Vertex AI training pipeline in the correct order.',
+    items: [
+      { t: 'Ingest new data from BigQuery', why: 'Start with fresh data.' },
+      { t: 'Validate the data schema and statistics', why: 'Stop before training on bad data.' },
+      { t: 'Transform features with the same code used at serving', why: 'Prevents training-serving skew.' },
+      { t: 'Train the model (with hyperparameter tuning)', why: 'Build candidates.' },
+      { t: 'Evaluate against the current production model', why: 'Compare on the same test set.' },
+      { t: 'Register the model in Model Registry if it is better', why: 'Version and approve.' },
+      { t: 'Deploy to the endpoint with a traffic split (canary)', why: 'Safe rollout.' },
+      { t: 'Monitor for skew and drift; trigger retraining on alerts', why: 'Closes the loop.' }
+    ], debrief: 'Ingest → validate → transform → train → evaluate → register → deploy → monitor. Each gate stops a bad model from reaching users.' };
+})();
+
+;
 /* Cloud lab UI: live resource map + cloud shell terminal + live task checking. */
 (function () {
   'use strict';
@@ -3533,6 +3922,171 @@ window.COURSE = {
   }
   window.LAB_KINDS = window.LAB_KINDS || {};
   window.LAB_KINDS.cloud = { render: render, build: build, helpers: helpers, runSolution: runSolution };
+})();
+
+;
+/* Hands-on PBQ-style labs: match (one or more columns of dropdowns), order (arrange steps), calc (numeric answers), acl (build a firewall rule set and test it). */
+(function () {
+  'use strict';
+  function $(s, r) { return (r || document).querySelector(s); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+  function head(L, api, tag) {
+    return '<div class="row" style="margin-bottom:8px"><button class="btn sm ghost" data-go="' + api.back + '">← Back</button><span class="grow"></span>' +
+      (L.hints && L.hints.length ? '<button class="btn sm ghost" id="hint">Hint</button>' : '') + '<button class="btn sm warn" id="rst">Reset</button></div>' +
+      '<div class="tag">' + tag + ' · HANDS-ON LAB</div><h1 style="margin:4px 0 6px">' + esc(L.title) + '</h1>' +
+      '<div class="panel tight small" style="margin-bottom:10px">' + L.brief + '</div>';
+  }
+  function common(m, L, api, redraw) {
+    var hi = 0, h = $('#hint', m);
+    if (h) h.onclick = function () { var k = Math.min(hi++, L.hints.length - 1); api.modal('<div class="tag">Hint ' + (k + 1) + ' of ' + L.hints.length + '</div><p>' + L.hints[k] + '</p><button class="btn" data-close>Got it</button>'); };
+    $('#rst', m).onclick = function () { if (!confirm('Reset this lab?')) return; api.clear(); redraw(true); };
+  }
+  function finish(api, L, allOk, out) {
+    if (allOk) {
+      out.innerHTML = '<div class="explain"><b class="v" style="color:var(--ok)">All correct.</b><div>' + (L.debrief || '') + '</div></div>';
+      if (!api.done()) { api.complete(); }
+    } else out.innerHTML = '<div class="explain"><b class="v" style="color:var(--bad)">Not yet.</b><div>Rows marked red are wrong. Read the explanation on each, fix them, and check again.</div></div>';
+  }
+
+  // ---------------- MATCH ----------------
+  function renderMatch(m, L, api, fresh) {
+    var saved = fresh ? null : api.load();
+    var cols = L.cols || [{ name: 'Answer', options: L.options }];
+    var order = saved && saved.order && saved.order.length === L.items.length ? saved.order : (L.keep ? L.items.map(function (_, i) { return i; }) : shuffle(L.items.map(function (_, i) { return i; })));
+    var picks = saved && saved.picks ? saved.picks : {};
+    m.innerHTML = head(L, api, 'PBQ') + '<div id="rows"></div><div class="row" style="margin-top:10px"><button class="btn pri" id="chk">Check answers</button><span class="chip" id="sc"></span></div><div id="out" style="margin-top:10px"></div>' +
+      '<p class="dim small">Pick an answer in every dropdown, then Check. This mirrors the drag-and-drop / dropdown performance-based questions on the real exam.</p>';
+    var rows = $('#rows', m);
+    rows.innerHTML = order.map(function (ii) {
+      var it = L.items[ii];
+      return '<div class="pbq-row" data-i="' + ii + '"><div class="it">' + it.t + '</div>' + cols.map(function (c, ci) {
+        var opts = c.options, cur = (picks[ii] || [])[ci] || '';
+        return '<label class="small muted" style="display:flex;flex-direction:column;gap:3px">' + (cols.length > 1 ? esc(c.name) : '') + '<select data-c="' + ci + '"><option value="">— choose —</option>' + opts.map(function (o) { return '<option' + (o === cur ? ' selected' : '') + '>' + esc(o) + '</option>'; }).join('') + '</select></label>';
+      }).join('') + '<div class="why small" style="flex-basis:100%;display:none"></div></div>';
+    }).join('');
+    function persist() { api.save({ order: order, picks: picks }); }
+    rows.addEventListener('change', function (e) { var sel = e.target.closest('select'); if (!sel) return; var r = sel.closest('.pbq-row'), ii = +r.dataset.i; picks[ii] = picks[ii] || []; picks[ii][+sel.dataset.c] = sel.value; r.classList.remove('ok', 'bad'); persist(); });
+    $('#chk', m).onclick = function () {
+      var right = 0;
+      rows.querySelectorAll('.pbq-row').forEach(function (r) {
+        var ii = +r.dataset.i, it = L.items[ii], ans = Array.isArray(it.a) ? it.a : [it.a], p = picks[ii] || [];
+        var ok = ans.every(function (a, ci) { return Array.isArray(a) ? a.indexOf(p[ci]) >= 0 : p[ci] === a; });
+        r.classList.toggle('ok', ok); r.classList.toggle('bad', !ok); if (ok) right++;
+        var w = r.querySelector('.why'); w.style.display = 'block';
+        w.innerHTML = (ok ? '<span style="color:var(--ok)">✓</span> ' : '<span style="color:var(--bad)">✗ Answer: ' + esc(ans.map(function (a) { return Array.isArray(a) ? a[0] : a; }).join(' · ')) + '.</span> ') + (it.why || '');
+      });
+      $('#sc', m).textContent = right + '/' + L.items.length;
+      finish(api, L, right === L.items.length, $('#out', m));
+    };
+    common(m, L, api, function () { renderMatch(m, L, api, true); });
+  }
+
+  // ---------------- ORDER ----------------
+  function renderOrder(m, L, api, fresh) {
+    var saved = fresh ? null : api.load(), n = L.items.length;
+    var cur = saved && saved.cur && saved.cur.length === n ? saved.cur : (function () { var o = shuffle(L.items.map(function (_, i) { return i; })); var same = o.every(function (v, i) { return v === i; }); if (same) o.reverse(); return o; })();
+    function draw(checked) {
+      var right = 0;
+      $('#ol', m).innerHTML = cur.map(function (ii, pos) {
+        var ok = ii === pos; if (ok) right++;
+        return '<div class="ord' + (checked ? (ok ? ' pbq-row ok' : ' pbq-row bad') : '') + '"><span class="n">' + (pos + 1) + '</span><span class="t">' + L.items[ii].t + (checked && L.items[ii].why ? '<div class="small muted" style="margin-top:4px">' + (ok ? '✓ ' : '✗ belongs at step ' + (ii + 1) + '. ') + L.items[ii].why + '</div>' : '') + '</span>' +
+          '<button class="btn sm" data-up="' + pos + '" ' + (pos === 0 ? 'disabled' : '') + '>▲</button><button class="btn sm" data-dn="' + pos + '" ' + (pos === n - 1 ? 'disabled' : '') + '>▼</button></div>';
+      }).join('');
+      return right;
+    }
+    m.innerHTML = head(L, api, 'PBQ') + '<div id="ol"></div><div class="row" style="margin-top:10px"><button class="btn pri" id="chk">Check order</button><span class="chip" id="sc"></span></div><div id="out" style="margin-top:10px"></div>' +
+      '<p class="dim small">Use ▲ ▼ to move each step into the correct order (first at the top).</p>';
+    draw(false);
+    $('#ol', m).addEventListener('click', function (e) {
+      var u = e.target.closest('[data-up]'), d = e.target.closest('[data-dn]');
+      if (u) { var i = +u.dataset.up; var t = cur[i]; cur[i] = cur[i - 1]; cur[i - 1] = t; }
+      else if (d) { var j = +d.dataset.dn; var t2 = cur[j]; cur[j] = cur[j + 1]; cur[j + 1] = t2; }
+      else return;
+      api.save({ cur: cur }); draw(false); $('#out', m).innerHTML = '';
+    });
+    $('#chk', m).onclick = function () { var r = draw(true); $('#sc', m).textContent = r + '/' + n; finish(api, L, r === n, $('#out', m)); };
+    common(m, L, api, function () { renderOrder(m, L, api, true); });
+  }
+
+  // ---------------- CALC ----------------
+  function num(v) { var t = String(v).replace(/[$,%\s]/g, ''); return t === '' ? NaN : +t; }
+  function renderCalc(m, L, api, fresh) {
+    var saved = fresh ? null : api.load(), vals = saved && saved.vals ? saved.vals : {};
+    m.innerHTML = head(L, api, 'PBQ') + '<div class="pbq">' + L.fields.map(function (f, i) {
+      return '<div class="pbq-row" data-i="' + i + '"><div class="it">' + f.label + '</div><input class="num" inputmode="decimal" data-f="' + i + '" placeholder="' + esc(f.unit || 'number') + '" value="' + esc(vals[i] || '') + '"><div class="why small" style="flex-basis:100%;display:none"></div></div>';
+    }).join('') + '</div><div class="row" style="margin-top:10px"><button class="btn pri" id="chk">Check</button><span class="chip" id="sc"></span></div><div id="out" style="margin-top:10px"></div>' +
+      '<p class="dim small">Enter plain numbers ($ and commas are fine). Answers within ' + (L.tolPct || 1) + '% are accepted.</p>';
+    m.querySelectorAll('[data-f]').forEach(function (inp) { inp.oninput = function () { vals[inp.dataset.f] = inp.value; api.save({ vals: vals }); inp.closest('.pbq-row').classList.remove('ok', 'bad'); }; });
+    $('#chk', m).onclick = function () {
+      var right = 0;
+      L.fields.forEach(function (f, i) {
+        var r = m.querySelector('.pbq-row[data-i="' + i + '"]'), v = num(vals[i] || ''), tol = Math.max(Math.abs(f.a) * (L.tolPct || 1) / 100, f.tol || 0.005);
+        var ok = !isNaN(v) && Math.abs(v - f.a) <= tol; if (ok) right++;
+        r.classList.toggle('ok', ok); r.classList.toggle('bad', !ok);
+        var w = r.querySelector('.why'); w.style.display = 'block'; w.innerHTML = (ok ? '<span style="color:var(--ok)">✓</span> ' : '<span style="color:var(--bad)">✗ Expected ' + esc(f.show || f.a) + '.</span> ') + (f.why || '');
+      });
+      $('#sc', m).textContent = right + '/' + L.fields.length;
+      finish(api, L, right === L.fields.length, $('#out', m));
+    };
+    common(m, L, api, function () { renderCalc(m, L, api, true); });
+  }
+
+  // ---------------- ACL (firewall rule builder) ----------------
+  function ip2n(ip) { var p = String(ip).split('.').map(Number); return p.length === 4 && p.every(function (x) { return x >= 0 && x <= 255; }) ? ((p[0] << 24) >>> 0) + (p[1] << 16) + (p[2] << 8) + p[3] : null; }
+  function inNet(ip, spec) {
+    if (spec === 'ANY') return true;
+    var m = /^(\d+\.\d+\.\d+\.\d+)(?:\/(\d+))?$/.exec(spec); if (!m) return false;
+    var bits = m[2] === undefined ? 32 : +m[2], a = ip2n(ip), b = ip2n(m[1]); if (a === null || b === null) return false;
+    var mask = bits === 0 ? 0 : (~0 << (32 - bits)) >>> 0; return ((a & mask) >>> 0) === ((b & mask) >>> 0);
+  }
+  function portOk(port, spec) { if (spec === 'ANY' || spec === '') return true; return String(spec).split(',').some(function (s) { var r = /^(\d+)-(\d+)$/.exec(s.trim()); if (r) return port >= +r[1] && port <= +r[2]; return +s === port; }); }
+  function evalRules(rules, f) {
+    for (var i = 0; i < rules.length; i++) {
+      var r = rules[i];
+      if (!r.src || !r.dst || !r.act) continue;
+      if (!inNet(f.src, r.src) || !inNet(f.dst, r.dst)) continue;
+      if (r.proto !== 'ANY' && r.proto !== f.proto) continue;
+      if (f.proto !== 'ICMP' && !portOk(f.port, r.port || 'ANY')) continue;
+      return { act: r.act, rule: i + 1 };
+    }
+    return { act: 'DENY', rule: 0 };
+  }
+  function renderAcl(m, L, api, fresh) {
+    var saved = fresh ? null : api.load(), N = L.rows || 5;
+    var rules = saved && saved.rules ? saved.rules : (L.prefill || []).concat([]).map(function (r) { return Object.assign({}, r); });
+    while (rules.length < N) rules.push({ src: '', dst: '', proto: 'TCP', port: '', act: '' });
+    function sel(name, opts, v, i) { return '<select data-r="' + i + '" data-k="' + name + '">' + opts.map(function (o) { var val = typeof o === 'string' ? o : o[0], lab = typeof o === 'string' ? o : o[1]; return '<option value="' + esc(val) + '"' + (val === v ? ' selected' : '') + '>' + esc(lab) + '</option>'; }).join('') + '</select>'; }
+    var nets = [['', '—']].concat(L.nets.map(function (n) { return [n[0], n[1] + ' (' + n[0] + ')']; })).concat([['ANY', 'ANY']]);
+    m.innerHTML = head(L, api, 'FIREWALL PBQ') +
+      '<div class="panel tight small" style="margin-bottom:10px"><b>Networks</b><br>' + L.nets.map(function (n) { return esc(n[1]) + ': <code>' + esc(n[0]) + '</code>'; }).join(' · ') + '<br><span class="muted">Rules are checked top to bottom; the first match wins. Anything that matches no rule is denied (implicit deny).</span></div>' +
+      '<div style="overflow-x:auto"><table class="acl"><tr><th>#</th><th>Source</th><th>Destination</th><th>Proto</th><th>Port(s)</th><th>Action</th></tr>' +
+      rules.map(function (r, i) {
+        return '<tr><td class="mono">' + (i + 1) + '</td><td>' + sel('src', nets, r.src, i) + '</td><td>' + sel('dst', nets, r.dst, i) + '</td><td>' + sel('proto', ['TCP', 'UDP', 'ICMP', 'ANY'], r.proto, i) + '</td><td><input data-r="' + i + '" data-k="port" value="' + esc(r.port) + '" placeholder="443 or ANY" inputmode="numeric"></td><td>' + sel('act', [['', '—'], 'ALLOW', 'DENY'], r.act, i) + '</td></tr>';
+      }).join('') + '</table></div>' +
+      '<div class="row" style="margin-top:10px"><button class="btn pri" id="chk">Test the rule set</button><span class="chip" id="sc"></span></div><div id="flows" style="margin-top:8px"></div><div id="out" style="margin-top:10px"></div>';
+    m.querySelector('table').addEventListener('input', function (e) { var t = e.target; if (!t.dataset.k) return; rules[+t.dataset.r][t.dataset.k] = t.value.trim().toUpperCase() === 'ANY' ? 'ANY' : t.value.trim(); api.save({ rules: rules }); });
+    m.querySelector('table').addEventListener('change', function (e) { var t = e.target; if (!t.dataset.k) return; rules[+t.dataset.r][t.dataset.k] = t.value; api.save({ rules: rules }); });
+    $('#chk', m).onclick = function () {
+      var right = 0;
+      $('#flows', m).innerHTML = L.tests.map(function (f) {
+        var r = evalRules(rules, f), ok = r.act === f.expect; if (ok) right++;
+        return '<div class="flow ' + (ok ? 'ok' : 'bad') + '">' + (ok ? '✓ ' : '✗ ') + esc(f.name) + ' — ' + esc(f.src) + ' → ' + esc(f.dst) + ' ' + esc(f.proto) + (f.proto === 'ICMP' ? '' : '/' + f.port) + ': ' + r.act + (r.rule ? ' by rule ' + r.rule : ' (implicit deny)') + (ok ? '' : ' — should be ' + f.expect) + '</div>';
+      }).join('');
+      $('#sc', m).textContent = right + '/' + L.tests.length + ' flows';
+      var extra = L.maxRules && rules.filter(function (r) { return r.src && r.dst && r.act; }).length > L.maxRules;
+      if (extra && right === L.tests.length) { $('#out', m).innerHTML = '<div class="explain"><b class="v" style="color:var(--lock)">Works, but too many rules.</b><div>Every flow behaves correctly, but use ' + L.maxRules + ' rules or fewer — simplify (one rule can cover a whole subnet, and the implicit deny already blocks everything else).</div></div>'; return; }
+      finish(api, L, right === L.tests.length, $('#out', m));
+    };
+    common(m, L, api, function () { renderAcl(m, L, api, true); });
+  }
+
+  window.LAB_KINDS = window.LAB_KINDS || {};
+  window.LAB_KINDS.match = { render: function (m, L, api) { renderMatch(m, L, api, false); } };
+  window.LAB_KINDS.order = { render: function (m, L, api) { renderOrder(m, L, api, false); } };
+  window.LAB_KINDS.calc = { render: function (m, L, api) { renderCalc(m, L, api, false); } };
+  window.LAB_KINDS.acl = { render: function (m, L, api) { renderAcl(m, L, api, false); } };
+  window.PBQ_TEST = { evalRules: evalRules, inNet: inNet };
 })();
 
 ;
