@@ -250,7 +250,7 @@ html,body{overflow-x:hidden}
 <body>
 <noscript>This study app needs JavaScript enabled.</noscript>
 <script>
-/* build d4a73f416a */
+/* build a8905cab6a */
 /* CloudSim — a small AWS CLI + Azure CLI simulator over a working cloud model.
    AWS: VPC, subnets, IGW, route tables, NAT, EIP, security groups, EC2, S3, IAM, SNS, CloudWatch.
    Azure: resource groups, locks, VNets, subnets, NSGs (priority rules), VMs, public IPs,
@@ -4252,6 +4252,397 @@ window.X = {
       { t: 'Tag photos with every applicable label (outdoor, snow, dog).', a: 'Multilabel classification (Custom Vision)', why: 'Several labels per image.' },
       { t: 'Index faces, spoken words and topics across 300 training videos.', a: 'Video Indexer', why: 'Video insights.' }
     ], debrief: 'Prebuilt first, layout for structure, template for fixed forms, neural for varied ones, composed to route.' };
+})();
+
+;
+/* AWS depth pack: Cloud Practitioner (CLF-C02), Solutions Architect Associate (SAA-C03), Pro track */
+(function () {
+  var Q = window.Q, X = window.X, L = COURSE.labs;
+
+  // ======================= CLF-C02 =======================
+  X.add('a01', { gateN: 20,
+    lesson: [{ h: 'Deep dive: Well-Architected pillars and CAF perspectives with examples', html: '<table><tr><th>Pillar</th><th>Ask</th><th>Example practice</th></tr><tr><td>Operational excellence</td><td>Can we run and improve it?</td><td>Infrastructure as code, small reversible changes, runbooks</td></tr><tr><td>Security</td><td>Is it protected?</td><td>Least privilege, encryption, traceability (CloudTrail)</td></tr><tr><td>Reliability</td><td>Does it recover?</td><td>Multi-AZ, auto healing, tested backups</td></tr><tr><td>Performance efficiency</td><td>Is it using the right resources?</td><td>Serverless, right instance types, caching</td></tr><tr><td>Cost optimization</td><td>Are we paying only for value?</td><td>Right-sizing, Savings Plans, turning off idle resources</td></tr><tr><td>Sustainability</td><td>Are we minimizing impact?</td><td>High utilization, managed services, efficient regions</td></tr></table><p><b>Cloud Adoption Framework (CAF)</b> perspectives: <b>Business</b>, <b>People</b>, <b>Governance</b> (business-side) and <b>Platform</b>, <b>Security</b>, <b>Operations</b> (technical). Migration "7 Rs": retire, retain, rehost, relocate, repurchase, replatform, refactor.</p><p><b>Regions</b> are chosen by: compliance/data residency, latency to users, service availability, and price. Each Region has multiple isolated <b>Availability Zones</b>; <b>edge locations</b> serve CloudFront and Route 53; <b>Local Zones</b> and <b>Wavelength</b> push compute closer to users and 5G networks; <b>Outposts</b> bring AWS hardware on-premises.</p>' }],
+    qs: [
+      Q('Which factor should usually be considered FIRST when choosing an AWS Region for regulated data?', 'Compliance and data residency requirements', ['The color of the console', 'The number of edge locations', 'Alphabetical order'], 'Legal requirements come first; then latency, services, price.', 'c1'),
+      Q('Running AWS infrastructure in a customer\'s own data center is provided by:', 'AWS Outposts', ['AWS Local Zones', 'Amazon CloudFront', 'AWS Wavelength'], 'Outposts are AWS racks on-premises.', 'c3'),
+      Q('Ultra-low-latency apps for mobile devices on 5G networks use:', 'AWS Wavelength', ['AWS Outposts', 'AWS Snowball', 'Amazon S3 Glacier'], 'Wavelength embeds compute in telecom networks.', 'c3'),
+      Q('Which Well-Architected pillar focuses on recovering from failures and meeting demand?', 'Reliability', ['Cost optimization', 'Sustainability', 'Operational excellence'], 'Reliability = recover and scale.', 'c1'),
+      Q('Making small, frequent, reversible changes is a design principle of which pillar?', 'Operational excellence', ['Security', 'Reliability', 'Sustainability'], 'Operations excellence favors small changes.', 'c1'),
+      Q('Which CAF perspective covers staff skills, training and organizational change?', 'People', ['Platform', 'Security', 'Operations'], 'People = culture, skills, structure.', 'c1'),
+      Q('Moving an application to the cloud and replacing its self-managed database with Amazon RDS is:', 'Replatforming', ['Rehosting', 'Retiring', 'Repurchasing'], 'Lift, tinker and shift.', 'c1'),
+      Q('Replacing an on-premises CRM with a SaaS CRM product is:', 'Repurchasing', ['Refactoring', 'Relocating', 'Rehosting'], 'Drop and shop.', 'c1'),
+      Q('Each AWS Region consists of:', 'Multiple isolated Availability Zones', ['A single data center', 'Only edge locations', 'One Local Zone'], 'AZs give fault isolation.', 'c3'),
+      Q('Which cloud advantage describes no longer guessing capacity?', 'Elasticity — scale up and down with demand', ['Trade variable for fixed expense', 'Spend more on data centers', 'Slower deployment'], 'Stop guessing capacity.', 'c1'),
+      Q('Benefiting from AWS\'s purchasing power, which lowers prices, is called:', 'Economies of scale', ['Elasticity', 'Agility', 'High availability'], 'Massive scale lowers costs.', 'c1'),
+      Q('Deploying worldwide in minutes is which advantage?', 'Go global in minutes', ['Stop spending on data centers', 'Increase speed only for databases', 'Fixed pricing'], 'Many Regions available instantly.', 'c1'),
+      Q('Which Well-Architected pillar is concerned with minimizing environmental impact?', 'Sustainability', ['Performance efficiency', 'Security', 'Reliability'], 'The sixth pillar.', 'c1'),
+      Q('Which statement about edge locations is correct?', 'They cache content for CloudFront and answer Route 53 queries close to users', ['They host EC2 instances for every Region', 'They are the same as Availability Zones', 'They store RDS backups'], 'Edge = content delivery and DNS.', 'c3')
+    ], labs: ['awx-pillars'] });
+
+  X.add('a02', { gateN: 20,
+    lesson: [{ h: 'Deep dive: the service-selection cheat sheet', html: '<table><tr><th>Need</th><th>Service</th></tr><tr><td>Virtual servers</td><td>EC2 (Lightsail for simple bundles)</td></tr><tr><td>Run code without servers</td><td>Lambda</td></tr><tr><td>Containers without managing servers</td><td>ECS or EKS on Fargate</td></tr><tr><td>Deploy a web app, AWS handles the platform</td><td>Elastic Beanstalk</td></tr><tr><td>Object storage</td><td>S3</td></tr><tr><td>Block storage for one EC2 instance</td><td>EBS</td></tr><tr><td>Shared Linux file system</td><td>EFS</td></tr><tr><td>Windows file shares</td><td>FSx for Windows File Server</td></tr><tr><td>Relational database</td><td>RDS / Aurora</td></tr><tr><td>Key-value NoSQL, single-digit ms</td><td>DynamoDB</td></tr><tr><td>Data warehouse</td><td>Redshift</td></tr><tr><td>Query S3 with SQL</td><td>Athena</td></tr><tr><td>Move petabytes offline</td><td>Snowball / Snow Family</td></tr><tr><td>Migrate databases</td><td>AWS DMS</td></tr><tr><td>Message queue / pub-sub / events</td><td>SQS / SNS / EventBridge</td></tr><tr><td>DNS / CDN / private network</td><td>Route 53 / CloudFront / VPC</td></tr></table>' }],
+    qs: [
+      Q('A company wants to deploy a web application by uploading code while AWS provisions servers, load balancing and scaling. Choose:', 'AWS Elastic Beanstalk', ['Amazon EC2 only', 'AWS Snowball', 'Amazon Redshift'], 'PaaS-style deployment.', 'c3'),
+      Q('Several Linux EC2 instances need the same shared file system. Choose:', 'Amazon EFS', ['Amazon EBS', 'Amazon S3 Glacier', 'Instance store'], 'EFS is shared NFS.', 'c3'),
+      Q('Windows servers need SMB file shares integrated with Active Directory. Choose:', 'Amazon FSx for Windows File Server', ['Amazon EFS', 'Amazon S3', 'Amazon EBS'], 'Native Windows file shares.', 'c3'),
+      Q('Analysts want to run SQL queries directly on log files in S3 without loading a database. Choose:', 'Amazon Athena', ['Amazon RDS', 'AWS Lambda', 'Amazon ElastiCache'], 'Serverless SQL on S3.', 'c3'),
+      Q('A company must move 400 TB to AWS but has limited bandwidth. Choose:', 'AWS Snowball', ['AWS Direct Connect for one day', 'Amazon SES', 'Amazon Lightsail'], 'Physical data transfer device.', 'c3'),
+      Q('Migrating an Oracle database to Amazon Aurora with minimal downtime uses:', 'AWS Database Migration Service (DMS)', ['AWS Snowmobile', 'Amazon Inspector', 'AWS Config'], 'DMS replicates during migration.', 'c3'),
+      Q('A simple website with predictable monthly pricing and bundled compute, storage and networking fits:', 'Amazon Lightsail', ['Amazon EMR', 'AWS Outposts', 'Amazon Redshift'], 'Simple VPS bundles.', 'c3'),
+      Q('A petabyte-scale data warehouse for business intelligence is:', 'Amazon Redshift', ['Amazon DynamoDB', 'Amazon Neptune', 'Amazon EFS'], 'Columnar warehouse.', 'c3'),
+      Q('A graph database to model social connections is:', 'Amazon Neptune', ['Amazon Redshift', 'Amazon RDS for MySQL', 'Amazon S3'], 'Graph database.', 'c3'),
+      Q('Decoupling a web tier from a processing tier so messages wait until processed uses:', 'Amazon SQS', ['Amazon Route 53', 'AWS Shield', 'Amazon EBS'], 'Message queue.', 'c3'),
+      Q('Sending one message to many subscribers (email, SMS, queues) uses:', 'Amazon SNS', ['Amazon SQS FIFO only', 'AWS Glue', 'Amazon Athena'], 'Pub/sub fan-out.', 'c3'),
+      Q('Which service provides a managed Hadoop/Spark cluster for big data processing?', 'Amazon EMR', ['Amazon Lightsail', 'AWS Batch only', 'Amazon Polly'], 'Elastic MapReduce.', 'c3'),
+      Q('Running containers without provisioning or managing servers uses:', 'AWS Fargate', ['Amazon EC2 Dedicated Hosts', 'AWS Outposts', 'Amazon Lightsail'], 'Serverless compute for containers.', 'c3'),
+      Q('Which service gives a managed Kubernetes control plane?', 'Amazon EKS', ['Amazon ECS', 'AWS Lambda', 'Amazon SQS'], 'Elastic Kubernetes Service.', 'c3')
+    ] });
+
+  X.add('a03', { gateN: 20,
+    lesson: [{ h: 'Deep dive: which security service does what', html: '<table><tr><th>Service</th><th>Job</th></tr><tr><td>IAM / IAM Identity Center</td><td>Users, roles, policies / workforce single sign-on across accounts</td></tr><tr><td>Amazon Cognito</td><td>Sign-up and sign-in for your app\'s customers</td></tr><tr><td>AWS CloudTrail</td><td>Who called which API, when (audit)</td></tr><tr><td>AWS Config</td><td>Resource configuration history and compliance rules</td></tr><tr><td>Amazon GuardDuty</td><td>Threat detection from logs (malicious IPs, crypto-mining, credential misuse)</td></tr><tr><td>Amazon Inspector</td><td>Vulnerability scanning of EC2, container images, Lambda</td></tr><tr><td>Amazon Macie</td><td>Finds sensitive data (PII) in S3</td></tr><tr><td>AWS Security Hub</td><td>Aggregates findings and checks best-practice standards</td></tr><tr><td>Amazon Detective</td><td>Investigates the root cause of findings</td></tr><tr><td>AWS Shield / WAF</td><td>DDoS protection (Standard free, Advanced paid) / web application firewall rules</td></tr><tr><td>AWS KMS / CloudHSM</td><td>Managed keys / dedicated single-tenant HSMs</td></tr><tr><td>AWS Secrets Manager</td><td>Store and automatically rotate secrets</td></tr><tr><td>AWS Artifact</td><td>Download AWS compliance reports and agreements</td></tr></table><p><b>Root user</b>: protect with MFA, don\'t use day to day, no access keys. Tasks that require root include changing the account\'s support plan and closing the account.</p>' }],
+    qs: [
+      Q('Which service records API calls made in an AWS account for auditing?', 'AWS CloudTrail', ['Amazon CloudWatch', 'AWS Config', 'Amazon Inspector'], 'CloudTrail = who did what.', 'c2'),
+      Q('Which service continuously detects threats such as unusual API calls or crypto-mining?', 'Amazon GuardDuty', ['AWS Artifact', 'AWS Budgets', 'Amazon Macie'], 'Intelligent threat detection.', 'c2'),
+      Q('Which service scans EC2 instances and container images for software vulnerabilities?', 'Amazon Inspector', ['Amazon GuardDuty', 'AWS Shield', 'AWS Trusted Advisor'], 'Vulnerability management.', 'c2'),
+      Q('Which service discovers PII stored in S3 buckets?', 'Amazon Macie', ['Amazon Detective', 'AWS WAF', 'AWS Config'], 'Sensitive data discovery.', 'c2'),
+      Q('Which service tracks resource configuration changes and evaluates compliance rules?', 'AWS Config', ['AWS CloudTrail', 'Amazon Inspector', 'Amazon Cognito'], 'Configuration history and rules.', 'c2'),
+      Q('A mobile app needs customer sign-up, sign-in and social login. Choose:', 'Amazon Cognito', ['IAM users', 'AWS Organizations', 'AWS Artifact'], 'Customer identity.', 'c2'),
+      Q('Employees need single sign-on to many AWS accounts. Choose:', 'AWS IAM Identity Center', ['Amazon Cognito', 'AWS Shield', 'Amazon Macie'], 'Workforce SSO.', 'c2'),
+      Q('Database passwords must be stored securely and rotated automatically. Choose:', 'AWS Secrets Manager', ['Amazon S3', 'AWS Artifact', 'Amazon SQS'], 'Automatic rotation.', 'c2'),
+      Q('An auditor requests AWS\'s SOC 2 report. Where do you get it?', 'AWS Artifact', ['AWS Trusted Advisor', 'Amazon Inspector', 'AWS Support Center only'], 'Compliance reports portal.', 'c2'),
+      Q('Which protection against DDoS is automatically included at no extra cost?', 'AWS Shield Standard', ['AWS Shield Advanced', 'AWS WAF managed rules', 'Amazon GuardDuty'], 'Shield Advanced is paid.', 'c2'),
+      Q('Block SQL injection attempts against an Application Load Balancer. Choose:', 'AWS WAF', ['Amazon Macie', 'AWS Snowball', 'Amazon Inspector'], 'Web application firewall.', 'c2'),
+      Q('Under shared responsibility, patching the guest operating system on EC2 is the responsibility of:', 'The customer', ['AWS', 'Both equally', 'Nobody'], 'You manage the OS on EC2.', 'c2'),
+      Q('Under shared responsibility, physical security of data centers belongs to:', 'AWS', ['The customer', 'The customer\'s auditor', 'The internet provider'], 'Security OF the cloud.', 'c2'),
+      Q('Which task requires the root user?', 'Changing the account\'s AWS Support plan', ['Launching an EC2 instance', 'Creating an S3 bucket', 'Reading CloudWatch metrics'], 'A small set of tasks need root.', 'c2'),
+      Q('A single place that aggregates findings from GuardDuty, Inspector and Macie and checks best-practice standards is:', 'AWS Security Hub', ['Amazon Detective', 'AWS Budgets', 'AWS Batch'], 'Central security view.', 'c2')
+    ], labs: ['awx-shared'] });
+
+  X.add('a04', { gateN: 20,
+    lesson: [{ h: 'Deep dive: discounts, cost tools and support plans', html: '<table><tr><th>Option</th><th>Best for</th></tr><tr><td>On-Demand</td><td>Short, unpredictable workloads; no commitment</td></tr><tr><td><b>Savings Plans</b></td><td>Commit $/hour for 1 or 3 years; <b>Compute Savings Plans</b> apply across EC2, Fargate and Lambda</td></tr><tr><td><b>Reserved Instances</b></td><td>Steady EC2/RDS usage, 1 or 3 years (Standard = biggest discount, Convertible = can change type)</td></tr><tr><td><b>Spot Instances</b></td><td>Up to 90% off, can be interrupted with a 2-minute warning</td></tr><tr><td><b>Dedicated Hosts</b></td><td>Physical server for you — server-bound licenses (BYOL), compliance</td></tr></table><ul><li>Tools: <b>Pricing Calculator</b> (estimate before), <b>Cost Explorer</b> (analyze and forecast), <b>Budgets</b> (alerts on thresholds), <b>Cost and Usage Report</b> (most detailed data), <b>Cost Anomaly Detection</b>, <b>Compute Optimizer</b> (right-sizing), <b>Trusted Advisor</b> (cost, security, performance checks), <b>cost allocation tags</b>.</li><li><b>Organizations consolidated billing</b>: one bill and combined volume discounts across accounts.</li><li>Data transfer: <b>inbound to AWS is free</b>; outbound to the internet is charged.</li></ul><table><tr><th>Support plan</th><th>Key features</th></tr><tr><td>Basic</td><td>Free: docs, forums, core Trusted Advisor checks</td></tr><tr><td>Developer</td><td>Business-hours email to Cloud Support Associates</td></tr><tr><td>Business</td><td>24/7 phone/chat, full Trusted Advisor, under 1-hour response for production down</td></tr><tr><td>Enterprise On-Ramp</td><td>Pool of Technical Account Managers, 30-minute response for business-critical down</td></tr><tr><td>Enterprise</td><td>Designated TAM, 15-minute response for business-critical down, Concierge billing support</td></tr></table>' }],
+    qs: [
+      Q('A batch analytics job can be interrupted and restarted. Cheapest EC2 option?', 'Spot Instances', ['On-Demand', 'Dedicated Hosts', 'Reserved Instances for 3 years'], 'Up to 90% off, interruptible.', 'c4'),
+      Q('A company commits to $10/hour of compute for 3 years and wants the discount to apply to EC2, Fargate and Lambda. Choose:', 'Compute Savings Plans', ['EC2 Instance Savings Plans', 'Spot Instances', 'Dedicated Hosts'], 'Compute SPs are the most flexible.', 'c4'),
+      Q('Software licensed per physical server must be brought to AWS. Choose:', 'Dedicated Hosts', ['Spot Instances', 'Lambda', 'On-Demand shared tenancy'], 'BYOL on dedicated physical servers.', 'c4'),
+      Q('Which tool estimates the cost of an architecture before it is built?', 'AWS Pricing Calculator', ['Cost Explorer', 'AWS Budgets', 'CloudTrail'], 'Estimate up front.', 'c4'),
+      Q('Which tool sends an alert when monthly spend is forecast to exceed $5,000?', 'AWS Budgets', ['AWS Artifact', 'Amazon Inspector', 'AWS Config'], 'Budgets alert on actual or forecast.', 'c4'),
+      Q('Which tool visualizes past spend and forecasts future costs?', 'AWS Cost Explorer', ['AWS Pricing Calculator', 'AWS Shield', 'Amazon Macie'], 'Analyze and forecast.', 'c4'),
+      Q('Which provides the most detailed, line-item billing data for analysis?', 'AWS Cost and Usage Report', ['Billing dashboard summary only', 'Trusted Advisor', 'AWS Health Dashboard'], 'CUR is the most granular.', 'c4'),
+      Q('Which service recommends right-sized EC2 instance types based on utilization?', 'AWS Compute Optimizer', ['AWS Artifact', 'Amazon Cognito', 'AWS Snowball'], 'Right-sizing recommendations.', 'c4'),
+      Q('Multiple accounts should get one bill and share volume pricing tiers. Use:', 'AWS Organizations consolidated billing', ['Separate credit cards', 'IAM groups', 'AWS Config'], 'Combined usage, one bill.', 'c4'),
+      Q('Which data transfer is generally free?', 'Data transferred into AWS from the internet', ['Data out to the internet', 'All cross-Region traffic', 'Everything'], 'Inbound is free.', 'c4'),
+      Q('The lowest-cost plan that offers 24/7 phone support and the full set of Trusted Advisor checks is:', 'Business', ['Developer', 'Basic', 'Enterprise'], 'Business adds 24/7 and full TA.', 'c4'),
+      Q('A company needs a designated Technical Account Manager and 15-minute response for business-critical outages. Choose:', 'Enterprise Support', ['Business Support', 'Developer Support', 'Enterprise On-Ramp'], 'Designated TAM.', 'c4'),
+      Q('Tagging resources by project so costs can be split in reports uses:', 'Cost allocation tags', ['Security groups', 'Route tables', 'IAM roles'], 'Activate tags for billing.', 'c4'),
+      Q('Which tool flags unusual spending spikes using machine learning?', 'AWS Cost Anomaly Detection', ['AWS Artifact', 'Amazon Detective', 'AWS Shield'], 'Anomaly alerts on spend.', 'c4'),
+      Q('Standard Reserved Instances differ from Convertible ones because they:', 'Offer a larger discount but less flexibility to change instance family', ['Can be interrupted', 'Apply to Lambda', 'Have no commitment'], 'Convertible trades discount for flexibility.', 'c4')
+    ], labs: ['awx-cost'] });
+
+  // ======================= SAA-C03 =======================
+  X.add('a06', { gateN: 20,
+    lesson: [{ h: 'Deep dive: evaluating a policy decision step by step', html: '<ol><li>Start with an implicit <b>deny</b>.</li><li>Any applicable <b>explicit Deny</b> (identity policy, resource policy, SCP, boundary, session policy) → <b>denied</b>, full stop.</li><li>Organizations <b>SCP</b> must allow the action (SCPs never grant, they only limit) — and they do <b>not</b> affect the management account.</li><li><b>Resource-based policy</b> allowing the principal (same account) can grant access by itself.</li><li><b>Permissions boundary</b> (if set) must allow it; <b>session policy</b> (if any) must allow it.</li><li>An <b>identity-based policy</b> must allow it (unless a same-account resource policy already did).</li></ol><p>Policy <b>conditions</b> that show up often: <code>aws:SourceIp</code>, <code>aws:MultiFactorAuthPresent</code>, <code>aws:RequestedRegion</code>, <code>aws:PrincipalOrgID</code> (allow anyone in your organization), <code>aws:SecureTransport</code> (require HTTPS), <code>s3:x-amz-server-side-encryption</code>.</p><p>Encryption choices: <b>SSE-S3</b> (AWS-managed keys), <b>SSE-KMS</b> (KMS keys — audit trail in CloudTrail, key policies, separation of duties), <b>DSSE-KMS</b> (dual-layer), <b>SSE-C</b> (you supply the key per request), client-side encryption. <b>KMS key policies</b> are the primary control on who can use a key.</p>' }],
+    qs: [
+      Q('An IAM policy allows s3:GetObject, but an SCP on the account denies s3:*. Result?', 'Denied — an explicit deny in the SCP wins', ['Allowed — identity policy wins', 'Allowed only with MFA', 'It depends on the bucket name'], 'Explicit deny anywhere denies.', 's1'),
+      Q('Which statement about SCPs is correct?', 'They set the maximum permissions for accounts but do not grant permissions', ['They grant permissions to users', 'They apply to the management account', 'They replace IAM policies'], 'Guardrails, not grants.', 's1'),
+      Q('A bucket must be readable by every account in your AWS Organization, and only those. Use a bucket policy condition on:', 'aws:PrincipalOrgID', ['aws:SourceIp', 'aws:CurrentTime', 's3:prefix'], 'Org-wide access in one condition.', 's1'),
+      Q('Deny any S3 request not sent over HTTPS with a bucket policy condition on:', 'aws:SecureTransport = false', ['aws:MultiFactorAuthPresent', 'aws:RequestedRegion', 's3:delimiter'], 'Enforce TLS.', 's1'),
+      Q('Security wants an audit trail of every use of the key that encrypts S3 objects, and separate key administrators. Choose:', 'SSE-KMS with a customer managed key', ['SSE-S3', 'No encryption', 'SSE-C'], 'KMS usage is logged in CloudTrail.', 's1'),
+      Q('The customer must supply the encryption key with every S3 request and AWS must not store it. Choose:', 'SSE-C', ['SSE-S3', 'SSE-KMS', 'Glacier Vault Lock'], 'Customer-provided keys.', 's1'),
+      Q('A Lambda function in account A must write to a DynamoDB table in account B. Common approach?', 'Lambda assumes an IAM role in account B that trusts account A and allows the write', ['Share root credentials', 'Make the table public', 'Copy the table'], 'Cross-account role assumption.', 's1'),
+      Q('Prevent anyone in member accounts from using Regions outside us-east-1 and eu-west-1. Use:', 'An SCP denying actions when aws:RequestedRegion is not in the allowed list', ['A security group', 'A NACL', 'IAM password policy'], 'Region restriction guardrail.', 's1'),
+      Q('Who primarily controls access to a KMS key?', 'The key policy', ['A security group', 'The VPC route table', 'The S3 bucket ACL'], 'Every KMS key has a key policy.', 's1'),
+      Q('Third-party auditors need temporary read access to logs in your account. Best practice?', 'Create an IAM role they assume (with an external ID)', ['Create IAM users and email passwords', 'Share root credentials', 'Make the logs public'], 'Roles + external ID prevent the confused-deputy problem.', 's1'),
+      Q('A company needs FIPS 140-2 Level 3 single-tenant HSMs under its exclusive control. Choose:', 'AWS CloudHSM', ['AWS KMS default keys', 'Secrets Manager', 'SSE-S3'], 'Dedicated HSMs.', 's1'),
+      Q('Delegated admins can create roles but those roles must never exceed a defined permission set. Use:', 'Permissions boundaries', ['SCPs on the admins only', 'Inline policies', 'Session tags'], 'Boundaries cap delegated permissions.', 's1'),
+      Q('Which service provides managed threat detection that should be enabled in every account and Region?', 'Amazon GuardDuty', ['AWS Batch', 'Amazon Lightsail', 'AWS Glue'], 'Org-wide threat detection.', 's1'),
+      Q('Protect a public web app on CloudFront from common exploits and rate-limit abusive IPs. Choose:', 'AWS WAF on the CloudFront distribution', ['A NACL on the origin subnet only', 'AWS Snowball', 'Amazon Inspector'], 'WAF rules at the edge.', 's1')
+    ], labs: ['awx-iam-eval'] });
+
+  X.add('a07', { gateN: 20,
+    lesson: [{ h: 'Deep dive: connectivity decision guide', html: '<table><tr><th>Need</th><th>Choose</th></tr><tr><td>Private VMs need outbound internet (IPv4)</td><td>NAT gateway (one per AZ for HA)</td></tr><tr><td>Outbound-only IPv6</td><td>Egress-only internet gateway</td></tr><tr><td>Private access to S3/DynamoDB</td><td>Gateway VPC endpoint (free)</td></tr><tr><td>Private access to other AWS services or SaaS</td><td>Interface endpoint (PrivateLink)</td></tr><tr><td>Expose your service privately to other VPCs/accounts</td><td>PrivateLink endpoint service (behind an NLB)</td></tr><tr><td>Connect 2 VPCs</td><td>VPC peering (non-transitive, no overlapping CIDRs)</td></tr><tr><td>Connect many VPCs and on-prem</td><td>Transit Gateway (hub and spoke)</td></tr><tr><td>Encrypted on-prem link quickly</td><td>Site-to-Site VPN</td></tr><tr><td>Dedicated private bandwidth, consistent latency</td><td>Direct Connect (add VPN over it for encryption)</td></tr></table><p><b>Route 53 routing policies</b>: simple, <b>weighted</b> (split %), <b>latency-based</b> (fastest Region), <b>failover</b> (active-passive with health checks), <b>geolocation</b> (by user location — content or compliance), <b>geoproximity</b> (by distance with bias), <b>multivalue answer</b> (several healthy records), IP-based.</p><p>Load balancers: <b>ALB</b> (HTTP/HTTPS, path- and host-based routing, Lambda targets), <b>NLB</b> (TCP/UDP, static IPs, extreme performance), <b>Gateway LB</b> (inline third-party appliances). <b>Global Accelerator</b>: static anycast IPs and the AWS backbone for TCP/UDP apps; <b>CloudFront</b>: caching CDN for HTTP content.</p>' }],
+    qs: [
+      Q('Private EC2 instances in two AZs need outbound internet access that survives an AZ failure. Design?', 'A NAT gateway in each AZ, with each private subnet routed to its own AZ\'s NAT gateway', ['One NAT gateway in one AZ', 'An internet gateway route from private subnets', 'A VPC peering connection'], 'NAT gateways are zonal.', 's2'),
+      Q('EC2 instances in private subnets must reach S3 without traversing the internet, at no extra cost. Use:', 'A gateway VPC endpoint for S3', ['A NAT gateway', 'An interface endpoint for EC2', 'Direct Connect'], 'Gateway endpoints are free.', 's4'),
+      Q('Fifty VPCs across accounts and an on-prem network need to interconnect simply. Use:', 'AWS Transit Gateway', ['Full-mesh VPC peering', 'Internet gateways', 'NAT gateways'], 'Hub-and-spoke routing.', 's2'),
+      Q('A SaaS provider must expose its service privately to customer VPCs without peering. Use:', 'AWS PrivateLink (endpoint service behind an NLB)', ['A public ALB', 'VPC peering with every customer', 'NAT gateway'], 'Private service exposure.', 's1'),
+      Q('Users worldwide should be routed to the Region that gives them the lowest latency. Route 53 policy?', 'Latency-based routing', ['Simple routing', 'Weighted routing', 'Geolocation routing'], 'Fastest Region.', 's3'),
+      Q('All users in Germany must be served from the EU Region for legal reasons. Route 53 policy?', 'Geolocation routing', ['Latency routing', 'Weighted routing', 'Multivalue answer'], 'Location-based rules.', 's1'),
+      Q('Send 10% of traffic to a new version of the site for testing. Route 53 policy?', 'Weighted routing', ['Failover routing', 'Geolocation routing', 'Simple routing'], 'Percentages.', 's2'),
+      Q('An active-passive setup should switch DNS to a standby Region when health checks fail. Use:', 'Failover routing with health checks', ['Weighted 50/50', 'Geoproximity only', 'Simple routing'], 'Active-passive DR.', 's2'),
+      Q('A multiplayer game uses UDP and needs static IPs and fast global routing over the AWS backbone. Use:', 'AWS Global Accelerator', ['Amazon CloudFront', 'An ALB', 'Route 53 simple routing'], 'Anycast IPs for TCP/UDP.', 's3'),
+      Q('Route /api/* to one target group and /images/* to another behind one load balancer. Use:', 'Application Load Balancer path-based routing', ['Network Load Balancer', 'Gateway Load Balancer', 'Classic Load Balancer'], 'Layer 7 routing.', 's3'),
+      Q('Inline third-party firewall appliances must inspect all traffic transparently. Use:', 'Gateway Load Balancer', ['Application Load Balancer', 'Global Accelerator', 'CloudFront'], 'GWLB is for appliances.', 's1'),
+      Q('A company needs consistent, high-bandwidth, private connectivity to AWS, encrypted. Design?', 'Direct Connect with a Site-to-Site VPN over it (or MACsec)', ['Direct Connect alone is always encrypted', 'Internet gateway', 'VPC peering'], 'Direct Connect is private, not encrypted by default.', 's1'),
+      Q('Which is true of security groups?', 'They are stateful and support allow rules only', ['They are stateless', 'They support deny rules', 'They apply to subnets'], 'NACLs are stateless with allow and deny.', 's1'),
+      Q('Two VPCs have overlapping CIDR ranges. Can they be peered?', 'No — peered VPCs cannot have overlapping CIDRs', ['Yes, always', 'Only in the same Region', 'Only with NAT'], 'Plan non-overlapping address space.', 's2')
+    ], labs: ['awx-net'] });
+
+  X.add('a08', { gateN: 20,
+    lesson: [{ h: 'Deep dive: scaling and compute choices', html: '<ul><li><b>Auto Scaling policies</b>: <b>target tracking</b> (keep CPU at 50%), <b>step</b> (bigger steps for bigger alarms), <b>scheduled</b> (known patterns), <b>predictive</b> (forecasts from history). Lifecycle hooks run actions on launch/terminate; warm pools reduce start time.</li><li><b>Placement groups</b>: <b>cluster</b> (one AZ, lowest latency — HPC), <b>spread</b> (distinct hardware, max 7 per AZ — critical instances), <b>partition</b> (groups on separate racks — Hadoop, Cassandra, Kafka).</li><li>Instance families: general (M, T burstable), compute (C), memory (R, X), storage (I, D), accelerated (P, G, Inf, Trn). <b>Graviton</b> (ARM) gives better price-performance.</li><li><b>Lambda</b>: max 15 minutes, up to 10 GB memory, scales per request; <b>provisioned concurrency</b> removes cold starts; <b>reserved concurrency</b> caps a function.</li><li>Long-running containers → ECS/EKS (Fargate for serverless); batch jobs → AWS Batch; long workflows → Step Functions.</li></ul>' }],
+    qs: [
+      Q('Keep average CPU of an Auto Scaling group near 50% automatically. Use:', 'Target tracking scaling', ['Scheduled scaling', 'Manual scaling', 'Simple scaling with no alarms'], 'Set a target metric.', 's3'),
+      Q('Traffic jumps every weekday at 8 AM. Prepare capacity in advance with:', 'Scheduled scaling (or predictive scaling)', ['Only target tracking', 'Spread placement group', 'Larger EBS volumes'], 'Known patterns → schedule.', 's3'),
+      Q('An HPC application needs the lowest network latency between instances. Use:', 'A cluster placement group', ['A spread placement group', 'Multiple Regions', 'A partition placement group across AZs'], 'Packed close together.', 's3'),
+      Q('Six critical instances must not share underlying hardware. Use:', 'A spread placement group', ['A cluster placement group', 'Dedicated Hosts only', 'A single AZ cluster'], 'Distinct hardware.', 's2'),
+      Q('A Kafka cluster needs rack-aware isolation across many instances. Use:', 'A partition placement group', ['A cluster placement group', 'Spot Fleet only', 'A single instance'], 'Partitions on separate racks.', 's2'),
+      Q('A job runs for 45 minutes. Can it run in a single Lambda invocation?', 'No — Lambda times out at 15 minutes; use ECS/Fargate, Batch or Step Functions', ['Yes, with more memory', 'Yes, with provisioned concurrency', 'Yes, up to 24 hours'], '15-minute maximum.', 's3'),
+      Q('A latency-sensitive API on Lambda suffers cold starts. Fix with:', 'Provisioned concurrency', ['Reserved concurrency of 0', 'Smaller memory', 'A NAT gateway'], 'Pre-initialized environments.', 's3'),
+      Q('A Lambda function must never use more than 50 concurrent executions to protect a database. Use:', 'Reserved concurrency set to 50', ['Provisioned concurrency of 500', 'A larger timeout', 'SQS FIFO only'], 'Caps concurrency.', 's2'),
+      Q('Better price-performance for many general workloads is often achieved with:', 'AWS Graviton (ARM) instances', ['Older generation instances', 'Dedicated Hosts', 'Larger instance stores'], 'Graviton is cost-efficient.', 's4'),
+      Q('In-memory analytics with very large RAM needs suits which family?', 'Memory optimized (R/X)', ['Compute optimized (C)', 'Burstable (T)', 'Storage optimized (I)'], 'Memory-heavy workloads.', 's3'),
+      Q('Instances need a script to finish registering with a config server before receiving traffic. Use:', 'An Auto Scaling lifecycle hook', ['A spread placement group', 'Route 53 weighted routing', 'S3 events'], 'Hooks pause launch/terminate.', 's2'),
+      Q('Thousands of batch compute jobs with queues and priorities are best run with:', 'AWS Batch', ['Lambda only', 'Lightsail', 'Elastic Beanstalk'], 'Managed batch scheduling.', 's3'),
+      Q('A workload is steady 24/7 for three years on a fixed instance type. Cheapest pricing?', 'Standard Reserved Instances or EC2 Instance Savings Plans', ['On-Demand', 'Spot only', 'Dedicated Hosts'], 'Commitment discounts.', 's4'),
+      Q('Burstable instances that earn CPU credits during low usage are the:', 'T family', ['C family', 'P family', 'I family'], 'Burstable performance.', 's4')
+    ], labs: ['awx-compute'] });
+
+  X.add('a09', { gateN: 20,
+    lesson: [{ h: 'Deep dive: S3 classes, EBS types and file systems', html: '<table><tr><th>S3 class</th><th>Use</th><th>Minimum storage duration</th></tr><tr><td>Standard</td><td>Frequent access</td><td>None</td></tr><tr><td>Intelligent-Tiering</td><td>Unknown or changing patterns</td><td>None</td></tr><tr><td>Standard-IA</td><td>Infrequent, needs ms access</td><td>30 days</td></tr><tr><td>One Zone-IA</td><td>Infrequent, re-creatable data</td><td>30 days</td></tr><tr><td>Glacier Instant Retrieval</td><td>Archive, millisecond access</td><td>90 days</td></tr><tr><td>Glacier Flexible Retrieval</td><td>Archive, minutes–hours</td><td>90 days</td></tr><tr><td>Glacier Deep Archive</td><td>Long-term, 12–48 hours</td><td>180 days</td></tr></table><table><tr><th>EBS</th><th>Use</th></tr><tr><td>gp3</td><td>Default SSD; set IOPS and throughput independently of size</td></tr><tr><td>io2 Block Express</td><td>Highest IOPS, sub-ms latency, critical databases; Multi-Attach</td></tr><tr><td>st1</td><td>Throughput HDD for big sequential workloads (logs, data warehouses)</td></tr><tr><td>sc1</td><td>Cold HDD, lowest cost, infrequent access</td></tr></table><p>EBS volumes live in <b>one AZ</b>; snapshots are stored regionally and can be copied across Regions. <b>FSx for Lustre</b> = HPC with S3 integration; <b>FSx for NetApp ONTAP</b> = multi-protocol enterprise NAS. <b>S3 Object Lock</b> (WORM) and <b>Glacier Vault Lock</b> for compliance retention; <b>S3 Replication</b> (CRR/SRR) needs versioning.</p>' }],
+    qs: [
+      Q('Data access patterns are unknown and change over time; minimize cost without retrieval fees surprises. Choose:', 'S3 Intelligent-Tiering', ['S3 One Zone-IA', 'Glacier Deep Archive', 'S3 Standard only'], 'Automatic tiering.', 's4'),
+      Q('Medical images are rarely read but must be retrievable in milliseconds when needed. Cheapest fit?', 'S3 Glacier Instant Retrieval', ['Glacier Deep Archive', 'S3 Standard', 'EBS sc1'], 'Archive with millisecond access.', 's4'),
+      Q('Thumbnails that can be regenerated are accessed monthly. Cheapest suitable class?', 'S3 One Zone-IA', ['S3 Standard', 'S3 Glacier Flexible Retrieval for ms access', 'Instance store'], 'Re-creatable data can live in one AZ.', 's4'),
+      Q('Regulations require 10 years of retention with retrieval within 48 hours. Cheapest choice?', 'S3 Glacier Deep Archive', ['S3 Standard-IA', 'S3 Intelligent-Tiering', 'EBS gp3'], '12–48 hour retrieval, lowest cost.', 's4'),
+      Q('A database needs 20,000 IOPS on a 500 GB volume and you don\'t want to over-provision size. Choose:', 'gp3 with provisioned IOPS (or io2 for highest needs)', ['st1', 'sc1', 'Instance store only'], 'gp3 decouples IOPS from size (up to 16,000); io2 beyond.', 's3'),
+      Q('A mission-critical database needs the highest IOPS and sub-millisecond latency. Choose:', 'io2 Block Express', ['gp2', 'st1', 'sc1'], 'Top performance tier.', 's3'),
+      Q('Large sequential log processing needs high throughput at low cost. Choose:', 'st1 throughput optimized HDD', ['io2', 'gp3 at maximum IOPS', 'Glacier'], 'Throughput HDD.', 's4'),
+      Q('An EBS volume must be used by an instance in a different AZ. How?', 'Create a snapshot and restore a new volume in the target AZ', ['Attach it directly', 'Change the volume\'s AZ setting', 'Use S3 Transfer Acceleration'], 'EBS is AZ-scoped.', 's2'),
+      Q('Files must be written once and never deleted or modified for 7 years (WORM). Use:', 'S3 Object Lock in compliance mode', ['S3 lifecycle rules only', 'IAM policies only', 'Versioning only'], 'WORM retention.', 's1'),
+      Q('Objects must be automatically copied to a bucket in another Region for DR. Use:', 'S3 Cross-Region Replication (versioning enabled on both buckets)', ['S3 Transfer Acceleration', 'Lifecycle to Glacier', 'CloudFront'], 'CRR requires versioning.', 's2'),
+      Q('An HPC job needs a high-performance file system that loads data from S3. Choose:', 'Amazon FSx for Lustre', ['Amazon EFS', 'EBS st1', 'S3 Glacier'], 'Lustre for HPC with S3 integration.', 's3'),
+      Q('Uploads from users around the world to a single S3 bucket are slow. Improve with:', 'S3 Transfer Acceleration (or multipart upload)', ['Glacier Deep Archive', 'One Zone-IA', 'Smaller objects only'], 'Uses edge locations.', 's3'),
+      Q('On-premises applications need to keep using NFS/SMB while data is stored in S3. Use:', 'AWS Storage Gateway (File Gateway)', ['Amazon EFS only', 'AWS Snowball Edge permanently', 'Amazon FSx for Lustre'], 'Hybrid file access backed by S3.', 's2'),
+      Q('Objects older than 90 days should move to Glacier Flexible Retrieval automatically. Use:', 'An S3 Lifecycle rule', ['S3 Replication', 'Object Lock', 'Requester Pays'], 'Lifecycle transitions.', 's4')
+    ], labs: ['awx-storage'] });
+
+  X.add('a10', { gateN: 20,
+    lesson: [{ h: 'Deep dive: database decision guide', html: '<table><tr><th>Need</th><th>Choose</th></tr><tr><td>Managed relational, high availability</td><td>RDS Multi-AZ (synchronous standby, automatic failover)</td></tr><tr><td>Scale relational reads</td><td>Read replicas (asynchronous; can be cross-Region)</td></tr><tr><td>Relational at higher performance, fast failover, up to 15 replicas</td><td>Aurora (6 copies across 3 AZs)</td></tr><tr><td>Relational across Regions with &lt;1 s replication</td><td>Aurora Global Database</td></tr><tr><td>Variable/unpredictable relational load</td><td>Aurora Serverless v2</td></tr><tr><td>Key-value at any scale, single-digit ms</td><td>DynamoDB (on-demand or provisioned capacity)</td></tr><tr><td>Microsecond reads for DynamoDB</td><td>DAX</td></tr><tr><td>Multi-Region active-active NoSQL</td><td>DynamoDB Global Tables</td></tr><tr><td>Session store / cache with persistence, pub/sub, sorted sets</td><td>ElastiCache for Redis (Valkey/Redis OSS)</td></tr><tr><td>Simple multithreaded cache</td><td>ElastiCache for Memcached</td></tr><tr><td>Document (MongoDB-compatible)</td><td>DocumentDB</td></tr><tr><td>Graph / time series / ledger / wide-column</td><td>Neptune / Timestream / QLDB-style ledger needs / Keyspaces (Cassandra)</td></tr></table><p>Too many database connections from Lambda? Put <b>RDS Proxy</b> in front. Encrypting an existing unencrypted RDS instance: snapshot → copy the snapshot with encryption → restore.</p>' }],
+    qs: [
+      Q('An RDS database must survive an AZ failure with automatic failover. Use:', 'RDS Multi-AZ', ['A single read replica', 'Larger instance type', 'Manual snapshots only'], 'Synchronous standby with failover.', 's2'),
+      Q('A reporting workload overloads the primary database with reads. Offload it with:', 'RDS read replicas', ['Multi-AZ standby (classic, not readable)', 'A larger EBS volume', 'CloudFront'], 'Async replicas serve reads.', 's3'),
+      Q('A relational database must serve users in two continents with local reads and fast cross-Region recovery. Use:', 'Aurora Global Database', ['RDS Multi-AZ', 'ElastiCache Memcached', 'DynamoDB Streams'], 'Sub-second cross-Region replication.', 's2'),
+      Q('A relational workload is idle most of the day with unpredictable spikes. Choose:', 'Aurora Serverless v2', ['RDS on a large reserved instance', 'Redshift', 'EC2 with self-managed MySQL'], 'Scales capacity automatically.', 's4'),
+      Q('A gaming leaderboard needs single-digit millisecond reads at massive scale with no servers to manage. Choose:', 'DynamoDB', ['RDS for PostgreSQL', 'Redshift', 'S3 Select'], 'Serverless key-value.', 's3'),
+      Q('DynamoDB reads must drop to microseconds for a hot product catalog. Add:', 'DynamoDB Accelerator (DAX)', ['RDS Proxy', 'Read replicas', 'CloudFront'], 'In-memory cache for DynamoDB.', 's3'),
+      Q('A DynamoDB table must accept writes in three Regions simultaneously. Use:', 'DynamoDB Global Tables', ['DynamoDB Streams to S3', 'RDS Multi-AZ', 'Aurora read replicas'], 'Multi-Region active-active.', 's2'),
+      Q('Thousands of Lambda invocations exhaust RDS connections. Fix with:', 'Amazon RDS Proxy', ['A NAT gateway', 'Bigger Lambda memory', 'S3 events'], 'Connection pooling.', 's2'),
+      Q('A caching layer needs persistence, replication and sorted sets for a leaderboard. Choose:', 'ElastiCache for Redis', ['ElastiCache for Memcached', 'Amazon EFS', 'S3'], 'Redis has rich data structures and replication.', 's3'),
+      Q('An existing MongoDB workload should move to a managed AWS service with minimal changes. Choose:', 'Amazon DocumentDB', ['Amazon Neptune', 'Amazon RDS for MySQL', 'Amazon Timestream'], 'MongoDB-compatible.', 's3'),
+      Q('How do you encrypt an existing unencrypted RDS instance?', 'Snapshot it, copy the snapshot with encryption enabled, restore a new instance', ['Toggle encryption on the live instance', 'Encryption is impossible', 'Enable S3 encryption'], 'Encrypt via snapshot copy.', 's1'),
+      Q('A DynamoDB workload has unpredictable traffic with no capacity planning wanted. Capacity mode?', 'On-demand', ['Provisioned with fixed units', 'Reserved capacity only', 'Manual sharding'], 'Pay per request.', 's4'),
+      Q('IoT sensor data must be stored and queried as time series efficiently. Choose:', 'Amazon Timestream', ['Amazon Neptune', 'Amazon DocumentDB', 'Amazon Redshift only'], 'Purpose-built time-series database.', 's3'),
+      Q('Aurora stores data durably by keeping how many copies across how many AZs?', 'Six copies across three AZs', ['Two copies in one AZ', 'One copy per Region', 'Three copies in one AZ'], 'Built-in storage durability.', 's2')
+    ], labs: ['awx-db'] });
+
+  X.add('a11', { gateN: 20,
+    lesson: [{ h: 'Deep dive: decoupling patterns and DR numbers', html: '<ul><li><b>SQS Standard</b>: nearly unlimited throughput, at-least-once delivery, best-effort ordering. <b>SQS FIFO</b>: ordered, exactly-once processing (lower throughput). <b>Visibility timeout</b> hides a message while it is processed; a <b>dead-letter queue</b> catches messages that keep failing; <b>long polling</b> reduces empty responses and cost.</li><li><b>SNS + SQS fan-out</b>: one event to many independent queues. <b>EventBridge</b>: event bus with content-based rules, SaaS and scheduled events. <b>Kinesis Data Streams</b>: ordered real-time streams with replay; <b>Amazon Data Firehose</b>: load streams into S3/Redshift/OpenSearch with no code.</li><li><b>Step Functions</b>: orchestrate multi-step workflows with retries and branching.</li></ul><table><tr><th>DR strategy</th><th>RPO/RTO</th><th>Cost</th></tr><tr><td>Backup & restore</td><td>Hours</td><td>Lowest</td></tr><tr><td>Pilot light (core data replicated, minimal services off)</td><td>Tens of minutes</td><td>Low</td></tr><tr><td>Warm standby (scaled-down full copy running)</td><td>Minutes</td><td>Medium</td></tr><tr><td>Multi-site active/active</td><td>Near zero</td><td>Highest</td></tr></table><p><b>AWS Backup</b> centralizes backup policies across services and accounts; <b>Elastic Disaster Recovery</b> replicates servers for fast recovery.</p>' }],
+    qs: [
+      Q('Orders must be processed exactly once and in the order received. Choose:', 'SQS FIFO queue', ['SQS Standard queue', 'SNS topic only', 'S3 events'], 'Ordering and exactly-once processing.', 's2'),
+      Q('A message keeps failing processing and blocks progress. Best practice?', 'Configure a dead-letter queue after a maximum receive count', ['Delete the queue', 'Set visibility timeout to 0', 'Switch to FIFO'], 'Isolate poison messages.', 's2'),
+      Q('Workers sometimes take 5 minutes per message, and messages are processed twice. Fix with:', 'Increase the visibility timeout above the processing time', ['Decrease the visibility timeout', 'Use short polling', 'Delete the DLQ'], 'Message reappears if timeout is too short.', 's2'),
+      Q('One order event must trigger billing, shipping and analytics independently. Pattern?', 'SNS topic fanning out to multiple SQS queues', ['One SQS queue for all three', 'Direct database writes from the web tier', 'A NAT gateway'], 'Fan-out decouples consumers.', 's2'),
+      Q('Route events from a SaaS application to targets based on event content with rules. Use:', 'Amazon EventBridge', ['Amazon SQS Standard', 'AWS Snowball', 'Amazon Route 53'], 'Event bus with rules.', 's2'),
+      Q('Clickstream data must be ordered per user and replayable by multiple consumers. Choose:', 'Kinesis Data Streams', ['SQS Standard', 'SNS', 'S3 Glacier'], 'Ordered shards, replay.', 's3'),
+      Q('Stream data into S3 in near real time with no consumer code. Choose:', 'Amazon Data Firehose', ['Kinesis Data Streams with custom consumers', 'SQS FIFO', 'AWS Batch'], 'Managed delivery.', 's4'),
+      Q('A multi-step approval workflow with retries, waits and branches. Choose:', 'AWS Step Functions', ['A single Lambda with sleep', 'SQS only', 'CloudFront'], 'Workflow orchestration.', 's2'),
+      Q('DR requires RTO under 10 minutes at moderate cost with a scaled-down copy always running. Strategy?', 'Warm standby', ['Backup and restore', 'Pilot light', 'Multi-site active/active'], 'Running, scaled-down environment.', 's2'),
+      Q('Only the database is replicated to the DR Region; app servers are launched from AMIs during a disaster. Strategy?', 'Pilot light', ['Warm standby', 'Active/active', 'Backup and restore'], 'Core kept "lit".', 's2'),
+      Q('Hours of downtime are acceptable and cost must be minimal. Strategy?', 'Backup and restore', ['Multi-site active/active', 'Warm standby', 'Pilot light with full scale'], 'Cheapest, slowest.', 's4'),
+      Q('Centrally define backup schedules and retention across RDS, EBS, DynamoDB and EFS in many accounts. Use:', 'AWS Backup', ['S3 lifecycle rules', 'CloudTrail', 'AWS Config only'], 'Central backup policies.', 's2'),
+      Q('Reduce SQS cost and empty receives when queues are often empty. Use:', 'Long polling', ['Short polling', 'FIFO queues', 'Smaller messages'], 'Wait for messages up to 20 s.', 's4'),
+      Q('Replicate on-premises servers continuously to AWS for minutes-level recovery. Use:', 'AWS Elastic Disaster Recovery', ['AWS Snowball', 'S3 Glacier', 'AWS Artifact'], 'Block-level server replication.', 's2')
+    ], labs: ['awx-dr'] });
+
+  // ======================= Pro track =======================
+  X.add('a13', {
+    lesson: [{ h: 'Deep dive: professional-level network and security patterns', html: '<ul><li><b>Centralized egress</b>: spoke VPCs route internet traffic through an inspection VPC (AWS Network Firewall or GWLB appliances) via Transit Gateway.</li><li><b>Centralized ingress</b> and <b>shared services VPC</b> (DNS, directory) reached over Transit Gateway; <b>Route 53 Resolver</b> inbound/outbound endpoints integrate on-prem DNS.</li><li><b>Resource Access Manager (RAM)</b> shares subnets, Transit Gateways and other resources across accounts.</li><li>Security at scale: delegated administrators for GuardDuty/Security Hub in a security account, org-wide CloudTrail to a locked log-archive account, <b>AWS Firewall Manager</b> to apply WAF/SG/Network Firewall policies across accounts.</li><li>IR: isolate compromised instances with a restrictive security group, snapshot volumes, capture memory, revoke/rotate credentials, and automate with EventBridge + Lambda/Step Functions.</li></ul>' }],
+    qs: [
+      Q('All VPC internet egress must pass through one inspection point. Common design?', 'Route spokes through Transit Gateway to an inspection VPC with AWS Network Firewall', ['An internet gateway in every VPC', 'VPC peering mesh', 'S3 gateway endpoints'], 'Centralized egress inspection.'),
+      Q('On-prem servers must resolve private Route 53 hosted zones. Use:', 'Route 53 Resolver inbound endpoints', ['Public hosted zones only', 'CloudFront', 'NAT gateway'], 'Hybrid DNS.'),
+      Q('Share one set of subnets owned by a networking account with application accounts. Use:', 'AWS Resource Access Manager (shared VPC subnets)', ['VPC peering', 'Copy the VPC', 'IAM users in each account'], 'RAM shares resources.'),
+      Q('Apply the same WAF rules to every ALB across 100 accounts automatically. Use:', 'AWS Firewall Manager', ['Manual WAF per account', 'Security groups only', 'Route 53'], 'Central policy enforcement.'),
+      Q('First containment step for an EC2 instance showing crypto-mining activity?', 'Isolate it with a restrictive security group (and snapshot for forensics)', ['Terminate it immediately and lose evidence', 'Reboot it', 'Ignore it'], 'Contain while preserving evidence.'),
+      Q('CloudTrail logs must be tamper-resistant and owned by security, not workload teams. Design?', 'An organization trail delivering to a log-archive account bucket with restrictive policies (and Object Lock)', ['Local trails in each account deletable by admins', 'No trail', 'Logs on EC2 disks'], 'Centralized, protected logs.'),
+      Q('Automatically quarantine an instance when GuardDuty raises a high-severity finding. Use:', 'EventBridge rule triggering Lambda or Step Functions', ['Manual email review only', 'AWS Artifact', 'Cost Explorer'], 'Automated response.')
+    ], labs: ['awx-pro-net'] });
+
+  X.add('a14', {
+    lesson: [{ h: 'Deep dive: IaC, deployments and FinOps details', html: '<ul><li><b>CloudFormation</b>: stacks, <b>change sets</b> (preview), <b>drift detection</b>, <b>StackSets</b> (deploy across accounts/Regions), DeletionPolicy Retain/Snapshot. <b>CDK</b> generates CloudFormation from code; Terraform is the common multi-cloud alternative.</li><li>Deployments: <b>CodePipeline</b>/<b>CodeBuild</b>/<b>CodeDeploy</b>; strategies <b>in-place</b>, <b>rolling</b>, <b>blue/green</b>, <b>canary</b>, <b>linear</b>; feature flags; automatic rollback on alarms.</li><li><b>FinOps</b>: tagging strategy and enforcement (tag policies, SCPs), showback/chargeback, Savings Plans coverage and utilization, rightsizing, scheduling dev resources off-hours, unit economics (cost per customer/transaction).</li><li><b>Landing zone</b>: Control Tower with account factory, organizational units (Security, Infrastructure, Workloads, Sandbox), guardrails (preventive SCPs, detective Config rules), centralized logging and identity.</li></ul>' }],
+    qs: [
+      Q('Preview exactly what a CloudFormation update will change before applying it. Use:', 'A change set', ['Drift detection', 'StackSets', 'A deletion policy'], 'Change sets preview updates.'),
+      Q('Someone edited resources manually outside CloudFormation. Detect it with:', 'Drift detection', ['Change sets', 'CodeBuild', 'Cost Explorer'], 'Compare actual vs template.'),
+      Q('Deploy the same baseline stack to 60 accounts in 4 Regions. Use:', 'CloudFormation StackSets', ['One stack per account manually', 'Elastic Beanstalk', 'AWS Batch'], 'Multi-account, multi-Region deployment.'),
+      Q('Keep the RDS database when its stack is deleted. Set:', 'DeletionPolicy: Retain (or Snapshot)', ['UpdatePolicy only', 'A change set', 'Drift detection'], 'Protect stateful resources.'),
+      Q('Shift 10% of Lambda traffic to a new version for 10 minutes, then all of it, rolling back on alarms. Strategy?', 'Canary deployment with CodeDeploy', ['In-place all at once', 'Manual copy', 'Recreate the function'], 'Gradual, guarded rollout.'),
+      Q('Engineering teams should see the cost of their own services each month. FinOps practice?', 'Showback using enforced cost allocation tags', ['Hide costs from teams', 'One shared account for everything', 'Disable billing alerts'], 'Visibility drives accountability.'),
+      Q('Development environments run 24/7 but are used 50 hours a week. Simple saving?', 'Schedule them to stop outside working hours', ['Buy 3-year RIs for them', 'Double their size', 'Move them to Dedicated Hosts'], 'Turn off idle resources.'),
+      Q('A preventive guardrail in a Control Tower landing zone is implemented with:', 'Service control policies', ['CloudWatch dashboards', 'Cost Explorer', 'Route 53'], 'Preventive = SCPs; detective = Config rules.')
+    ], labs: ['awx-pro-iac'] });
+
+  // ======================= labs =======================
+  L['awx-pillars'] = { kind: 'match', title: 'Pillars, CAF and the 7 Rs', sum: 'Classify 10 statements',
+    brief: 'Classify each practice or decision.',
+    options: ['Operational excellence', 'Security', 'Reliability', 'Performance efficiency', 'Cost optimization', 'Sustainability', 'Rehost', 'Replatform', 'Refactor', 'Repurchase', 'Retire'],
+    items: [
+      { t: 'Use infrastructure as code and run game days to improve procedures.', a: 'Operational excellence', why: 'Run and improve.' },
+      { t: 'Enable CloudTrail everywhere and grant least privilege.', a: 'Security', why: 'Traceability and least privilege.' },
+      { t: 'Deploy across multiple AZs and test recovery procedures.', a: 'Reliability', why: 'Recover from failure.' },
+      { t: 'Choose Graviton instances and add a cache to cut latency.', a: 'Performance efficiency', why: 'Right resources.' },
+      { t: 'Buy a Savings Plan and stop idle dev instances at night.', a: 'Cost optimization', why: 'Pay only for value.' },
+      { t: 'Maximize utilization and pick a Region with lower carbon intensity.', a: 'Sustainability', why: 'Reduce environmental impact.' },
+      { t: 'Move VMs to EC2 unchanged to exit a data center fast.', a: 'Rehost', why: 'Lift and shift.' },
+      { t: 'Move the app to EC2 but switch its database to RDS.', a: 'Replatform', why: 'Lift, tinker, shift.' },
+      { t: 'Rebuild the monolith as serverless microservices.', a: 'Refactor', why: 'Re-architect.' },
+      { t: 'Replace the in-house HR system with a SaaS product.', a: 'Repurchase', why: 'Drop and shop.' },
+      { t: 'Shut down an application nobody uses.', a: 'Retire', why: 'Decommission.' }
+    ], debrief: 'Six pillars and seven Rs cover a large share of CLF-C02 scenario questions.' };
+  L['awx-shared'] = { kind: 'match', title: 'Shared responsibility', sum: 'AWS, customer, or shared?',
+    brief: 'Decide who is responsible for each item under the AWS Shared Responsibility Model.',
+    options: ['AWS', 'Customer', 'Shared'],
+    items: [
+      { t: 'Physical security of data centers', a: 'AWS', why: 'Security OF the cloud.' },
+      { t: 'Patching the hypervisor and host hardware', a: 'AWS', why: 'Infrastructure.' },
+      { t: 'Patching the guest OS on EC2', a: 'Customer', why: 'You manage the OS.' },
+      { t: 'Patching the database engine on Amazon RDS', a: 'AWS', why: 'Managed service handles engine patching (you choose maintenance windows).' },
+      { t: 'Configuring security groups and NACLs', a: 'Customer', why: 'Your network configuration.' },
+      { t: 'IAM users, roles and MFA', a: 'Customer', why: 'Identity is yours.' },
+      { t: 'Encrypting customer data in S3', a: 'Customer', why: 'You choose and configure encryption.' },
+      { t: 'Security awareness training for your staff', a: 'Customer', why: 'Your people.' },
+      { t: 'Patch management overall (infrastructure vs your guest OS and apps)', a: 'Shared', why: 'A shared control.' },
+      { t: 'Configuration management (AWS for infrastructure, you for your resources)', a: 'Shared', why: 'A shared control.' },
+      { t: 'Global network infrastructure between Regions', a: 'AWS', why: 'AWS backbone.' },
+      { t: 'Code running inside your Lambda functions', a: 'Customer', why: 'Your code and its permissions.' }
+    ], debrief: 'AWS secures the cloud itself; you secure what you put in it. Patch, configuration and awareness training are shared controls.' };
+  L['awx-cost'] = { kind: 'calc', title: 'AWS pricing math', sum: 'On-Demand vs commitments vs Spot', tolPct: 1,
+    brief: 'An instance costs <b>$0.20/hour On-Demand</b> and runs 24/7 (use <b>730 hours</b> per month). A 3-year commitment would cut the rate by <b>60%</b>. Spot capacity would cost <b>70% less</b> than On-Demand but the workload can tolerate interruptions only for its batch half.',
+    fields: [
+      { label: 'Monthly On-Demand cost for one instance ($)', a: 146, show: '$146', why: '0.20 × 730.' },
+      { label: 'Monthly cost with the 60% commitment discount ($)', a: 58.4, show: '$58.40', why: '146 × 0.4.' },
+      { label: 'Monthly savings from the commitment ($)', a: 87.6, show: '$87.60', why: '146 − 58.40.' },
+      { label: 'Monthly cost of one instance on Spot ($)', a: 43.8, show: '$43.80', why: '146 × 0.3.' },
+      { label: 'Fleet of 10: 5 steady on the commitment + 5 batch on Spot. Monthly total ($)', a: 511, show: '$511', why: '5 × 58.40 + 5 × 43.80 = 292 + 219.' },
+      { label: 'Same fleet all On-Demand ($)', a: 1460, show: '$1,460', why: '10 × 146.' }
+    ], debrief: 'Commit for the steady baseline, Spot for interruptible work, On-Demand for spikes — and validate with Cost Explorer and Compute Optimizer.' };
+  L['awx-iam-eval'] = { kind: 'match', title: 'Evaluate the IAM decision', sum: 'Allowed or denied? 8 policy scenarios',
+    brief: 'Apply AWS policy evaluation logic: explicit Deny wins; SCPs and boundaries limit; something must Allow. Decide each result.',
+    options: ['Allowed', 'Denied'],
+    items: [
+      { t: 'Identity policy allows s3:GetObject. No other policies apply.', a: 'Allowed', why: 'An allow with no deny.' },
+      { t: 'Identity policy allows s3:*; the bucket policy explicitly denies this user.', a: 'Denied', why: 'Explicit deny wins.' },
+      { t: 'Identity policy allows ec2:RunInstances; an SCP on the account allows only s3:*.', a: 'Denied', why: 'SCP does not allow EC2.' },
+      { t: 'Bucket policy (same account) allows the user; the user has no identity policy.', a: 'Allowed', why: 'Same-account resource policy can grant.' },
+      { t: 'Cross-account: bucket policy in account B allows a user from A; the user\'s identity policy in A has no S3 permissions.', a: 'Denied', why: 'Cross-account needs both sides.' },
+      { t: 'Identity policy allows iam:CreateUser; the permissions boundary allows only s3:*.', a: 'Denied', why: 'Boundary caps permissions.' },
+      { t: 'No policy mentions the action at all.', a: 'Denied', why: 'Implicit deny.' },
+      { t: 'Identity policy allows s3:DeleteObject only when aws:MultiFactorAuthPresent is true; the user signed in with MFA.', a: 'Allowed', why: 'Condition satisfied.' }
+    ], debrief: 'Deny beats allow; guardrails (SCP, boundary, session policy) must permit; and something must explicitly allow.' };
+  L['awx-net'] = { kind: 'match', title: 'Pick the AWS networking component', sum: '12 connectivity requirements',
+    brief: 'Choose the best AWS networking option for each requirement.',
+    options: ['NAT gateway', 'Gateway VPC endpoint', 'Interface endpoint (PrivateLink)', 'VPC peering', 'Transit Gateway', 'Site-to-Site VPN', 'Direct Connect', 'Application Load Balancer', 'Network Load Balancer', 'Global Accelerator', 'CloudFront', 'Route 53 failover routing'],
+    items: [
+      { t: 'Private instances download OS patches from the internet.', a: 'NAT gateway', why: 'Outbound only.' },
+      { t: 'Private instances read from S3 without internet and without extra charges.', a: 'Gateway VPC endpoint', why: 'Free S3/DynamoDB endpoint.' },
+      { t: 'Private access to the Secrets Manager API.', a: 'Interface endpoint (PrivateLink)', why: 'Interface endpoints for most services.' },
+      { t: 'Connect exactly two VPCs with non-overlapping CIDRs.', a: 'VPC peering', why: 'Simple 1:1.' },
+      { t: 'Hub connecting 40 VPCs and two data centers.', a: 'Transit Gateway', why: 'Hub and spoke.' },
+      { t: 'Encrypted connection to the office by tomorrow.', a: 'Site-to-Site VPN', why: 'Quick to set up.' },
+      { t: 'Dedicated 10 Gbps private link with consistent latency.', a: 'Direct Connect', why: 'Private circuit.' },
+      { t: 'Route by URL path to microservices.', a: 'Application Load Balancer', why: 'Layer 7.' },
+      { t: 'Millions of TCP connections with static IP addresses.', a: 'Network Load Balancer', why: 'Layer 4, static IPs.' },
+      { t: 'Global UDP game traffic over the AWS backbone with static anycast IPs.', a: 'Global Accelerator', why: 'Non-HTTP global acceleration.' },
+      { t: 'Cache images and video close to viewers worldwide.', a: 'CloudFront', why: 'CDN.' },
+      { t: 'Send users to the DR Region automatically when the primary health check fails.', a: 'Route 53 failover routing', why: 'DNS failover.' }
+    ], debrief: 'Outbound (NAT), private service access (endpoints), VPC-to-VPC (peering/TGW), hybrid (VPN/DX), traffic distribution (ELB/GA/CloudFront/Route 53).' };
+  L['awx-compute'] = { kind: 'match', title: 'Choose compute and scaling', sum: '10 compute decisions',
+    brief: 'Pick the best compute option or scaling feature.',
+    options: ['AWS Lambda', 'Lambda provisioned concurrency', 'ECS on Fargate', 'AWS Batch', 'Step Functions', 'EC2 Spot Fleet', 'Cluster placement group', 'Spread placement group', 'Target tracking scaling', 'Scheduled scaling', 'Elastic Beanstalk'],
+    items: [
+      { t: 'Resize images when they land in S3 (2 seconds each).', a: 'AWS Lambda', why: 'Short, event-driven.' },
+      { t: 'An API on Lambda must have no cold-start latency at 9 AM launch.', a: 'Lambda provisioned concurrency', why: 'Pre-warmed environments.' },
+      { t: 'Run a long-lived containerized web service without managing servers.', a: 'ECS on Fargate', why: 'Serverless containers.' },
+      { t: 'Run 10,000 queued simulation jobs with priorities.', a: 'AWS Batch', why: 'Managed batch scheduling.' },
+      { t: 'Coordinate a 6-step order workflow with retries and human approval.', a: 'Step Functions', why: 'Orchestration.' },
+      { t: 'Render video frames as cheaply as possible; interruptions are OK.', a: 'EC2 Spot Fleet', why: 'Cheap interruptible capacity.' },
+      { t: 'Tightly coupled HPC nodes need the lowest latency.', a: 'Cluster placement group', why: 'Packed together.' },
+      { t: 'Three critical servers must not share hardware.', a: 'Spread placement group', why: 'Distinct hardware.' },
+      { t: 'Keep the web fleet\'s CPU at 60% automatically.', a: 'Target tracking scaling', why: 'Metric target.' },
+      { t: 'Add capacity every Monday at 7 AM before the weekly report.', a: 'Scheduled scaling', why: 'Known schedule.' },
+      { t: 'A team uploads a Java app and wants AWS to handle provisioning and scaling.', a: 'Elastic Beanstalk', why: 'PaaS deployment.' }
+    ], debrief: 'Duration, statefulness, interruption tolerance and traffic shape decide compute.' };
+  L['awx-storage'] = { kind: 'match', title: 'Choose the storage', sum: 'S3 classes, EBS types and file systems',
+    brief: 'Pick the most cost-effective storage that meets each requirement.',
+    options: ['S3 Standard', 'S3 Intelligent-Tiering', 'S3 Standard-IA', 'S3 One Zone-IA', 'S3 Glacier Instant Retrieval', 'S3 Glacier Deep Archive', 'EBS gp3', 'EBS io2 Block Express', 'EBS st1', 'Amazon EFS', 'FSx for Windows File Server', 'FSx for Lustre'],
+    items: [
+      { t: 'Website assets read thousands of times a day.', a: 'S3 Standard', why: 'Frequent access.' },
+      { t: 'A data lake where nobody knows which data will be hot.', a: 'S3 Intelligent-Tiering', why: 'Automatic tiering.' },
+      { t: 'Disaster-recovery copies read only during a DR test, needing ms access.', a: 'S3 Standard-IA', why: 'Infrequent, multi-AZ, fast.' },
+      { t: 'Re-creatable transcoded video renditions read rarely.', a: 'S3 One Zone-IA', why: 'Cheap, one AZ OK.' },
+      { t: 'Patient X-rays read a few times a year but instantly when needed.', a: 'S3 Glacier Instant Retrieval', why: 'Archive with ms retrieval.' },
+      { t: 'Seven-year audit archive; retrieval within 2 days is fine.', a: 'S3 Glacier Deep Archive', why: 'Lowest cost archive.' },
+      { t: 'Boot volume for a general-purpose web server.', a: 'EBS gp3', why: 'Default SSD.' },
+      { t: 'An OLTP database needing 100,000+ IOPS.', a: 'EBS io2 Block Express', why: 'Highest IOPS.' },
+      { t: 'Large sequential scans of log files on a single instance.', a: 'EBS st1', why: 'Throughput HDD.' },
+      { t: 'Shared content directory for 20 Linux web servers across AZs.', a: 'Amazon EFS', why: 'Shared NFS.' },
+      { t: 'Windows user home drives integrated with Active Directory.', a: 'FSx for Windows File Server', why: 'SMB + AD.' },
+      { t: 'Genomics HPC cluster processing data stored in S3.', a: 'FSx for Lustre', why: 'HPC file system.' }
+    ], debrief: 'Access frequency and retrieval time choose the S3 class; IOPS vs throughput choose EBS; protocol and sharing choose the file system.' };
+  L['awx-db'] = { kind: 'match', title: 'Choose the database', sum: '10 database decisions',
+    brief: 'Pick the best AWS database option.',
+    options: ['RDS Multi-AZ', 'RDS read replica', 'Aurora Global Database', 'Aurora Serverless v2', 'DynamoDB', 'DynamoDB + DAX', 'DynamoDB Global Tables', 'ElastiCache for Redis', 'RDS Proxy', 'Amazon Redshift', 'Amazon Neptune'],
+    items: [
+      { t: 'Automatic failover if the primary AZ fails.', a: 'RDS Multi-AZ', why: 'Synchronous standby.' },
+      { t: 'Offload heavy read-only reporting queries.', a: 'RDS read replica', why: 'Async read scaling.' },
+      { t: 'Relational app with readers on two continents and fast Region recovery.', a: 'Aurora Global Database', why: 'Cross-Region.' },
+      { t: 'Relational dev database that sits idle most of the time.', a: 'Aurora Serverless v2', why: 'Scales down automatically.' },
+      { t: 'Shopping cart storage at massive scale, single-digit ms.', a: 'DynamoDB', why: 'Key-value, serverless.' },
+      { t: 'A product catalog on DynamoDB needs microsecond reads.', a: 'DynamoDB + DAX', why: 'In-memory accelerator.' },
+      { t: 'A mobile game writes player data in three Regions at once.', a: 'DynamoDB Global Tables', why: 'Multi-Region active-active.' },
+      { t: 'Session store and real-time leaderboard with sorted sets.', a: 'ElastiCache for Redis', why: 'Rich data structures.' },
+      { t: 'Serverless functions open too many database connections.', a: 'RDS Proxy', why: 'Connection pooling.' },
+      { t: 'BI analysts run complex SQL over 200 TB of history.', a: 'Amazon Redshift', why: 'Data warehouse.' },
+      { t: 'Fraud detection over relationships between accounts, devices and cards.', a: 'Amazon Neptune', why: 'Graph database.' }
+    ], debrief: 'HA vs read scale vs global vs serverless for relational; key-value with caching and global tables; purpose-built engines for analytics and graphs.' };
+  L['awx-dr'] = { kind: 'match', title: 'Decouple and recover', sum: 'Messaging and DR decisions',
+    brief: 'Choose the service or strategy for each requirement.',
+    options: ['SQS Standard', 'SQS FIFO', 'Dead-letter queue', 'SNS fan-out to SQS', 'EventBridge', 'Kinesis Data Streams', 'Step Functions', 'Backup and restore', 'Pilot light', 'Warm standby', 'Multi-site active/active', 'AWS Backup'],
+    items: [
+      { t: 'Buffer a burst of 1 million image jobs; order doesn\'t matter.', a: 'SQS Standard', why: 'Huge throughput.' },
+      { t: 'Bank transactions must be processed in order, once.', a: 'SQS FIFO', why: 'Ordering and exactly-once processing.' },
+      { t: 'Messages that fail 5 times should be set aside for inspection.', a: 'Dead-letter queue', why: 'Isolate poison messages.' },
+      { t: 'One "order placed" event goes to billing, shipping and email independently.', a: 'SNS fan-out to SQS', why: 'Fan-out.' },
+      { t: 'React to events from a SaaS partner with content-based routing rules.', a: 'EventBridge', why: 'Event bus.' },
+      { t: 'Real-time telemetry, ordered per device, replayed by two consumers.', a: 'Kinesis Data Streams', why: 'Ordered, replayable streams.' },
+      { t: 'Loan approval workflow with waits, branches and retries.', a: 'Step Functions', why: 'Orchestration.' },
+      { t: 'Cheapest DR; a day of downtime is acceptable.', a: 'Backup and restore', why: 'Lowest cost.' },
+      { t: 'Database replicated to DR; servers launched only during disaster.', a: 'Pilot light', why: 'Core always on.' },
+      { t: 'A smaller full copy runs in DR and scales up on failover.', a: 'Warm standby', why: 'Minutes RTO.' },
+      { t: 'Zero downtime: both Regions serve traffic all the time.', a: 'Multi-site active/active', why: 'Near-zero RTO/RPO.' },
+      { t: 'One policy schedules backups for RDS, EBS and EFS across accounts.', a: 'AWS Backup', why: 'Central backups.' }
+    ], debrief: 'Queues buffer, topics fan out, buses route, streams order and replay, workflows orchestrate — and DR cost rises as RTO/RPO fall.' };
+  L['awx-pro-net'] = { kind: 'match', title: 'Enterprise network & security patterns', sum: 'Pro-level design choices',
+    brief: 'Choose the AWS feature or pattern for each enterprise requirement.',
+    options: ['Transit Gateway + inspection VPC', 'Route 53 Resolver endpoints', 'AWS RAM shared subnets', 'AWS Firewall Manager', 'Organization CloudTrail to log-archive account', 'Delegated administrator for GuardDuty', 'EventBridge-triggered isolation', 'PrivateLink endpoint service'],
+    items: [
+      { t: 'All egress from 80 VPCs must be inspected in one place.', a: 'Transit Gateway + inspection VPC', why: 'Centralized inspection.' },
+      { t: 'On-prem DNS must resolve AWS private zones and vice versa.', a: 'Route 53 Resolver endpoints', why: 'Hybrid DNS.' },
+      { t: 'App teams deploy into subnets owned by the network team\'s account.', a: 'AWS RAM shared subnets', why: 'Shared VPC.' },
+      { t: 'Enforce the same WAF and security-group baselines in every account.', a: 'AWS Firewall Manager', why: 'Central policy.' },
+      { t: 'Audit logs from every account must be immutable and centrally owned.', a: 'Organization CloudTrail to log-archive account', why: 'Central, protected logging.' },
+      { t: 'The security account manages threat detection for the whole org.', a: 'Delegated administrator for GuardDuty', why: 'Delegated admin.' },
+      { t: 'Compromised instances are quarantined within seconds of a finding.', a: 'EventBridge-triggered isolation', why: 'Automated response.' },
+      { t: 'Offer an internal API privately to 30 partner accounts with overlapping CIDRs.', a: 'PrivateLink endpoint service', why: 'No routing/CIDR conflicts.' }
+    ], debrief: 'At scale, centralize inspection, logging and policy, delegate security tooling, and automate response.' };
+  L['awx-pro-iac'] = { kind: 'order', title: 'Ship infrastructure safely', sum: 'Order an IaC change pipeline',
+    brief: 'Put the steps of a safe infrastructure-as-code change into order.',
+    items: [
+      { t: 'Commit the template change to version control and open a pull request', why: 'Everything starts in code review.' },
+      { t: 'Pipeline runs linting and security checks (e.g. cfn-lint, policy-as-code)', why: 'Catch errors and risky settings early.' },
+      { t: 'Create a change set to preview resource changes', why: 'Know what will be replaced or deleted.' },
+      { t: 'Deploy to a staging account and run integration tests', why: 'Prove it works.' },
+      { t: 'Manual approval for production', why: 'Human gate for risky environments.' },
+      { t: 'Deploy to production with StackSets / canary and alarms for automatic rollback', why: 'Guarded rollout.' },
+      { t: 'Run drift detection on a schedule to catch manual changes', why: 'Keep reality equal to code.' }
+    ], debrief: 'Review → test → preview → stage → approve → guarded deploy → detect drift.' };
 })();
 
 ;
